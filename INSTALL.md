@@ -13,6 +13,7 @@ The machine:
   - Needs to run linux
   - Have Java 7+ installed.
   - Python2.7+ Installed
+    - aws client installed. ('pip install awscli')
   - Machine needs to have IAM-Manager credentials. This can either come from the machine
     if it is in AWS or configured on the machine. Deployment Manager uses standard AWS
     credentials chain.
@@ -47,7 +48,7 @@ chown <user running deployment manager> /var/log/cerebro
 chown <user running deployment manager> /var/run/cerebro
 ```
 
-**Altenatively**, the log and install directory can be changed with these environment
+**Alternatively**, the log and install directory can be changed with these environment
 variables, before starting up the DeploymentManager
 
 ```
@@ -56,11 +57,16 @@ export DEPLOYMENT_MANAGER_INSTALL_DIR=s3://<bucket>
 ```
 
 The Deployment Manager also requires a database to be created in RDS. This can be
-pre-created or the Deployment Manager will provision it on its own if it is not. If it
-is preconfigured, it can be set by environment variable with:
+pre-created or the Deployment Manager will provision it on its own if it is not. If
+you would like an RDS that requires options that are not available in the
+DeploymentManager, you can provision your own. We require MySQL 5.6+.
+
+If it is preconfigured, it can be set by environment variable with:
 
 ```
-export CEREBRO_DB_URL=jdbc:mysql://instance.com:port/db
+export CEREBRO_DB_URL=<host:port>[/db]
+export CEREBRO_DB_USERNAME=<user>
+export CEREBRO_DB_PASSWORD=password
 ```
 
 ### Ports
@@ -173,4 +179,46 @@ cerebro_cli clusters create
 
 You will need to specify multiple arguments to these calls.
 
-    TODO: include a version with actual arguments
+### Quick tutorial with the CLI
+These commands can be run to start up a cluster running CDAS from the CLI. This
+assumes that the DeploymentManger has just been installed and nothing has been
+done.
+```
+# First, create an environment. We will use --inheritConfigs when creating the
+# environment. This flag inherits the configuration of the DeploymentManager,
+# which may not be the same as the CDAS cluster when deployed in production.
+cerebro_cli configure --server=<host:port> of DeploymentManager.
+cerebro_cli environments create --name=SampleEnvironment --inheritConfigs
+
+# If this is the first time, the environment will be created with id '1'. If
+# it is not, you will have to change the environmentid in the commands below.
+# The environment should be listable now. You should see the newly created
+# environment.
+cerebro_cli environments list
+
+# You can also see a detailed output of what the environment looks like.
+cerebro_cli environments list --detail
+
+# Next, create a cluster. This will provision and get the cluster running. This
+# step involves provisioning instances in EC2 and can take ~10minutes. Again, it is
+# assumed this cluster is created with id '1', if not you will have to update the
+# steps below.
+cerebro_cli clusters create --name=TestCluster --environmentid=1 --num_nodes=1 --type=TestCluster
+
+# You can check the status of the cluster with
+cerebro_cli clusters status --clusterid=1
+
+# This should so the cluster as 'Provisioning'. You can see more details, including
+# how long it has been in this state with
+cerebro_cli clusters status --clusterid=1 --detail
+
+# It might be convenient to run this with 'watch' until the state transitions to
+# 'READY'
+watch cerebro_cli clusters status --clusterid=1
+
+# At this point the cluster is up and running. You can see the external endpoints
+# of the cluster with
+cerebro_cli clusters endpoints --clusterid=1
+
+# This should return a list of hostports where the service can be reached.
+```
