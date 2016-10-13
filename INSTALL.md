@@ -188,7 +188,7 @@ done.
 # environment. This flag inherits the configuration of the DeploymentManager,
 # which may not be the same as the CDAS cluster when deployed in production.
 cerebro_cli configure --server=<host:port> of DeploymentManager.
-cerebro_cli environments create --name=SampleEnvironment --inheritConfigs
+cerebro_cli environments create --name=SampleEnvironment --inheritConfigs=True --provider=aws
 
 # If this is the first time, the environment will be created with id '1'. If
 # it is not, you will have to change the environmentid in the commands below.
@@ -203,7 +203,7 @@ cerebro_cli environments list --detail
 # step involves provisioning instances in EC2 and can take ~10minutes. Again, it is
 # assumed this cluster is created with id '1', if not you will have to update the
 # steps below.
-cerebro_cli clusters create --name=TestCluster --environmentid=1 --num_nodes=1 --type=TestCluster
+cerebro_cli clusters create --name=TestCluster --environmentid=1 --num_nodes=1 --type=TEST_CLUSTER
 
 # You can check the status of the cluster with
 cerebro_cli clusters status --clusterid=1
@@ -213,12 +213,25 @@ cerebro_cli clusters status --clusterid=1
 cerebro_cli clusters status --clusterid=1 --detail
 
 # It might be convenient to run this with 'watch' until the state transitions to
-# 'READY'
+# 'READY'. At this point you can also log into your EC2 console and should see
+# the new instances being provisioned. The instances should be tagged with the
+# name of the cluster you specified ('TestCluster' by default).
+# This step can take around 10 minutes, depending how quickly the instances can
+# be provisioned.
 watch cerebro_cli clusters status --clusterid=1
 
 # At this point the cluster is up and running. You can see the external endpoints
-# of the cluster with
+# of the cluster.
+# This should return a list of hostports where the service can be reached. It
+# will look something this and you can curl the endpoint.
 cerebro_cli clusters endpoints --clusterid=1
+{
+    "canary:webport": [
+        "54.190.197.176:30848"
+    ]
+}
 
-# This should return a list of hostports where the service can be reached.
+# Curling that endpoint should return some basic information.
+curl 54.190.197.176:304848
+{"current_time": "2016-10-13-18-16-23", "uid": "8300d46e-6da8-4d09-bfe9-780d74f204ae", "start_time": "2016-10-13-18:13:39"}
 ```
