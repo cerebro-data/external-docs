@@ -33,16 +33,12 @@ This should return a json object indicating the health is ok.
 ### Registering a dataset. 
 For the tutorial, we will use an dataset that Cerebro has publicly available 
 in AWS S3. Feel free to adapt the dataset to one you have available.
-
-Again, we do not recommend directly using curl to communicate with the server, this
-is just for illustrative purposes.
-
 ```
-$ curl -H "Content-Type: application/json" -X PUT -d 
-'{"name":"products", "storage_url":"s3://cerebrodata/products"}' localhost:5000/api/datasets
+curl -H "Content-Type: application/json" -X PUT -d 
+'{"name":"products", "database":"tutorial", "storage_url":"s3://cerebrodata/products"}' localhost:5000/api/datasets
 ```
-This registers the dataset called 'products' back by data stored in S3. By default,
-only the owning user hash access.
+This registers the dataset in the 'tutorials' database called products. It is
+backed by data stored in S3. By default, only the owning user hash access.
 
 In this particular case, the dataset is self describing so it is ready to be
 read. In other cases, the PUT request can specify the HiveQL that is necessary
@@ -51,32 +47,10 @@ format, delimiters, etc.
 
 ### Reading it
 Cerebro provides many ways to access the data. We'll start with the simplest
-of using the REST endpoint. We've registed the dataset with the name 'products'. We can simply 
-issue a GET call to the planner endpoint.
+of using the REST endpoint. We've registed the dataset with the fully qualified
+name 'tutorial.products'. We can simply issue a GET call to the planner endpoint.
 
 ```
-$ curl <planner_endpoint>/scan/products
+curl <planner_endpoint>/scan/tutorial.products
 ```
 This should return the first few records of this dataset.
-
-### Defining access policies.
-We'll add 3 policies for 3 different users. The users must already exist on the system. We will
-  - Give the Hadoop just access to the category column.
-  - Give the presto user access to just the url column.
-  - Give the zeppelin user access to the category column after a transformation is applied AND rows are filtered.
- 
-```
-$ curl -H "Content-Type: application/json" -X PUT -d '{"users":"hadoop","dataset":"products","projection":"category"}' localhost:5000/api/policies
-$ curl -H "Content-Type: application/json" -X PUT -d '{"users":"presto","dataset":"products","projection":"url"}' localhost:5000/api/policies
-$ curl -H "Content-Type: application/json" -X PUT -d '{"users":"zeppelin","dataset":"products","projection":"upper(category)", "filters":"category < \"m\""}' localhost:5000/api/policies
-```
-
-### Reading it.
-Again, we can read it with the curl api. Each of these commands should return
-different data with the above policies enforced.
-
-```
-$ curl <planner_endpoint>/scan/products?user=hadoop
-$ curl <planner_endpoint>/scan/products?user=presto
-$ curl <planner_endpoint>/scan/products?user=zeppelin
-```
