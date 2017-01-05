@@ -20,15 +20,15 @@ The machine:
 
 ### Download
 First, download the Deployment Manager tar ball from one of the S3 locations:
-```
-wget https://s3-us-west-2.amazonaws.com/cerebrodata-release/deployment-manager-0.1.tar.gz
-OR
-wget https://s3.amazonaws.com/cerebrodata-release-useast/deployment-manager-0.1.tar.gz
+```shell
+$ curl -O https://s3-us-west-2.amazonaws.com/cerebrodata-release/deployment-manager-0.1.tar.gz
+# OR
+$ curl -O https://s3.amazonaws.com/cerebrodata-release-useast/deployment-manager-0.1.tar.gz
 ```
 
-```
-# Unpack the tar
-tar xzf deployment-manager-0.1.tar.gz
+```shell
+# Unpack the tar and delete it.
+$ tar xzf deployment-manager-0.1.tar.gz && rm deployment-manager-0.1.tar.gz
 ```
 
 ### Logging Configuration
@@ -37,12 +37,13 @@ logging directory must be local and the install directory can be local or on S3,
 on the durability of this machine. If using the defaults, make the directories and ensure
 the Deployment Manager has access.
 
-```
+```shell
 [sudo] mkdir -p /var/log/cerebro
 [sudo] mkdir -p /var/run/cerebro
 [sudo] chmod 700 /var/run/cerebro
 
-# Deployment Manager user needs exclusive access to those directories. If those directories# are created as different user than the Deployment Manager user, run:
+# Deployment Manager user needs exclusive access to those directories. If those
+# directories are created as different user than the Deployment Manager user, run:
 [sudo] chown <user running deployment manager> /var/log/cerebro
 [sudo] chown <user running deployment manager> /var/run/cerebro
 ```
@@ -50,9 +51,21 @@ the Deployment Manager has access.
 **Alternatively**, the log and install directory can be changed with these environment
 variables, before starting up the DeploymentManager
 
-```
+```shell
 export DEPLOYMENT_MANAGER_LOG_DIR=/tmp/<some dir>
 export DEPLOYMENT_MANAGER_INSTALL_DIR=s3://<bucket>
+```
+
+## Configuration
+The service has various configurations that can be set from the environment. The
+most common are included in a template config file in 
+'deployment-manager/conf/env-template.sh'. It is recommend you copy this file, modify
+it and then source it.
+
+```shell
+$ cp deployment-manager-0.1/conf/env-template.sh /var/run/cerebro/env.sh
+# open and edit env.sh, modifying it as necessary
+$ source /var/run/cerebro/env.sh
 ```
 
 ### S3 Configuration
@@ -61,7 +74,7 @@ to stage binaries as well as logging. The Deployment Manager role as well as the
 Data Access Roles needs read and write access to this location. This can be the
 same directory as DEPLOYMENT_MANAGER_INSTALL_DIR if it is already a bucket in S3.
 If not, set it with:
-```
+```shell
 export CEREBRO_S3_STAGING_DIR=s3://<bucket>
 ```
 
@@ -73,102 +86,72 @@ DeploymentManager, you can provision your own. We require MySQL 5.6+.
 
 If it is preconfigured, it can be set by environment variable with:
 
-```
+```shell
 export CEREBRO_DB_URL=<host:port>[/db]
 export CEREBRO_DB_USERNAME=<user>
 export CEREBRO_DB_PASSWORD=<password>
 ```
 
 ### Ports
-By default, the server will run on port 8080. To change this, set this in your
-environment before starting up the service:
-```
+By default, the server will run on port 8085. To change this, set this in your
+environment before starting up the service.
+
+```shell
 export CEREBRO_SERVER_HOSTPORT=0.0.0.0:<port>
 ```
 
-### Running
+The services launched by the DeploymentManager will by default start on random ports
+between 30000-33000. You can control those ports:
+
+```shell
+CEREBRO_PORT_CONFIGURATION=list of comma-separted <service:port-name:port>
+```
+
+### Kerberos
+To enable kerberos, first set these environment variables:
+
+```shell
+export CEREBRO_KERBEROS_PRINCIPAL=<principal>
+export CEREBRO_KEYTAB_FILE=filename.keytab
+```
+
+Upload the keytab and krb5.conf to the S3 Cerebro staging directory in the 'etc'
+directory. For example
+
+```shell
+aws s3 cp KEYTAB.keytab $CEREBRO_S3_STAGING/etc/KEYTAB.keytab
+aws s3 cp krb5.conf $CEREBRO_S3_STAGING/etc/krb5.conf
+```
+
+## Starting the DeploymentManager
 To run, simply run
-```
+```shell
 bin/deployment-manager
+# This should output 'System up and running' and the server hostport.
 ```
+
 This will run the Deployment Manager as a daemon. To logs will be output as configured,
-by default they can be viewed with.
-```
+by default they can be viewed:
+```shell
 tail -f /var/log/cerebro/deployment-manager.log
 ```
 
-To verify it is up and running, you can simply curl the endpoint. If this fails,
-look at the logs.
-```
-curl <hostport>/api/system/status
-# By default,
-curl localhost:8080/api/system/status
-# This should return 'Running'
-```
-
-## Installing from containers
-The Deployment Manager can also be installed from a docker image on ECS. It should run
-as a service with a single instance. The image is available from docker hub.
-
-```
-cerebro/deployment-manager:latest
-```
-
-### Install
-To install, simply follow the normal ECS steps, first provisioning an EC2 machine that is
-compatible with ECS. The container should be started with these configs, set via
-environment variables.
-
-#### Configs
-
-**CEREBRO_INSTALL_DIR**
-
-This is required and specifies the S3 directory for Cerebro to store install files. This
-should be a path in S3. Cerebro needs read and write access to this location.
-
-**CEREBRO_DB_URL**
-
-This is optional and specifies the database the installer should use. This needs to be a
-MYSQL instance with the database already created. An example of this url could be:
-```
-jdbc:mysql://cerebro-db.us-west-2.rds.amazonaws.com:3306/installDb
-```
-
-If this is not specified, the Deployment Manager will launch its own.
-
-**WATCHER_LOG_DST_DIR**
-
-This is the logging directory for the deployment manager. This should be configured to a
-bucket in S3. If specified, logs will be persisted to this directory, otherwise they are
-lost if the container is killed.
-
-#### Ports
-  - 8080: This port must be exposed. It is the port that requests to the deployment
-    manager are made.
-  - 5005: This port is optional. It serves the most recent logs as well as diagnostic
-    information.
-
 ## CLI
 The Deployment Manager can be most easily controlled from the CLI. To install the
-CLI, download the package from:
+CLI, download the install script and run it. This will prompt you with options to
+install it.
 
-```
-wget https://s3-us-west-2.amazonaws.com/cerebrodata-release/cerebro_cli-0.1.0-cp27-none-linux_x86_64.whl
-OR
-wget https://s3.amazonaws.com/cerebrodata-release-useast/cerebro_cli-0.1.0-cp27-none-linux_x86_64.whl
+```shell
+$ curl -O https://s3.amazonaws.com/cerebrodata-release-useast/cli/0.1/get-cli.py && chmod +rx get-cli.py
+$ ./get-cli.py
 ```
 
-To install:
-```
-pip install ./cerebro_cli-0.1.0-cp27-none-linux_x86_64.whl
-```
+**Configs**
+Initially, you should have the DeploymentManager hostport running. You can specify that
+when configuring the CLI and leave the catalog blank. You can later update the configs
+by modifying ~/.cerebro/configs.json
 
 ### Quick Start
-After installing the CLI, to quickly get started, run:
-```
-cerebro_cli configure --server=<host:port of Deployment Manager>
-```
-
 To ensure it is connected properly, run:
 ```
 cerebro_cli system info
