@@ -19,9 +19,10 @@ questions such as:
   - What are all the users/groups that have access to this dataset?
 
 ### Incompatible Changes
-**Policy API has changed**. 
+**Policy API has changed**.
 The endpoints are different (/api/grant-policy, /api/revoke-policy). The arguments are
-largely the same. It is no longer necessary to delete policies and not possible to view them.
+largely the same. It is no longer necessary to delete policies and not possible to view
+them.
 
 ### Known issues:
 **Creating the dataset with 'storage_url' currently requires the dataset to be parquet.**

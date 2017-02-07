@@ -24,7 +24,7 @@ such as Impala and HiveServer2 as well as gateway client configs for Spark, Pig,
 contact this service directly, we will only need to update HiveServer2 and Impala.
 3. Configure the gateway client configs to use Cerebro's data access service. This
 provides the functionality that the RecordService service provided.
- 
+
 These steps are repeated across multiple CDH clusters allowing them to share
 the same metadata.
 
@@ -44,11 +44,11 @@ clients. The configs are:
 If the cluster is not kerberized, then the kerberos principal is not necessary.
 
 #### Hive service configs
-The configs need to be set in Hive -> Service Wide -> 
+The configs need to be set in Hive -> Service Wide ->
 Hive Service Advanced Configuration Snippet (Safety Value) for hive-site.xml
 
 This will require restarting the hive service. You can verify this is set properly
-by going on the machine (requires root) running HiveServer2 and looking in 
+by going on the machine (requires root) running HiveServer2 and looking in
 /var/run/cloudera-scm-agent/process/<latest folder for hive server2>/hive-site.xml.
 
 The CM generatd config should make it very clear that these two values have been
@@ -58,11 +58,11 @@ overridden.
 and can be safely ignored. **HiveServer2** health should be healthy.
 
 #### Hive client configs
-The configs need to be set in Hive -> Gateway -> 
+The configs need to be set in Hive -> Gateway ->
 Hive Client Advanced Configuration Snippet (Safety Value) for hive-site.xml
 
 This will require deploying the client configs and restarting dependent services. You
-can verify this is set properly by going to any gateway machine and looking in 
+can verify this is set properly by going to any gateway machine and looking in
 '/etc/hive/conf/hive-site.xml'
 
 #### Impala configs
@@ -90,14 +90,16 @@ kerberized clusters.
 
 #### Hive Server 2
 This will need to be set in:
-Hive -> Service Wide -> Hive Service Advanced Configuration Snippet (Safety Valve) for sentry-site.xml
+Hive -> Service Wide -> Hive Service Advanced Configuration Snippet (Safety Valve) for
+sentry-site.xml
 
-This will require restarting the dependent services. You can be verified by looking in 
+This will require restarting the dependent services. You can be verified by looking in
 the generated config for the HiveServer2 service (see above for the HMS config on details.
 
 #### Impala
 This will need to be set in:
-Impala -> Service Wide -> Impala Service Advanced Configuration Snippet (Safety Valve) for sentry-site.xml
+Impala -> Service Wide -> Impala Service Advanced Configuration Snippet (Safety Valve) for
+sentry-site.xml
 
 This will require restarting Impala.
 
@@ -112,10 +114,49 @@ on which one you are using. The configuration is:
 ```
 
 This has to be set in the safety valves in
-Yarn -> Gateway -> MapReduce Client Advanced Configuration Snippet (Safety Valve) for mapred-site.xml
+Yarn -> Gateway -> MapReduce Client Advanced Configuration Snippet (Safety Valve) for
+mapred-site.xml
 and
-Yarn -> Gateway -> YARN Client Advanced Configuration Snippet (Safety Valve) for yarn-site.xml
+Yarn -> Gateway -> YARN Client Advanced Configuration Snippet (Safety Valve) for
+yarn-site.xml
 
 This requires redeploying the client configs. You can verify it is set by going on any
 gateway machine and looking in /etc/hadoop/conf/[mapred|yarn]-site.xml
+
+## Client jars
+Cerebro publishes jars that are API compatible with the RecordService jars.
+
+### Pom configuration
+To use these jars from maven, you can configure the pom to use our repo and version.
+This can be added to the pom.
+```
+  <properties>
+    <recordservice.version>1.0.0-alpha-1-SNAPSHOT</recordservice.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.cloudera.recordservice</groupId>
+      <artifactId>recordservice-mr</artifactId>
+      <version>${recordservice.version}</version>
+    </dependency>
+  </dependencies>
+
+    <repositories>
+    <repository>
+      <id>central</id>
+      <name>libs-release</name>
+      <url>https://cerebro.jfrog.io/cerebro/libs-release</url>
+    </repository>
+  </repositories>
+```
+
+### Downloading the jars
+All of the release jars are also available in S3 in the release location. They are available
+at
+```
+s3://cerebrodata-release-useast/<version>/client
+# For example:
+s3://cerebrodata-release-useast/0.2.0/client
+```
 

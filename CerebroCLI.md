@@ -25,8 +25,8 @@ For a fresh setup, you can install with:
     $ ./cerebro_cli --help
 
 ## Configuration
-The service locations can be specified to the cli as a command line flag (run --help) 
-or can be configured from a configuration file which is helpful if interacting with 
+The service locations can be specified to the cli as a command line flag (run --help)
+or can be configured from a configuration file which is helpful if interacting with
 the same server repeatedly. The configuration file is stored in ~/.cerebro/configs.json.
 
 To configure the location of the catalog service, the file should contain:
