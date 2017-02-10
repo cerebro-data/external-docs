@@ -151,7 +151,7 @@ This can be added to the pom.
   </repositories>
 ```
 
-### Downloading the jars
+## Downloading the jars
 All of the release jars are also available in S3 in the release location. They are available
 at
 ```
@@ -160,3 +160,57 @@ s3://cerebrodata-release-useast/<version>/client
 s3://cerebrodata-release-useast/0.2.0/client
 ```
 
+## Configuring CDAS
+CDAS supports Hadoop configurations. The configs can be uploaded to the Cerebro S3 bucket
+and will be picked up by the services on restart. The configs should have the same names
+as their equivalent Hadoop equivalents (e.g. core-site.xml, hive-site.xml, sentry-site.xml).
+
+The configs should just contain the individual properties in xml format. Refer to the examples
+below. Multiple configs can be put by having multiple property tags.
+
+### Configuring Sentry admins example
+Create the file sentry-site.xml and populate it with:
+```xml
+<property>
+  <name>sentry.service.admin.group</name>
+  <value>COMMA SEPARATED LIST OF USERS/GROUPS</value>
+</property>
+```
+For example:
+```xml
+<property>
+  <name>sentry.service.admin.group</name>
+  <value>admin,nong,sysadmin</value>
+</property>
+```
+
+Save and upload this file to Cerebro's install bucket, under the /etc/ directory.
+
+For example:
+```shell
+$ aws s3 cp ./sentry-site.xml s3://<CEREBRO_BUCKET>/etc/
+```
+
+### Configuring cross realm kerberos example
+Create the file core-site.xml and populate it with the config. The example below
+will allow any principals of the form primary/instance@REALM1, primary/instance@REALM2 or
+primary@REALM2. By default, Cerebro allows all principals (in either form) from the realm
+Cerebro's keytab is in.
+```xml
+<property>
+  <name>hadoop.security.auth_to_local</name>
+  <value>
+    RULE:[2:$1@$0](.*@REALM1)s/@.*//
+    RULE:[2:$1@$0](.*@REALM2)s/@.*//
+    RULE:[1:$1@$0](.*@REALM2)s/@.*//
+  </value>
+</property>
+```
+Upload this file to S3:
+```shell
+$ aws s3 cp ./core-site.xml s3://<CEREBRO_BUCKET>/etc/
+```
+
+
+For more details on this config, refer to the Hadoop documentation:
+https://hortonworks.com/blog/fine-tune-your-apache-hadoop-security-settings/
