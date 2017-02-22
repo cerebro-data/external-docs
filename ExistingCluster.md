@@ -10,7 +10,7 @@ part of installing and starting up a kubernetes cluster. It contains cluster nam
 and various other credentials.
 
 Copy the file to the Deployment Manager's external clusters directory. This is by default
-'/var/run/cerebro/clusters'.
+'/etc/cerebro/clusters'.
 
 ### Registering the cluster
 We can register the cluster by creating it from the CLI.

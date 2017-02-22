@@ -7,10 +7,10 @@ Cerebro Data Access Service (CDAS) cluster.
 Cerebro depends on a few AWS services to be set up before installing Cerebro.
   - S3 Bucket. Cerebro uses this bucket to store log files as well as stage intermediate
     config files. This bucket should be readable and writable by all instances running any
-    Cerebro components. This bucket will be referred to as CEREBRO_S3_BUCKET.
+    Cerebro components. This bucket will be referred to as CEREBRO_S3_STAGING_DIR.
   - RDS instance with MySQL5.6 provisioned. This can be provisioned with the configuration
     of your choice. Cerebro instances need read and write access to this database.
-    This document will refer to this as CEREBRO_RDS_DB.
+    This document will refer to this as CEREBRO_DB_URL.
   - IAM credentials. Cerebro instances need read and write access to the above two. The
     DeploymentManager needs the ability to provision instances and the cluster machines
     will need credentials to your data. These can be one IAM profile with all the
@@ -43,43 +43,43 @@ you need:
 Download and extract the DeploymentManager tarball
 ```shell
 # Recommended location is /opt/cerebro but can be any location.
-$ mkdir -p /opt/cerebro && cd /opt/cerebro
+mkdir -p /opt/cerebro && cd /opt/cerebro
 
 # Get the tarball from S3.
-$ curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.2.0/deployment-manager-0.2.0.tar.gz
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.2.0/deployment-manager-0.2.0.tar.gz
 
 # Extract the bits.
-$ tar xzf deployment-manager-0.2.0.tar.gz && rm deployment-manager-0.2.0.tar.gz && ln -s deployment-manager-0.2.0 deployment-manager
+tar xzf deployment-manager-0.2.0.tar.gz && rm deployment-manager-0.2.0.tar.gz && ln -s deployment-manager-0.2.0 deployment-manager
 ```
 
 Download the shell binary. This depends on the OS running the CLI.
 ```shell
 # Linux
-$ curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.2.0/cli/linux/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.2.0/cli/linux/cerebro_cli && chmod +x cerebro_cli
 # OSX
-$ curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.2.0/cli/darwin/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.2.0/cli/darwin/cerebro_cli && chmod +x cerebro_cli
 
 # Verify the version
-$ ./cerebro_cli version
+./cerebro_cli version
 ```
 
 ### DeploymentManager logging and install directory
 Configure the logging and local install directories. These should be paths on the
 local file system. The install directory currently needs to be restored if this machine
-is moved. These by default are '/var/log/cerebro' and '/var/run/cerebro' but can be
+is moved. These by default are '/var/log/cerebro' and '/etc/cerebro' but can be
 changed by setting DEPLOYMENT_MANAGER_LOGDIR and DEPLOYMENT_MANAGER_INSTALL_DIR in
 the environment.
 
 For a standard install:
 ```shell
 [sudo] mkdir -p /var/log/cerebro
-[sudo] mkdir -p /var/run/cerebro
-[sudo] chmod 700 /var/run/cerebro
+[sudo] mkdir -p /etc/cerebro
+[sudo] chmod 700 /etc/cerebro
 
 # DeploymentManager user needs exclusive access to those directories. If those
 # directories are created as different user than the DeploymentManager user, run:
 [sudo] chown <user running deployment manager> /var/log/cerebro
-[sudo] chown <user running deployment manager> /var/run/cerebro
+[sudo] chown <user running deployment manager> /etc/cerebro
 ```
 
 ### Cerebro Configuration
@@ -88,27 +88,27 @@ done via environment variables before starting up the server. It is recommended 
 copy the template configuration, update it and then source it. Steps below assume
 the standard install paths were used.
 ```shell
-$ cp /opt/cerebro/deployment-manager/conf/env-template.sh /var/run/cerebro/env.sh
+cp /opt/cerebro/deployment-manager/conf/env-template.sh /etc/cerebro/env.sh
 # open and edit env.sh, modifying it as necessary
-$ source /var/run/cerebro/env.sh
+source /etc/cerebro/env.sh
 ```
 
-**CEREBRO_DEFAULT_REGION**
+**CEREBRO_AWS_DEFAULT_REGION**
 This is the region that Cerebro is running in.
 ```shell
 Example:
-export CEREBRO_DEFAULT_REGION=us-west-2
+export CEREBRO_AWS_DEFAULT_REGION=us-west-2
 ```
 
 **CEREBRO_S3_STAGING_DIR**
-This is the CEREBRO_S3_BUCKET for logs and install files.
+This is the CEREBRO_S3_STAGING_DIR for logs and install files.
 ```shell
 Example:
 export CEREBRO_S3_STAGING_DIR=s3://cerebro-data
 ```
 
 **CEREBRO_DB_URL/CEREBRO_DB_USERNAME/CEREBRO_DB_PASSWORD**
-This is the end point and db credentials for CEREBRO_RDS_DB. DB_URL should be the
+This is the end point and db credentials for CEREBRO_DB_URL. DB_URL should be the
 host/port (typically 3306) of the running mysql instance.
 ```shell
 Example:
@@ -116,7 +116,7 @@ export CEREBRO_DB_URL=cerebro.xyzzzz.rds.amazonaws.com:3306
 ```
 
 **CEREBRO_DB_NAME**
-This is the DB name inside the CEREBRO_RDS_DB that the DeploymentManager will use.
+This is the DB name inside the CEREBRO_DB_URL that the DeploymentManager will use.
 If this RDS instance is only backing a single DeploymentManager install, this does
 not need to be set. Otherwise, each install can have a different database. This does
 not need to be pre-created.
@@ -143,15 +143,16 @@ the ports that are required for clients. If they are not specified, Cerebro will
 pick randomly available ports to expose these services on.
   - cerebro_planner_worker:worker
   - cerebro_catalog:sentry
-  - cerebro_catalog_ui:webui
+  - cdas_rest_server:api
   - cerebro_planner_worker:planner
   - cerebro_planner_worker:webui
   - cerebro_catalog:hms
+  - kubernetes_dashboard:admin_ui
 
 An example configuration would be:
 ```shell
 CEREBRO_PORT_CONFIGURATION="cerebro_planner_worker:worker:7185,cerebro_catalog:sentry:7182"
-CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,cerebro_catalog_ui:webui:7184"
+CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,cdas_rest_server:api:7184"
 CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,cerebro_planner_worker:planner:7183"
 CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,cerebro_planner_worker:webui:7181"
 CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,cerebro_catalog:hms:7180"
@@ -160,13 +161,13 @@ export CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,kubernetes_dashbo
 
 **KERBEROS**
 To enable Kerberos, Cerebro needs a keytab and principal. They keytab needs to be uploaded
-to S3 at CEREBRO_S3_BUCKET/etc/KEYTAB_FILE_NAME. Then the configurations
+to S3 at CEREBRO_S3_STAGING_DIR/etc/KEYTAB_FILE_NAME. Then the configurations
 CEREBRO_KERBEROS_PRINCIPAL and CEREBRO_KERBEROS_KEYTAB_FILE should be set to principal
 and KEYTAB_FILE_NAME
 ```shell
 export CEREBRO_KERBEROS_PRINCIPAL=<principal>
 # Note: not the full path in S3, just the base name.
-export CEREBRO_KEYTAB_FILE=KEYTAB_FILE_NAME
+export CEREBRO_KERBEROS_KEYTAB_FILE=KEYTAB_FILE_NAME
 ```
 
 ## Starting the DeploymentManager
@@ -187,14 +188,81 @@ If there are configuration issues, they should be available at the end of the lo
 ## Configuring the CLI
 With the DeploymentManager running, we can configure the CLI to connect with it. Run
 ```shell
-$ <path to>/cerebro_cli configure --server <host:port of DeploymentManager>
-$ <path to>/cerebro_cli status
+<path to>/cerebro_cli configure --server <host:port of DeploymentManager>
+<path to>/cerebro_cli status
 # Should return 'Service available. Status: Running'
 ```
 
 ## Starting up a CDAS cluster.
-With the DeploymentManager started, the next step is to provision the EC2 instances
-which will run CDAS.
+With the DeploymentManager running, we can now start up CDAS clusters. There are multiple
+ways to do this and the following steps are the recommended way. For alternatives, see the
+end of this document.
+
+Cluster launch is broken up into two parts:
+  - Actions that need to happen on the DeploymentManager. This is referred to as the
+    *launch-script*.
+  - Actions that need to happen on each EC2 machine that is launched. These are referred
+    to as the *init-scripts*.
+
+The launch-script is required and when called, should provision a new EC2 instance. This
+will be run from the DeploymentManager machine. This script should launch the machine
+with all the required EC2 configurations (e.g. VPC, security groups, IAM Roles, etc). It
+is also the best place to tag machines or do any other setup as your organization
+requires.
+
+The init scripts is an optional  list of scripts that will be run when the instance is
+launched on the instance machine. This could, for example, install any monitoring software
+you already use, configure the machine to custom package repo locations, etc.
+
+We have provided a template launch script in
+/opt/cerebro/deployment-manager/bin/start-ec2-machine-example.sh. It is recommended you
+copy this and adapt it to your organization's requirements.
+```shell
+cp  /opt/cerebro/deployment-manager/bin/start-ec2-machine-example.sh /etc/cerebro/launch-ec2.sh
+# Edit this file. Sections with 'USER' are the most common required customizations.
+```
+
+With the script built, you can start a cluster from the CLI. We will first create an
+environment. An environment captures all the configurations required to launch
+clusters. Examples of environments might be 'dev' or 'prod'.
+```shell
+cerebro_cli environments create --name=<Name> --provider=AWS --launchScript=<Absolute path on DeploymentManager machine> --initScripts=<Comma separated list of init scripts>
+# Example:
+./cerebro_cli environments create --name=DevEnv --provider=AWS --launchScript=/etc/cerebro/launch-ec2.sh
+```
+
+With the environment created, the next step is to create a cluster in that environment.
+Multiple clusters can be created with the same environment.
+
+```shell
+cerebro_cli clusters create --name=<Name> --numNodes=<Number of nodes> --type=STANDALONE_CLUSTER --environmentid=<ID from environments create>
+Example:
+./cerebro_cli clusters create --name=fintech_prod --numNodes=1 --type=STANDALONE_CLUSTER --environmentid=1
+
+# List the running clusters. The newly created cluster should be visible.
+cerebro_cli clusters list
+
+# This should show the cluster as 'Provisioning'. You can see more details, including
+# how long it has been in this state using the cerebro_cli. This assumes the cluster
+# as id '1'.
+# If not, get the id from 'clusters list'.
+cerebro_cli clusters status --detail 1
+
+# It might be convenient to run this with 'watch' until the state transitions to
+# 'READY'.
+# This step will take a few minutes to provision the machines, install CDAS and start
+# up all the services.
+watch cerebro_cli clusters status 1
+
+# At this point all of Cerebro is up and running. To see the externally configured
+# end points, run
+cerebro_cli clusters endpoints 1
+```
+
+## Starting a CDAS cluster from a list of provisioned machines
+It is also possible to start a CDAS cluster from a list of already running machines.
+This is not recommended as the DeploymentManager does not launch them. This means
+that scaling and some fault tolerance capabilities will not work.
 
 These steps need to be done for each CDAS cluster you want to deploy. The overall steps
 are:
@@ -216,6 +284,8 @@ aws ec2 run-instances \
   --instance-type <INSTANCE_TYPE>
   ...
   --user-data file:///opt/cerebro/deployment-manager/bin/install-dm.sh
+Example:
+aws ec2 run-instances --image-id ami-43cf7d23 --iam-instance-profile Name=CerebroClusterRole --instance-type t2.medium --key-name prod-infra-key --count 2 --subnet-id subnet-64de3f03 --security-group-ids sg-30d8e657 --no-associate-public-ip-address --user-data file:///opt/cerebro/deployment-manager/bin/install-dm.sh
 ```
 
 The AMI needs to be running rhel7 and must have the IAM_CLUSTER role. This is also a
@@ -228,10 +298,12 @@ This is perfectly compatible with Cerebro. However, if your organization require
 repo locations, you will need to update this boostrap script.**
 
 The new instance takes a few minutes to set up Cerebro. You can check the status of
-the instance using the cerebro_cli waiting it to either return INSTALLING or
+each instance using the cerebro_cli waiting for it to either return INSTALLING or
 WAITING_TO_START.
 ```shell
-$ ./cerebro_cli agent <HOST:PORT of instance> state
+./cerebro_cli agent <HOST:PORT of instance> state
+Example:
+./cerebro_cli agent 10.1.10.101 state
 ```
 Instances can be started in parallel waiting for all them to reach either of these
 states. When all the instances have, you can continue.
@@ -243,21 +315,23 @@ list can either be supplied via the commandline (comma separated) or from a loca
 (each IP on a separate line).
 ```
 # Start all the Cerebro services
-$ cerebro_cli clusters create --name=<Name> --type=STANDALONE_CLUSTER --machinesList=<machines or absoluate path to file with machine list>
-$ cerebro_cli clusters list
+cerebro_cli clusters create --name=<Name> --type=STANDALONE_CLUSTER --machinesList=<machines or absoluate path to file with machine list>
+Example:
+./cerebro_cli clusters create --name=fintech_prod --type=STANDALONE_CLUSTER --machinesList=10.1.10.101,10.1.10.102
+cerebro_cli clusters list
 
-# This should so the cluster as 'Provisioning'. You can see more details, including
+# This should show the cluster as 'Provisioning'. You can see more details, including
 # how long it has been in this state using the cerebro_cli. This assumes the cluster
 # as id '1'.
 # If not, get the id from 'clusters list'.
-$ cerebro_cli clusters status --detail 1
+cerebro_cli clusters status --detail 1
 
 # It might be convenient to run this with 'watch' until the state transitions to
 # 'READY'.
 # This step will take a couple of minutes as all the services get started.
-$ watch cerebro_cli clusters status 1
+watch cerebro_cli clusters status 1
 
 # At this point all of Cerebro is up and running. To see the externally configured
 # end points, run
-$ cerebro_cli clusters endpoints 1
+cerebro_cli clusters endpoints 1
 ```

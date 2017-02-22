@@ -27,13 +27,12 @@ To enable Kerberos on the DeploymentManager REST API Server, set the following t
 specified above.
 
 Both of these environment variables must be properly configured to enable Kerberos for your
-DeploymentManager REST API Server. In case the Keytab file specified is not present at the location,
+DeploymentManager REST API Server. In case the keytab file specified is not present at the location,
 or only one of the configurations is present, an appropriate error message will be returned.<br />
-In order to run the DeploymentManager with Kerberos authentication disabled, make sure both these
-variables are not set before starting the DeploymentManager.
+In order to run the DeploymentManager with Kerberos authentication disabled, make sure neither of these
+variables are set before starting the DeploymentManager.
 
-In addition, make sure you have the correct config file
-**/etc/krb5.conf** with the correct `default_realm` and `realm` information.
+In addition, make sure **/etc/krb5.conf** has the correct `default_realm` and `realm` information.
 
 #### Verifying Kerberos state at startup
 When you start the DeploymentManager with Kerberos enabled, you should see the following line in the
@@ -66,11 +65,11 @@ Kerberos authentication:
   ```
   **If you have the keytab for the principal, the command is:**
   ```shell
-  $ kinit -kt <PRINCIPAL_NAME> <PATH_TO_KEYTAB>
+  $ kinit -kt <path_to_keytab> <principal_name>
   ```
-  *Example assuming your Keytab file is called john.keytab in your home directory:*
+  *Example*:
   ```shell
-  $ kinit -kt john ~/john.keytab
+  $ kinit -kt /Users/john/john.keytab john
   ```
 
 
@@ -91,11 +90,11 @@ Kerberos authentication:
 ## DM Administrator authorization
 Currently the Cerebro DeploymentManager REST API Server supports an administrator role. In this
 section we will cover the following:
-  - [Setting up the users and groups which have administrator privileges](#setting-up-users-and-groups-with-admin-privileges)
+  - [Setting up users and groups with administrator privileges](#setting-up-users-and-groups-with-administrator-privileges)
   - [Verifying administrator authorization using curl](#verifying-admin-authorization-using-curl)
   - [Authorization of authenticated vs unauthenticated clients](#authorization-of-authenticated-vs-unauthenticated-clients)
 
-### Setting up users and groups with admin privileges
+### Setting up users and groups with administrator privileges
 The Cerebro DeploymentManager requires the following environment variable to be set, in order to
 enable Administrator authorization on the DeploymentManager REST API server:
   - **DM_ADMIN_USERS** - The names of all individual users and Unix groups that have administrator

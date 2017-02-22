@@ -35,7 +35,7 @@ You may use the dashboard ui to list the various CDAS services and confirm that 
 For example, a 10-node CDAS cluster would have the following pods:
   - 1 canary pod
   - 1 cerebro-catatog pod
-  - 1 cerebro-catalog-ui pod
+  - 1 cdas-rest-server pod
   - 1 zookeeper pod
   - 1 cerebro-planner-worker pod
   - 9 cerebro-worker pods
