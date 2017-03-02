@@ -4,8 +4,8 @@ Kubernetes Dashboard enables the cluster administrator to get overall health of 
 and get details of each node, pod and service that is part of the cluster.
 
 ### Version
-  - Current version of Kubernetes is 1.4.0
-  - The admin dashboard version is 1.4.2
+  - Current version of Kubernetes is 1.5.3
+  - The admin dashboard version is 1.5.1
 
 ### Dashboard Web
 The dashboard web interface is accessible through the same port on the IP address of any of

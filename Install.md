@@ -26,11 +26,13 @@ DeploymentManager machine:
   - Needs to run linux
   - Have Java 7+ installed (OpenJDK or Sun JVM).
   - Machine needs to have IAM_MANAGER credentials.
+  - Minimum instance type should be t2.small
 
 Cluster machine:
   - rhel 7: Cerebro will try to install java if not present. If your environment
     uses non-standard package management, see additional steps below.
   - Machine needs to have IAM_CLUSTER credentials.
+  - Minimum instance type should be t2.medium
 
 In addition, you will need to install the Cerebro CLI. The machine running the CLI
 needs to have network access to the DeploymentManager and cluster machines. The CLI
@@ -46,18 +48,18 @@ Download and extract the DeploymentManager tarball
 mkdir -p /opt/cerebro && cd /opt/cerebro
 
 # Get the tarball from S3.
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.2.0/deployment-manager-0.2.0.tar.gz
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.3.0/deployment-manager-0.3.0.tar.gz
 
 # Extract the bits.
-tar xzf deployment-manager-0.2.0.tar.gz && rm deployment-manager-0.2.0.tar.gz && ln -s deployment-manager-0.2.0 deployment-manager
+tar xzf deployment-manager-0.3.0.tar.gz && rm deployment-manager-0.3.0.tar.gz && ln -s deployment-manager-0.3.0 deployment-manager
 ```
 
 Download the shell binary. This depends on the OS running the CLI.
 ```shell
 # Linux
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.2.0/cli/linux/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.3.0/cli/linux/cerebro_cli && chmod +x cerebro_cli
 # OSX
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.2.0/cli/darwin/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.3.0/cli/darwin/cerebro_cli && chmod +x cerebro_cli
 
 # Verify the version
 ./cerebro_cli version

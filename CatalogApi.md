@@ -207,7 +207,26 @@ Again, we can read it with the curl api. Each of these commands should return
 different data with the above policies enforced.
 
 ```
-$ curl <planner_endpoint>/scan/products?user=hadoop
-$ curl <planner_endpoint>/scan/products?user=presto
-$ curl <planner_endpoint>/scan/products?user=zeppelin
+$ curl <cdas_rest_server_endpoint>/api/scan/products?user=hadoop
+$ curl <cdas_rest_server_endpoint>/api/scan/products?user=presto
+$ curl <cdas_rest_server_endpoint>/api/scan/products?user=zeppelin
+```
+
+Alternatively, the *scanpage* api can be used to return records in batches.  The
+api accepts two optional argument _records=_, which limits the number of records
+returned in each batch, and _session\_id_.  By default, the api returns 10,000 records.
+
+The _session\_id_ value is used on subsequent queries to return successive batches of
+records.  It must be omitted on the first query.
+```
+$ curl <cdas_rest_server_endpoint>/api/scanpage/products?user=presto
+$ curl <cdas_rest_server_endpoint>/api/scanpage/products?user=presto&records=500
+$ curl <cdas_rest_server_endpoint>/api/scanpage/products?user=presto&session_id=77480ad07d743bb1:b4f7822f036c6c91
+```
+Each returned object contains:
+```
+{
+  'records' [List]: Each entry is an object containing the field names, types and values of each record.
+  'session_id' [String]: Key used to return subsequent 'pages'.  Each page contains up to 'records' entries.  When the final page is returned, 'session_id' is "-1".
+}
 ```

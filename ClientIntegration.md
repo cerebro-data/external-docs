@@ -195,41 +195,30 @@ catalog.
 CDAS exposes a REST API that returns data as JSON. This API is only intended to
 read data, not to register datasets or update their policies.
 
-**NOTE**: This API is currently (intentionally) unauthenticated meaning any user can
-pretend to be any other user. This is very temporary to facilitate testing without
-having to authenticate as other users. If enabled, the API usage is identical and
- requires the client be authenticated with kerberos/ldap.
-
 The REST API simply exposes a HTTP endpoint. This endpoint is referenced in other
-documents as the 'planner webui' endpoint. To read data, you can simply reach:
+documents as the 'cdas REST server' endpoint. To read data, you can simply reach:
 ```
-http://<hostport>/scan/<dataset name>
+http://<hostport>/api/scan/<dataset name>
 # You can optionally specify how many records with:
-http://<hostport>/scan/<dataset>?records=N
-
-# You can also specify who to run the request as
-http://<hostport>/scan/<dataset>?user=<user>
-
-# Or both, by adding & between the arguments
-http://<hostport>/scan/<dataset>?user=<user>&records=N
+http://<hostport>/api/scan/<dataset>?records=N
 ```
 
 Continuing the above example with data registered via HiveServer2, we should see:
 ```
 # Read the entire dataset
-curl <hostport>/scan/sample
+curl <hostport>/api/scan/sample
 
-# Read it as the test user, this should fail.
-curl <hostport>/scan/sample?user=<test user>
-
-# Read the view as the test user, this should work.
-curl <hostport>/scan/sample_view?user=<test user>
+# If running on a kerberized cluster, you will need to authenticate the curl
+# request. This assumes you have local kerberos credentials (i.e. already ran
+# kinit)
+curl --negotiate -u : hostport/api/scan/sample
 ```
 
 ### Python Pandas Integration
-Reading the data into a panda data frame is very simple with the REST API. 
+Reading the data into a panda data frame is very simple with the REST API.
+
 ```
 import pandas as pd
-df = pd.read_json('http://<hostport>/scan/<dataset>')
+df = pd.read_json('http://<hostport>/api/scan/<dataset>')
 ```
 

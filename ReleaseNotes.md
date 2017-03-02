@@ -1,3 +1,53 @@
+# 0.3.0 Release Notes
+
+## February-2017
+This is the feature complete release candidate of CDAS.
+
+### New Features
+**Tableau Cerebro Catalog Integration**
+You can access data stored in Cerebro using Tableau.
+See [Tableau WDC](https://github.com/cerebro-data/external-docs/blob/master/TableauWDC.md) for details.
+
+**Catalog UI**
+Alpha release of the catalog webui. You can see the datasets that are in the sytem and how to read
+them from a veriety of integration points. Just navigate to the catalog ui webui and point and log
+in with your user token.
+
+**Catalog REST API Integration**  
+Changes were made to the Catalog REST API.  See [Catalog API](https://github.com/cerebro-data/external-docs/blob/master/CatalogApi.md) and the [tutorial](https://github.com/cerebro-data/external-docs/blob/master/CatalogApiTutorial.md) for further details.
+
+**Installation Process**  
+The installation process has been enhanced by providing customizable templates for
+launching EC2 instances and initializing cluster nodes.  See:
+[Installation Guide](https://github.com/cerebro-data/external-docs/blob/master/Install.md), "Starting up a CDAS cluster" for details.
+
+**Authentication**
+With this release, all Cerebro services can run with authentication enabled end-to-end. See:
+[Authentication](https://github.com/cerebro-data/cerebro/blob/master/docs/user/Authentication.md)
+for further details. This includes non-kerberized clients (for example the catalog webui) using
+tokens.
+
+### Changes
+**Admin Dashboard**  
+The Kubernetes admin dashboard has been upgraded to version 1.5.1 from version 1.4.2.
+See [Kubernetes Quickstart](https://github.com/cerebro-data/external-docs/blob/master/KubernetesDashboardQuickStart.md)
+for details.
+
+**Kubernetes**  
+Kubernetes has been upgraded to version 1.5.3 from version 1.4.2.
+
+### Incompatible and Breaking Changes
+Renamed *cerebro\_catalog\_ui* to *cdas\_rest\_server*.  This is a port configuration change and will
+require users to update their env file. Note that this point will also need to be exposed.
+
+Installation instructions moved components from /var/run/cerebro to /etc/cerebro. Prior versions of
+the install script recommended you place various files (on the DeploymentManager machine) in /var/run/cerebro.
+If you have built scripts and automation following those steps, those should be adapted to use /etc/cerebro
+instead.
+
+### Known issues
+Catalog UI sometimes does not refresh databases correctly. Refresh from the browser as a workaround.
+
 # 0.2.0 Release Notes
 
 ## 02-03-2017
@@ -22,7 +72,7 @@ See `Security.md` for additional details.
 
 **Admin Dashboard**  
 You may now use the Kubernetes admin dashboard for managing the Cerebro cluster.
-See 'KubernetesDashboardQuickStart.md` for details.
+See `KubernetesDashboardQuickStart.md` for details.
 
 **CLI interface**  
 cerebro_cli has new commands to interact with the DM REST API and the agents.
