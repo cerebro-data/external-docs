@@ -9,7 +9,7 @@ You can access data stored in Cerebro using Tableau.
 See [Tableau WDC](https://github.com/cerebro-data/external-docs/blob/master/TableauWDC.md) for details.
 
 **Catalog UI**
-Alpha release of the catalog webui. You can see the datasets that are in the sytem and how to read
+Beta release of the catalog webui. You can see the datasets that are in the sytem and how to read
 them from a veriety of integration points. Just navigate to the catalog ui webui and point and log
 in with your user token.
 
@@ -23,9 +23,10 @@ launching EC2 instances and initializing cluster nodes.  See:
 
 **Authentication**
 With this release, all Cerebro services can run with authentication enabled end-to-end. See:
-[Authentication](https://github.com/cerebro-data/cerebro/blob/master/docs/user/Authentication.md)
+[Authentication](https://github.com/cerebro-data/external-docs/blob/master/Authentication.md)
 for further details. This includes non-kerberized clients (for example the catalog webui) using
-tokens.
+tokens.  
+For information on setting up a Kerberized cluster, see: [Kerberized Cluster Setup](https://github.com/cerebro-data/external-docs/blob/master/KerberosClusterSetup.md)
 
 ### Changes
 **Admin Dashboard**  
@@ -132,4 +133,3 @@ The workaround is to specify the request using hiveql.
 
 This causes compatibility issues with clients such as Impala. The workaround is to register
 the dataset with the filter and grant the policy on the new dataset.
-

@@ -162,15 +162,12 @@ export CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,kubernetes_dashbo
 ```
 
 **KERBEROS**
-To enable Kerberos, Cerebro needs a keytab and principal. They keytab needs to be uploaded
-to S3 at CEREBRO_S3_STAGING_DIR/etc/KEYTAB_FILE_NAME. Then the configurations
-CEREBRO_KERBEROS_PRINCIPAL and CEREBRO_KERBEROS_KEYTAB_FILE should be set to principal
-and KEYTAB_FILE_NAME
-```shell
-export CEREBRO_KERBEROS_PRINCIPAL=<principal>
-# Note: not the full path in S3, just the base name.
-export CEREBRO_KERBEROS_KEYTAB_FILE=KEYTAB_FILE_NAME
-```
+For information on how to set up a Kebrerized cluster, see:
+  - [Kerberos Cluster Setup](https://github.com/cerebro-data/external-docs/blob/master/KerberosClusterSetup.md)  
+
+For more details on interactions with authenticated Cerebro, see:
+  - [Authentication](https://github.com/cerebro-data/external-docs/blob/master/Authentication.md)
+  - [Security](https://github.com/cerebro-data/external-docs/blob/master/Security.md)
 
 ## Starting the DeploymentManager
 After setting those environment variables and sourcing them, simply run:
