@@ -29,6 +29,20 @@ permissions.
 All APIs take JSON as the parameter and if they return anything, returns a JSON object.
 This is except the create APIs, which will just return the ID.
 
+### Executing Hive DDL
+Endpoint: /api/hive-ddl [POST]
+This API allows you to execute HiveQL DDL statements. This can be used instead of the
+many of the other APIs if preferred. For example, this can be used to create datasets,
+create roles, issues grants, etc. The purpose of this API is to be compatible with
+beeline.
+
+The post request can take as parameters:
+```
+{
+    "query" [String]: Required, HiveQL DDL statement.
+}
+```
+
 ### Object definition
 ```
 Dataset {
@@ -143,11 +157,11 @@ that have access and at which level. Each object contains:
 {
   'database' [String]: Name of database of this object.
   'name' [String]: Name of this object.
-  'users/groups': List[String]. The users and groups that have access to this object.
-  'roles' List[String]: For each user/group, the role they had which gave them
+  'users/groups': list[String]. The users and groups that have access to this object.
+  'roles' list[String]: For each user/group, the role they had which gave them
       access to this object.
   'level' [String]: ALL/READ/WRITE access level.
-  'projection' List[String]: The projection within this dataset. If empty, it indicates
+  'projection' list[String]: The projection within this dataset. If empty, it indicates
       all the fields.
 }
 ```
@@ -230,3 +244,23 @@ Each returned object contains:
   'session_id' [String]: Key used to return subsequent 'pages'.  Each page contains up to 'records' entries.  When the final page is returned, 'session_id' is "-1".
 }
 ```
+
+## Databases
+
+A database is a set of datasets.  Each user has a set of databases that they are authorized
+to access.  This set may in practice be empty, which is to say, that user does not have
+permissions to access any databases.
+
+### Listing databases
+Endpoint: /api/databases?user=<token>
+
+Each returned object contains:
+```
+{
+  'databases' [list<String>]: databases for which the user has permission to access.
+}
+```
+### Example
+'''
+$ curl -H "Content-Type: application/json" -d "{ }" <cdas_rest_server_endpoint>/api/databases?user=presto
+'''
