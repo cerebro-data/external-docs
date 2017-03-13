@@ -9,9 +9,9 @@ You can access data stored in Cerebro using Tableau.
 See [Tableau WDC](https://github.com/cerebro-data/external-docs/blob/master/TableauWDC.md) for details.
 
 **Catalog UI**
-Beta release of the catalog webui. You can see the datasets that are in the sytem and how to read
-them from a veriety of integration points. Just navigate to the catalog ui webui and point and log
-in with your user token.
+Beta release of the catalog webui. You can see the datasets that are in the system and
+how to read them from a variety of integration points. Just navigate to the
+cerebro_catalog_ui:webui end point and log in with your user token.
 
 **Catalog REST API Integration**  
 Changes were made to the Catalog REST API.  See [Catalog API](https://github.com/cerebro-data/external-docs/blob/master/CatalogApi.md) and the [tutorial](https://github.com/cerebro-data/external-docs/blob/master/CatalogApiTutorial.md) for further details.

@@ -261,6 +261,6 @@ Each returned object contains:
 }
 ```
 ### Example
-'''
+```
 $ curl -H "Content-Type: application/json" -d "{ }" <cdas_rest_server_endpoint>/api/databases?user=presto
-'''
+```
