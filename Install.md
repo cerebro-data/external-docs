@@ -148,6 +148,7 @@ pick randomly available ports to expose these services on.
   - cdas_rest_server:api
   - cerebro_planner_worker:planner
   - cerebro_planner_worker:webui
+  - cerebro_catalog_ui:webui
   - cerebro_catalog:hms
   - kubernetes_dashboard:admin_ui
 
@@ -157,6 +158,7 @@ CEREBRO_PORT_CONFIGURATION="cerebro_planner_worker:worker:7185,cerebro_catalog:s
 CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,cdas_rest_server:api:7184"
 CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,cerebro_planner_worker:planner:7183"
 CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,cerebro_planner_worker:webui:7181"
+CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,cerebro_catalog_ui:webui:7186"
 CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,cerebro_catalog:hms:7180"
 export CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,kubernetes_dashboard:admin_ui:7350"
 ```
