@@ -17,9 +17,14 @@ import java.security.Principal;
 import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.kerberos.KerberosPrincipal;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
@@ -44,7 +49,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  * Utility class that demonstrates how to authenticate with the REST API using kerberos.
- * This assumes that the user already has a ticket (i.e. has run kinit already).
+ * The user can login using:
+ *   - User already has ticket, set via KRB5CCNAME in the environment to the cache file.
+ *   - User logs in with their KDC password.
  */
 public class GetToken {
   public static final class KerberosHttpClient {
@@ -84,24 +91,33 @@ public class GetToken {
     }
 
     /**
-     * Gets the kerberos credentials for the client (aka user). This assumes that
-     * there is already a ticket with the user as the principal.
+     * Gets the kerberos credentials for the user.
      */
-    private void login(String user) throws LoginException {
+    private void login(final String user) throws LoginException {
       Configuration config = new Configuration() {
         @SuppressWarnings("serial")
         @Override
         public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
+          Map<String, String> configs = new HashMap<String, String>();
+          String ticketCache = System.getenv("KRB5CCNAME");
+          if (ticketCache != null) {
+            configs.put("ticketCache", ticketCache);
+            configs.put("renewTGT", "true");
+            configs.put("useTicketCache", "true");
+            configs.put("doNotPrompt", "true");
+          } else {
+            configs.put("principal", user);
+            configs.put("doNotPrompt", "false");
+            configs.put("useTicketCache", "false");
+          }
+
+          if (debug) {
+            configs.put("debug", "true");
+          }
+
           return new AppConfigurationEntry[] {
             new AppConfigurationEntry("com.sun.security.auth.module.Krb5LoginModule",
-              AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, new HashMap<String, Object>() {
-                {
-                  put("useTicketCache", "true");
-                  put("doNotPrompt", "true");
-                  put("isInitiator", "true");
-                  put("debug", debug ? "true" : "false");
-                }
-              })
+                AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, configs)
           };
         }
       };
@@ -109,7 +125,18 @@ public class GetToken {
       Set<Principal> princ = new HashSet<Principal>(1);
       princ.add(new KerberosPrincipal(user));
       Subject sub = new Subject(false, princ, new HashSet<Object>(), new HashSet<Object>());
-      LoginContext lc = new LoginContext("", sub, null, config);
+      LoginContext lc = new LoginContext("", sub, new CallbackHandler() {
+        @Override
+        public void handle(Callback[] callbacks)
+            throws IOException, UnsupportedCallbackException {
+          for (Callback cb: callbacks) {
+            if (cb instanceof PasswordCallback) {
+              PasswordCallback pcb = (PasswordCallback)cb;
+              pcb.setPassword(System.console().readPassword("%s's password: ", user));
+            }
+          }
+        }
+      }, config);
       lc.login();
       subject = lc.getSubject();
     }
@@ -138,15 +165,16 @@ public class GetToken {
 
   public static void main(String[] args)
       throws UnsupportedOperationException, IOException, LoginException {
-    if (args.length != 2) {
-      System.err.println("Usaage GetToken <host:port> <username>");
+    if (args.length != 2 && args.length != 3 && args.length != 4) {
+      System.err.println("Usage GetToken <host:port> <username> [krb5 conf] [debug]");
       System.exit(1);
     }
 
-    final boolean DEBUG = false;
     final String URL = "http://" + args[0] + "/api/";
     final String USER = args[1];
-    KerberosHttpClient client = new KerberosHttpClient(USER, null, DEBUG);
+    final String CONF = args.length >= 3 ? args[2] : null;
+    final boolean DEBUG = args.length >= 4 && args[3].equalsIgnoreCase("debug");
+    KerberosHttpClient client = new KerberosHttpClient(USER, CONF, DEBUG);
 
     // Verify the unauthenticated health API works.
     System.out.println("Verifying unauthenticated health API...");

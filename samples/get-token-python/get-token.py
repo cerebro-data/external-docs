@@ -40,24 +40,31 @@ if __name__ == '__main__':
     print("Invalid service principal. Expecting <service-name>/<service-host>@<REALM>")
     sys.exit(1)
 
+  server_name = options.hostport.split(':')[0]
+  os.environ['NO_PROXY'] = server_name
+  os.environ['no_proxy'] = server_name
+
   AUTH = HTTPKerberosAuth(mutual_authentication=OPTIONAL,
       service=service_principal[0], hostname_override=service_principal[1],
       principal=options.user_principal)
 
-  print("Attempting unauthenticated health check...")
-  url = 'http://' + options.hostport + '/api/health'
-  health_response = requests.get(url)
-  result = handle_response(url, health_response)
-  print("  success: " + str(result))
+  try:
+    print("Attempting unauthenticated health check...")
+    url = 'http://' + options.hostport + '/api/health'
+    health_response = requests.get(url)
+    result = handle_response(url, health_response)
+    print("  success: " + str(result))
 
-  print("Attempting to authenticate...")
-  url = 'http://' + options.hostport + '/api/health-authenticated'
-  authenticate_response = requests.get(url, auth=AUTH)
-  result = handle_response(url, authenticate_response)
-  print("  success: " + str(result))
+    print("Attempting to authenticate...")
+    url = 'http://' + options.hostport + '/api/health-authenticated'
+    authenticate_response = requests.get(url, auth=AUTH)
+    result = handle_response(url, authenticate_response)
+    print("  success: " + str(result))
 
-  print("Attempting to get token...")
-  url = 'http://' + options.hostport + '/api/get-token'
-  token_response = requests.post(url, auth=AUTH)
-  result = handle_response(url, token_response)
-  print("  success: " + str(result))
+    print("Attempting to get token...")
+    url = 'http://' + options.hostport + '/api/get-token'
+    token_response = requests.post(url, auth=AUTH)
+    result = handle_response(url, token_response)
+    print("  success: " + str(result))
+  except:
+    print("Unable to connect to server: " + options.hostport)
