@@ -58,8 +58,8 @@ public class GetToken {
     private final boolean debug;
     private Subject subject;
 
-    public KerberosHttpClient(String user, String krb5ConfFile, boolean debug)
-        throws LoginException {
+    public KerberosHttpClient(String user, String krb5ConfFile, String keytabFile,
+        boolean debug) throws LoginException {
       this.debug = debug;
       if (debug) {
         System.setProperty("sun.security.spnego.debug", "true");
@@ -68,7 +68,7 @@ public class GetToken {
       if (krb5ConfFile != null) {
         System.setProperty("java.security.krb5.conf", krb5ConfFile);
       }
-      login(user);
+      login(user, keytabFile);
     }
 
     /**
@@ -93,14 +93,22 @@ public class GetToken {
     /**
      * Gets the kerberos credentials for the user.
      */
-    private void login(final String user) throws LoginException {
+    private void login(final String user, final String keytab) throws LoginException {
       Configuration config = new Configuration() {
         @SuppressWarnings("serial")
         @Override
         public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
           Map<String, String> configs = new HashMap<String, String>();
           String ticketCache = System.getenv("KRB5CCNAME");
-          if (ticketCache != null) {
+          if (keytab != null) {
+            configs.put("keyTab", keytab);
+            configs.put("principal", user);
+            configs.put("useKeyTab", "true");
+            configs.put("storeKey", "true");
+            configs.put("doNotPrompt", "true");
+            configs.put("useTicketCache", "true");
+            configs.put("renewTGT", "true");
+          } else if (ticketCache != null) {
             configs.put("ticketCache", ticketCache);
             configs.put("renewTGT", "true");
             configs.put("useTicketCache", "true");
@@ -165,8 +173,9 @@ public class GetToken {
 
   public static void main(String[] args)
       throws UnsupportedOperationException, IOException, LoginException {
-    if (args.length != 2 && args.length != 3 && args.length != 4) {
-      System.err.println("Usage GetToken <host:port> <username> [krb5 conf] [debug]");
+    if (args.length < 2 || args.length > 5) {
+      System.err.println(
+          "Usage GetToken <host:port> <username> [krb5 conf] [debug] [keytab]");
       System.exit(1);
     }
 
@@ -174,7 +183,9 @@ public class GetToken {
     final String USER = args[1];
     final String CONF = args.length >= 3 ? args[2] : null;
     final boolean DEBUG = args.length >= 4 && args[3].equalsIgnoreCase("debug");
-    KerberosHttpClient client = new KerberosHttpClient(USER, CONF, DEBUG);
+    final String KEYTAB = args.length >= 5 ? args[4] : null;
+
+    KerberosHttpClient client = new KerberosHttpClient(USER, CONF, KEYTAB, DEBUG);
 
     // Verify the unauthenticated health API works.
     System.out.println("Verifying unauthenticated health API...");
