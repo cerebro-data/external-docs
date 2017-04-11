@@ -131,9 +131,10 @@ To use these jars from maven, you can configure the pom to use our repo and vers
 This can be added to the pom.
 ```
   <properties>
-    <recordservice.version>1.0.0-alpha-1-SNAPSHOT</recordservice.version>
+    <recordservice.version>1.0.0-beta-1</recordservice.version>
   </properties>
 
+  <!-- For MapReduce -->
   <dependencies>
     <dependency>
       <groupId>com.cloudera.recordservice</groupId>
@@ -142,18 +143,41 @@ This can be added to the pom.
     </dependency>
   </dependencies>
 
-    <repositories>
+  <!-- For Spark 1.6 -->
+  <dependencies>
+    <dependency>
+      <groupId>com.cloudera.recordservice</groupId>
+      <artifactId>recordservice-spark</artifactId>
+      <version>${recordservice.version}</version>
+    </dependency>
+  </dependencies>
+
+  <!-- For Spark 2.0 -->
+  <dependencies>
+    <dependency>
+      <groupId>com.cloudera.recordservice</groupId>
+      <artifactId>recordservice-spark-2.0</artifactId>
+      <version>${recordservice.version}</version>
+    </dependency>
+  </dependencies>
+
+  <repositories>
     <repository>
-      <id>central</id>
+      <id>cerebro.releases.repo</id>
       <name>libs-release</name>
       <url>https://cerebro.jfrog.io/cerebro/libs-release</url>
+    </repository>
+    <repository>
+      <id>cerebro.snapshots.repo</id>
+      <name>libs-snapshot</name>
+      <url>https://cerebro.jfrog.io/cerebro/libs-snapshot</url>
     </repository>
   </repositories>
 ```
 
 ## Downloading the jars
-All of the release jars are also available in S3 in the release location. They are available
-at
+All of the release jars are also available in S3 in the release location. They are
+available at
 ```
 s3://cerebrodata-release-useast/<version>/client
 # For example:
