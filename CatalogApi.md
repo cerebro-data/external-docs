@@ -22,7 +22,7 @@ This API allows you to execute HiveQL DDL statements. This can be used to create
 create roles, issues grants, etc. The purpose of this API is to be compatible with
 [beeline](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL).
 
-The POST request can take as parameters:
+The POST request takes as a parameter:
 ```
 {
     "query" [String]: Required, HiveQL DDL statement.
@@ -38,7 +38,7 @@ curl -H "Content-Type: application/json" -X POST -d '{"query":"show databases"}'
 Endpoint: /api/databases [GET]<br>
 Endpoint: /api/databases [POST]
 
-The POST request can take as parameters:
+The POST request takes as a parameter:
 ```
 {
   "filter" [String]: Optional, filter on the name of databases to return. For example, 'log*'
@@ -50,7 +50,7 @@ The POST request can take as parameters:
 Endpoint: /api/datasets [GET]<br>
 Endpoint: /api/datasets [POST]
 
-The POST request can take as parameters:
+The POST request takes as a parameter:
 ```
 {
   "db" [String]: Optional, database to retrieve datasets from. Default is 'default'.
@@ -77,8 +77,10 @@ curl -X POST localhost:5000/api/datasets/cerebro_sample.sample
 ```
 
 ## Scanning a dataset
-Endpoint: /api/scan/{name} [POST] <br>
-Endpoint: /api/scanpage/{name} [POST]
+Endpoint: /api/scan/{name} [GET] <br>
+Endpoint: /api/scanpage/{name} [GET]
+Endpoint: /api/scan [POST] <br>
+Endpoint: /api/scanpage [POST]
 
 Returns dataset as json. The scan API will only return the initial rows. Scanpage returns
 a handle that can be used to retrieve all the records.
@@ -86,6 +88,19 @@ a handle that can be used to retrieve all the records.
 Example:
 ```
 curl localhost:5000/api/scan/cerebro_sample.sample
+```
+
+The POST request takes as a parameter:
+```
+{
+  "query" [String]:   "SQL Query to execute"
+}
+```
+
+Example:
+```
+curl -X POST -H 'Content-Type: application/json' \
+-d '{"query" : "select uid, ccn from cerebro.sample.users"}' localhost:5000/api/scan
 ```
 
 The scanpage api accepts two optional argument _records=_, which limits the number of records

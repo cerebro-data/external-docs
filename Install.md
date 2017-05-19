@@ -48,18 +48,18 @@ Download and extract the DeploymentManager tarball
 mkdir -p /opt/cerebro && cd /opt/cerebro
 
 # Get the tarball from S3.
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.3.0/deployment-manager-0.3.0.tar.gz
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.0/deployment-manager-0.4.0.tar.gz
 
 # Extract the bits.
-tar xzf deployment-manager-0.3.0.tar.gz && rm deployment-manager-0.3.0.tar.gz && ln -s deployment-manager-0.3.0 deployment-manager
+tar xzf deployment-manager-0.4.0.tar.gz && rm deployment-manager-0.4.0.tar.gz && ln -s deployment-manager-0.4.0 deployment-manager
 ```
 
 Download the shell binary. This depends on the OS running the CLI.
 ```shell
 # Linux
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.3.0/cli/linux/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.0/cli/linux/cerebro_cli && chmod +x cerebro_cli
 # OSX
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.3.0/cli/darwin/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.0/cli/darwin/cerebro_cli && chmod +x cerebro_cli
 
 # Verify the version
 ./cerebro_cli version
@@ -69,7 +69,7 @@ curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.3.0/cli/darwin/cer
 Configure the logging and local install directories. These should be paths on the
 local file system. The install directory currently needs to be restored if this machine
 is moved. These by default are '/var/log/cerebro' and '/etc/cerebro' but can be
-changed by setting DEPLOYMENT_MANAGER_LOGDIR and DEPLOYMENT_MANAGER_INSTALL_DIR in
+changed by setting DEPLOYMENT_MANAGER_LOG_DIR and DEPLOYMENT_MANAGER_INSTALL_DIR in
 the environment.
 
 For a standard install:
@@ -96,7 +96,8 @@ source /etc/cerebro/env.sh
 ```
 
 **CEREBRO_AWS_DEFAULT_REGION**
-This is the region that Cerebro is running in.
+Cerebro will autodetect the region that it is running in. This setting
+allows for a region other than the current region to be configured.
 ```shell
 Example:
 export CEREBRO_AWS_DEFAULT_REGION=us-west-2
@@ -260,6 +261,16 @@ watch cerebro_cli clusters status 1
 cerebro_cli clusters endpoints 1
 ```
 
+## Starting multiple CDAS catalogs sharing the same metadata
+Cerebro catalogs can be configured to share the same underlying metadata. This feature
+is supported for "active-passive" configurations. In this case when creating the multiple
+clusters, supply the catalogDbNamePrefix argument. Catalogs which share the same name
+will share the same metadata. For example, to create two clusters that share metadata:
+```shell
+./cerebro_cli clusters create --name=prod --numNodes=1 --type=STANDALONE_CLUSTER --environmentid=1 --catalogDbNamePrefix=metadata
+./cerebro_cli clusters create --name=prod-backup --numNodes=1 --type=STANDALONE_CLUSTER --environmentid=1 --catalogDbNamePrefix=metadata
+```
+
 ## Starting a CDAS cluster from a list of provisioned machines
 It is also possible to start a CDAS cluster from a list of already running machines.
 This is not recommended as the DeploymentManager does not launch them. This means
@@ -336,3 +347,10 @@ watch cerebro_cli clusters status 1
 # end points, run
 cerebro_cli clusters endpoints 1
 ```
+
+# Cerebro Upgrade
+Starting with 0.4.0, Cerebro upgrades to newer CDAS versions and patches can be applied
+using the cerebro_cli command.
+
+See [Cluster Administration](https://github.com/cerebro-data/external-docs/blob/master/ClusterAdmin.md)
+for further details.

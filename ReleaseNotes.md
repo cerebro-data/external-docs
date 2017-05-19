@@ -1,3 +1,107 @@
+# 0.4.0 Release Notes
+
+## May-2017
+
+### New Features
+**Cluster Administration**
+Cluster administration has been significantly enhanced to protect your cluster from
+accidental termination, scaling an existing cluster, and upgrading to newer versions
+of CDAS components.
+See [Cluster Administration](https://github.com/cerebro-data/external-docs/blob/master/ClusterAdmin.md)
+for further details.
+
+**SQL Statement Processing**
+The Record Service daemon and catalog-admin rest endpoint scan and scanpage APIs now
+process SQL statements through a POST interface.
+
+See the [Catalog REST API](https://github.com/cerebro-data/external-docs/blob/master/CatalogApi.md)
+for details.
+
+**Database Command Line Interface (CLI)**
+End-user database and dataset functionality is made available through a command line (CLI)
+tool, dbcli.  The tool enables users to acquire tokens, list databases, list datasets in
+a database, show the schema for a dataset (describe), view a sample of data, create tables
+and grant permissions through Hive DDL.
+
+See the [Database CLI](https://github.com/cerebro-data/external-docs/blob/master/DbCLI.md)
+for details.
+
+### Changes
+**cerebro_cli utility**
+The following subcommands were added:
+* `cerebro_cli agents state`
+    * lists the state of all agents, grouped by cluster
+* `cerebro_cli clusters nodes <cluster id>`
+    * lists the nodes that constitute the indicated cluster
+* `cerebro_cli clusters upgrade
+      --releaseVersion <version>
+      --components <componenta:version,componentb:version> <clusterID>`
+    * Sets the version to be used by clusters that are subsequently created.
+      The releaseVersion flag sets the version of CDAS to install and the
+      components flag allows for specific components to run a different, likely higher,
+      version of that component.
+
+**AWS Region Configuration**
+Deployment Manager will now detect the AWS region that it is running in if one is not
+configured via the AWS_DEFAULT_REGION value. The result is cached, requiring a
+Deployment Manager restart (following a change in your configuration) if you want to
+manage a cluster in another AWS region.
+
+**Kerberos**
+Cerebro allows to explicitly specify the principal used for the REST API. Previously
+this was assumed to be dervied from the service principal (i.e. HTTP/<service_host>).
+See [Kerberos](https://github.com/cerebro-data/external-docs/blob/master/KerberosClusterSetup.md)
+docs for more details.
+
+**Deployment Manager**
+The S3_STAGING_DIR environment variable is now validated during Deployment Manager
+startup.
+Improved reporting of issues that arise during agent startup.
+Configured service port uniqueness is now enforced during Deployment Manager startup.
+
+**Using Encrypted S3 buckets**
+Writes to S3 buckets now set the server-side encryption flag on the S3 write or copy
+request if the S3_STAGING_ENCRYPTION configuration is set to true.
+
+### Incompatible and Breaking Changes
+**Change to CEREBRO_KERBEROS_KEYTAB_FILE config**
+Previously, this config used to be the basename of the keytab file and the user was
+required to upload the file to Cerebro's S3 staging directory. In this release, this
+config has been updated to be the full path to the keytab. The path can be on the
+DeploymentManager machine (e.g. /etc/keytabs/cerebro.keytab) or on S3. No steps are
+now required to upload the keytab to the staging directory.
+
+The prior config will no longer validate. The DeploymentManager will not
+start up. Users coming from a previous release will need to update their configs.
+For example, changing:
+```
+export CEREBRO_KERBEROS_KEYTAB_FILE=cerebro.keytab
+# to
+export CEREBRO_KERBEROS_KEYTAB_FILE=/path/on/deployment-manager/cerebro.keytab
+```
+
+** Rename database to db **
+Some REST APIs used the the field name 'database' and others used the field name 'db'.
+All APIs were changed to consistently use the term 'db'  This impacts the following APIs:
+   
+* api/datasets [POST]
+* api/datasets/{name} [POST]
+
+For detail see: [Catalog REST API](https://github.com/cerebro-data/external-docs/blob/master/CatalogApi.md).
+
+### Known issues
+**Errors during Deployment Manager configuration file writes prevent restart**
+If the configuration file for Deployment Manager is not correctly written to RDS (due to
+an issue occurring during the write), then the Deployment Manager  will not be able to
+start again. The workaround is to manually update (correct) the underlying configuration
+file.
+
+**Unable to delete a launching cluster**
+In some cases, it is not possible to immediately terminate a cluster that is launching
+and the delete will only go into affect after it is done launching. To get the cluster
+to delete immediately, manually terminating/shutting down the launching machines will
+work.
+
 # 0.3.0 Release Notes
 
 ## February-2017

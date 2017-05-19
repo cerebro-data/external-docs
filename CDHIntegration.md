@@ -220,26 +220,3 @@ For example:
 $ aws s3 cp ./sentry-site.xml s3://<CEREBRO_BUCKET>/etc/
 ```
 
-### Configuring cross realm kerberos example
-Create the file core-site.xml and populate it with the config. The example below
-will allow any principals of the form primary/instance@REALM1, primary/instance@REALM2 or
-primary@REALM2. By default, Cerebro allows all principals (in either form) from the realm
-Cerebro's keytab is in.
-```xml
-<property>
-  <name>hadoop.security.auth_to_local</name>
-  <value>
-    RULE:[2:$1@$0](.*@REALM1)s/@.*//
-    RULE:[2:$1@$0](.*@REALM2)s/@.*//
-    RULE:[1:$1@$0](.*@REALM2)s/@.*//
-  </value>
-</property>
-```
-Upload this file to S3:
-```shell
-$ aws s3 cp ./core-site.xml s3://<CEREBRO_BUCKET>/etc/
-```
-
-
-For more details on this config, refer to the Hadoop documentation:
-https://hortonworks.com/blog/fine-tune-your-apache-hadoop-security-settings/

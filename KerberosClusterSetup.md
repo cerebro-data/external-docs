@@ -1,10 +1,9 @@
 # Kerberized Cluster Setup
 This tutorial demonstrates how to set up a Kerberized Cerebro cluster that has end-to-end
 authentication enabled. This process generally involves the following three steps:
-  - Create a keytab with two principals, one with the *service name* as **cerebro** and another with
-    the *service name* as **HTTP**.
-  - Upload the keytab file to S3.
-  - Set the keytab and principal configs in the enviromenment.
+  - Create a keytab with two principals, one with the *service name* as **cerebro** and
+    another with the *service name* as **HTTP**.
+  - Set the keytab and principal configs in the environment.
 
 The tutorial breaks the above steps into the following:
   - [Prerequisites](#prerequisites)
@@ -13,31 +12,32 @@ The tutorial breaks the above steps into the following:
 
 ## Prerequisites
 This section lists out the necessary requirements to enable Kerberos for Cerebro.
-  - **KDC**  
-    Make sure that you have a KDC set up and available, and can either request for credentials,
-    or have access to the KDC to set up credentials yourself.
-  - **Ensure client side Kerberos packages are installed**  
+  - **KDC**
+    Make sure that you have a KDC set up and available, and can either request for
+    credentials, or have access to the KDC to set up credentials yourself.
+  - **Ensure client side Kerberos packages are installed**
     Try running `kinit` and `klist` and make sure these utilities are installed.
-  - **Kerberos Configuration File**  
-    This file is known as the **krb5.conf** file and this contains the information needed to authenticate
-    a client against a KDC.
+  - **Kerberos Configuration File**
+    This file is known as the **krb5.conf** file and this contains the information needed
+    to authenticate a client against a KDC.
     - Make sure that this file exists in the location **/etc/krb5.conf**.
-    - Make sure that this file has the the correct `default_realm` and `realm` information.
+    - Make sure that this file has the correct `default_realm` and `realm` information.
 
 ## Creation of the Kerberos principals and keytab files.
-  - In order to allow Cerebro's internal services to be authenticated end to end, we need to create
-    the following *2* Kerberos principals, and add them to **a single keytab file**:
-      - **Cerebro principal**  
-      This is of the format `cerebro/<instance>@REALM`.  
-      For example, this can be `cerebro/cerebro-service@CEREBRO.TEST`  
-      - **HTTP principal**  
-      This is of the format `HTTP/<instance>@REALM`.  
+  - In order to allow Cerebro's internal services to be authenticated end-to-end, we need
+    to create the following *2* Kerberos principals, and add them to
+    **a single keytab file**:
+      - **Cerebro principal**
+      This is of the format `cerebro/<instance>@REALM`.
+      For example, this can be `cerebro/cerebro-service@CEREBRO.TEST`
+      - **HTTP principal**
+      This is of the format `HTTP/<instance>@REALM`.
       For example, this can be `HTTP/cerebro-service@CEREBRO.TEST`
-  - To do this, log into the kadmin util, and run the following command for each of the principals that
-    needs to be created:  
+  - To do this, log in with kadmin, and run the following command for each of the
+    principals that needs to be created:
   `addprinc -randkey <principal_name>`
-  - Once the principals are created, a single keytab file needs to be created which has both of these principals.
-  To do this, log into the kadmin util, and run the following command:  
+  - Once the principals are created, create a single keytab file which contains both
+    principals. To do this, log into the kadmin util, and run the following command:
   `ktadd -kt <keytab_file_name> <principal_name_1> <principal_name_2>`
 
 ```
@@ -78,15 +78,16 @@ $
 ```
 
 ## Setting up the credentials
-- **Ensuring sure the keytab file has appropriate permissions**  
-  Once the keytab file, has been created, look at the file permissions using `ls -l <KEYTAB_FILE_NAME>`
-  Make sure everyone has read and execute privileges at least, and if not, do the following:  
-  `sudo chmod 755 <KEYTAB_FILE_NAME>`
+- **Ensuring sure the keytab file has appropriate permissions**
+  Once the keytab file, has been created, look at the file permissions using
+  `ls -l <KEYTAB_FILE_NAME>`
+  Make sure everyone has read and execute privileges at least, and if not, do the
+  following: `sudo chmod 755 <KEYTAB_FILE_NAME>`
 
-- **Verifying the keytab file has both the principals**  
-  Once the keytab file has the proper permissions, verify that both the principals are present.
-  The command to do that is:  
-  `$ klist -kt <KEYTAB_FILE_NAME>`  
+- **Verifying the keytab file has both the principals**
+  Once the keytab file has the proper permissions, verify that both the principals are
+  present. The command to do that is:
+  `$ klist -kt <KEYTAB_FILE_NAME>`
 
   For example, if the keytab file is called *cerebro.keytab*, the command looks like this:
   ```
@@ -98,21 +99,19 @@ $
     4 03/02/2017 13:27:57 HTTP/cerebro-service@CEREBRO.TEST
  ```
 
-- **Putting the keytab file in the S3 bucket**  
-  The keytab file needs to be uploaded to S3 at the following location:  
-  `CEREBRO_S3_STAGING_DIR/etc/`  
-
-- **Setting the environment variables**  
+- **Setting the environment variables**
   Set the following environment variables:
-    - **CEREBRO_KERBEROS_PRINCIPAL**  
-      Set this to the Cerebro principal created above.  
-    - **CEREBRO_KERBEROS_KEYTAB_FILE**  
-      Set this to the name of the keytab file stored in S3, in the last step.
+    - **CEREBRO_KERBEROS_PRINCIPAL**
+      Set this to the Cerebro principal created above.
+    - **CEREBRO_KERBEROS_KEYTAB_FILE**
+      Set this to the path of the keytab file. This can be a local or remote (s3) path.
+    - **CEREBRO_KERBEROS_HTTP_PRINCIPAL**
+      Set this to the HTTP principal if the principal is non-standard. This is not
+      required if the principals were created with the steps above.
 
   ```shell
   export CEREBRO_KERBEROS_PRINCIPAL=<principal>
-  # Note: not the full path in S3, just the base name.
-  export CEREBRO_KERBEROS_KEYTAB_FILE=KEYTAB_FILE_NAME
+  export CEREBRO_KERBEROS_KEYTAB_FILE=FULL_PATH_TO_KEYTAB_FILE
 
   # Example:
   $ export CEREBERO_KERBEROS_PRINCIPAL=cerebro/cerebro-service
@@ -122,7 +121,52 @@ $
   $ source /etc/cerebro/env.sh
   ```
 
-At this point, all the steps necessary to run Cerebro authenticated end-to-end have been taken.
+## Cross realm kerberos
+CDAS supports clients which are in a different realm than Cerebro's realm. For example,
+Cerebro can be running in the realm 'SERVICES.COM' and users can be running in
+'USERS.COM'. In this case, the Cerebro principals would be:
+'cerebro/cerebro-service@SERVICES.COM' and
+'HTTP/cerebro-service@SERVICES.COM'. Users could be 'admin&#46;USERS.COM'.
+
+### Configuring cross realm support
+Create the file core-site.xml (locally) and populate it with the config below. The
+example below will allow principals from both realms to be accepted. By default, only
+principals from the same realm as the Cerebro principals will be accepted.
+```xml
+<property>
+  <name>hadoop.security.auth_to_local</name>
+  <value>
+    RULE:[2:$1@$0](.*@SERVICES.COM)s/@.*//
+    RULE:[1:$1@$0](.*@SERVICES.COM)s/@.*//
+    RULE:[2:$1@$0](.*@USERS.COM)s/@.*//
+    RULE:[1:$1@$0](.*@USERS.COM)s/@.*//
+  </value>
+</property>
+```
+Upload this file to S3:
+```shell
+$ aws s3 cp ./core-site.xml s3://<CEREBRO_BUCKET>/etc/
+```
+For more details on this config, refer to the Hadoop documentation:
+https://hortonworks.com/blog/fine-tune-your-apache-hadoop-security-settings/
+
+### Client krb5 conf
+Clients from different realms that need to authenticate with Cerebro need to ensure
+that their krb5.conf file specifies the realm of the Cerebro services. This is done
+by adding an entry in the 'domain\_realm' section in the krb5 file.
+
+This config needs to be set for all clients in a different realm.
+
+In the running example, we would want to add an entry indicating that the Cerebro
+service host is in the SERVICES.COM realm.
+```
+# Rest of krb5.conf file
+[domain_realm]
+  # Likely to have existing entries
+  cerebro-service = SERVICES.com # Indicates Cerebro is running in the SERVICES.COM realm
+```
+
+## More information
 Other docs that might be helpful are:
   - [Authentication](https://github.com/cerebro-data/external-docs/blob/master/Authentication.md)
   - [Security](https://github.com/cerebro-data/external-docs/blob/master/Security.md)

@@ -37,36 +37,36 @@ _cdas_rest_api_ in the box followed by **/wdc**.  The following page will appear
    ![Tableau Web Data Connectior](https://s3.amazonaws.com/cerebro-data-docs/images/TableauWebDataConnector.png)
 
    5. Enter a valid authentication token in the text box above the 'Accept Auth Token' button and
-press the 'Accept Auth Token' button.  A valid authentication token can be acquired by _*insert link to instructions*_.
+press the 'Accept Auth Token' button.  A valid authentication token can be acquired by referring to the 'Getting a token' section of [Authentication](https://github.com/cerebro-data/cerebro/blob/master/docs/user/Authentication.md).
 
    6. Click the 'Get Data!' link when it becomes highlighted.
 
    7. A page similar to the following page should appear.  Please note that the data sets in this
 list are illustrative only.
 
-     ![Tableau Web Data Connector Data Sets](https://s3.amazonaws.com/cerebro-data-docs/images/TableauDataSets.png)
+   ![Tableau Web Data Connector Data Sets](https://s3.amazonaws.com/cerebro-data-docs/images/TableauDataSets.png)
 
    8. Select a data set from the left hand list.  The schema of the selected data set should
 appear.  The page should be similar to the following:
 
-    ![Tableau Web Data Connector Schema](https://s3.amazonaws.com/cerebro-data-docs/images/TableauSchema.png)
+   ![Tableau Web Data Connector Schema](https://s3.amazonaws.com/cerebro-data-docs/images/TableauSchema.png)
 
    9. Click the 'Update Now' link to load the data.  A page similar to the following should
 appear.  The length of time for this step to complete will vary depending on the amount of data in
 your selected data set.
 
-    ![Tableau Data View](https://s3.amazonaws.com/cerebro-data-docs/images/TableauDataView.png)
+   ![Tableau Data View](https://s3.amazonaws.com/cerebro-data-docs/images/TableauDataView.png)
 
-    ## Error Reporting
+## Error Reporting
 
      When errors are detected, because of either user error, system error or communication error
 the following dialog will be presented:  
 
-    ![Tableau Exception Report](https://s3.amazonaws.com/cerebro-data-docs/images/TableauExceptionReport.png)
+   ![Tableau Exception Report](https://s3.amazonaws.com/cerebro-data-docs/images/TableauExceptionReport.png)
 
     Clicking on 'Show Details' presents additional information, such as:  
 
-    ![Tableau Exception Detail](https://s3.amazonaws.com/cerebro-data-docs/images/TableauExceptionDetail.png)
+   ![Tableau Exception Detail](https://s3.amazonaws.com/cerebro-data-docs/images/TableauExceptionDetail.png)
 
 The contents of these pages are illustrative only.  The actual contents may vary, depending on the
 reason for the error or exception.
@@ -92,5 +92,3 @@ The following are a list of known exceptions and the root cause for each excepti
    An internal error or communications error occurred while retrieving schema information.
    If it is a communication error, retry the request.  If it is an internal error, report
    the problem along with the scenario you attempted.
-
-
