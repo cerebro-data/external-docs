@@ -168,6 +168,11 @@ export CEREBRO_PORT_CONFIGURATION="$CEREBRO_PORT_CONFIGURATION,kubernetes_dashbo
 For information on how to set up a Kebrerized cluster, see:
   - [Kerberos Cluster Setup](https://github.com/cerebro-data/external-docs/blob/master/KerberosClusterSetup.md)  
 
+**LDAP**
+For information on how to set LDAP Basic Auth related environment variables, see:
+  - [LDAP Basic Auth](https://github.com/cerebro-data/external-docs/blob/master/LdapAuthentication.md#setting-up-ldap-related-configurations)
+
+
 For more details on interactions with authenticated Cerebro, see:
   - [Authentication](https://github.com/cerebro-data/external-docs/blob/master/Authentication.md)
   - [Security](https://github.com/cerebro-data/external-docs/blob/master/Security.md)

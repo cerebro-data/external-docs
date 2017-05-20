@@ -208,9 +208,7 @@ For example:
 </property>
 ```
 
-NOTE: if the cluster is kerberized, the primary must be in the list of admins. For
-example, if the principal for cerebro is 'cerebro/host.com@REALM', cerebro must be
-in the list of admins. For Impala integration, the impala principal's primary (typically
+**NOTE**: For Impala integration, the impala principal's primary (typically
 'impala') must also be in the list of admins.
 
 Save and upload this file to Cerebro's install bucket, under the /etc/ directory.
