@@ -2,27 +2,17 @@
 
 The Database CLI provides client access to running Cerebro Database services.
 
-## Prequisites
-The CLI requires either python3+ or python2.7+. The CLI is supported on linux and OSX.
-Afterwards, install the required packages:
-
-    $ [sudo] pip install -r ./db_requirements.txt
-    $ ./dbcli --help
-
+## Installation
 For a fresh setup, you can install with:
 
-    $ curl -O https://s3.amazonaws.com/cerebrodata-release-useast/cli/0.1/db_requirements.txt
-    $ curl -O https://s3.amazonaws.com/cerebrodata-release-useast/cli/0.1/dbcli && chmod 755 ./dbcli
+    # Linux
+    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.0/cli/linux/dbcli && chmod 755 ./dbcli
 
-    # Install pip if you have not
-    $ curl -O https://bootstrap.pypa.io/get-pip.py
-    $ [sudo] python get-pip.py
-
-    # Install CLI dependencies
-    $ [sudo] pip install -r ./db_requirements.txt
-
-    # Database CLI is ready to use
-    $ ./dbcli --help
+    # OSX
+    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.0/cli/darwin/dbcli && chmod 755 ./dbcli
+    
+    # Verify the version
+    ./dbcli --help
 
 ## Configuration
 The service locations and/or default database can be specified to the cli through the

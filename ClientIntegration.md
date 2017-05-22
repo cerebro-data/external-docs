@@ -1,5 +1,5 @@
 # Cerebro Data Access Service Integration
-This documents describes how to use Cerero Data Access Service (CDAS) from a user's
+This documents describes how to use Cerebro Data Access Service (CDAS) from a user's
 perspective. It describes how Cerebro can be used from various existing tools to:
   - Explore and create new data sets and views.
   - Define fine-grained access policies over datasets.
@@ -119,7 +119,7 @@ for Hadoop and we will summarize here. There are two ways to do this:
      HADOOP_CLASSPATH is colon separated and libjars is comma separated.
 
 As a complete example, assuming we are using the RecordServiceAvro client library. For
-option 1, we can simply just run the application as the dependncies have been handled
+option 1, we can simply just run the application as the dependencies have been handled
 as part of the build.
 ```
 hadoop jar AvroApplication.jar <arguments>
@@ -142,8 +142,8 @@ recordservice-hcatalog-pid-adapter jar.
 Pig configuration is identical to MapReduce. Refer to that section.
 
 ### Hue Integration
-Hue does not require any additional steps to work with Cerebro. Hue also connects to HiveServer2 and
-is integrated very similarly as beeline.
+Hue does not require any additional steps to work with Cerebro. Hue also connects to
+HiveServer2 and is integrated very similarly as beeline.
 
 ##### Troubleshooting
 If requests are failing with users not having privileges, ensure that the user exists. The user must
@@ -152,8 +152,8 @@ exist on (as a unix user):
   - Cerebro catalog.
 
 ### Impala Integration
-Impala does not require any end user steps. After Impala is configured by the cluster admin, users
-can connect to Impala via the shell as normal.
+Impala does not require any end user steps. After Impala is configured by the cluster
+admin, users can connect to Impala via the shell as normal.
 
 ### Spark Integration
 Spark provides a few ways to integrate with spark. Refer to the open source client
@@ -168,7 +168,7 @@ sqlContext.sql("SHOW TABLES").show()
 ```
 
 **Note**: The sql supported is not necessarily compatible with beeline. This is
-more intended to retrieve catalog metadata and not recommended as a way to adminstor
+more intended to retrieve catalog metadata and not recommended as a way to administrate
 access control policies (grant/revoke).
 
 ##### Configuration
@@ -221,4 +221,3 @@ Reading the data into a panda data frame is very simple with the REST API.
 import pandas as pd
 df = pd.read_json('http://<hostport>/api/scan/<dataset>')
 ```
-

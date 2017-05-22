@@ -34,6 +34,10 @@ Cluster machine:
   - Machine needs to have IAM_CLUSTER credentials.
   - Minimum instance type should be t2.medium
 
+Network:
+  - We expect full network connectivity between the machines in the cluster and the
+    DeploymentManager machine.
+
 In addition, you will need to install the Cerebro CLI. The machine running the CLI
 needs to have network access to the DeploymentManager and cluster machines. The CLI
 can be installed on the DeploymentManager or a local development machine. To run the CLI
@@ -94,6 +98,10 @@ cp /opt/cerebro/deployment-manager/conf/env-template.sh /etc/cerebro/env.sh
 # open and edit env.sh, modifying it as necessary
 source /etc/cerebro/env.sh
 ```
+
+The config script from /etc/cerebro/env.sh will automatically be loaded when starting
+the DeploymentManager. If this is the path used, it is not necessary to source the
+script.
 
 **CEREBRO_AWS_DEFAULT_REGION**
 Cerebro will autodetect the region that it is running in. This setting
@@ -171,7 +179,6 @@ For information on how to set up a Kebrerized cluster, see:
 **LDAP**
 For information on how to set LDAP Basic Auth related environment variables, see:
   - [LDAP Basic Auth](https://github.com/cerebro-data/external-docs/blob/master/LdapAuthentication.md#setting-up-ldap-related-configurations)
-
 
 For more details on interactions with authenticated Cerebro, see:
   - [Authentication](https://github.com/cerebro-data/external-docs/blob/master/Authentication.md)

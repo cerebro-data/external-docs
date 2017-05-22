@@ -47,7 +47,7 @@ format, delimiters, etc.
 
 ### Reading it
 Cerebro provides many ways to access the data. We'll start with the simplest
-of using the REST endpoint. We've registed the dataset with the fully qualified
+of using the REST endpoint. We've registered the dataset with the fully qualified
 name 'tutorial.products'. We can simply issue a GET call to the planner endpoint.
 
 ```
