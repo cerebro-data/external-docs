@@ -41,16 +41,23 @@ TODO: need to implement CLI commands
 ```
 
 ## Upgrading an existing cluster to a new version of CDAS
-An existing cluster can be upgraded with new version of CDAS components. This can be done
-from the CLI using the upgrade command:
+An existing cluster can be upgraded with new version of CDAS components.
+The CLI command can be used to upgrade one or more components. After upgrade
+the cluster is restarted with the newer components and features. 
+Both version and components options cannot be specified at the same time.
+  
+To upgrade all components in an existing cluster to a new version, specify version only.  
+To upgrade specific components to a different version, specify components only.
 ```
 cerebro_cli clusters upgrade --components=<comp:version list> <CLUSTER_ID>
-# For example to upgrade cluster 2 cdas to version 0.4.0, and catalog-ui to 0.4.2,
-cerebro_cli clusters upgrade --components=cdas:0.4.0,catalog-ui:0.4.2 --releaseVersion=0.4.0 2 
+
+# For example to upgrade cluster 2 components cdas to version 0.4.0 and catalog-ui to 0.4.5,
+cerebro_cli clusters upgrade --components=cdas:0.4.0,catalog-ui:0.4.5 2 
+
+# To upgrade all CDAS components in cluster 3 to version 0.4.0.
+cerebro_cli clusters upgrade --version=0.4.5 3 
 ```
 
-The command can be used to upgrade one or more components. This upgrades the components and
-the is restarted with the newer components and features.
 
 Available in: 0.4.0+.
 

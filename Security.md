@@ -106,7 +106,7 @@ enable Administrator authorization on the DeploymentManager REST API server:
     following value should be set: ```john,sysadmins```
 
 ### Verifying admin authorization using curl
-- **Curl commands for server running with Kerberos enabled:**
+- **Curl commands for a server running with Kerberos enabled:**
   - Once the DeploymentManager is running with DM_ADMIN_USERS set, follow the steps [above](#verifying-kerberos-authentication-using-curl)
   to `kinit` and get a *TGT* for the client.
   - The following curl commands should return the client's admin authorization status:

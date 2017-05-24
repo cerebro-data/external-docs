@@ -78,7 +78,7 @@ $
 ```
 
 ## Setting up the credentials
-- **Ensuring sure the keytab file has appropriate permissions**
+- **Ensuring the keytab file has appropriate permissions**
   Once the keytab file, has been created, look at the file permissions using
   `ls -l <KEYTAB_FILE_NAME>`
   Make sure everyone has read and execute privileges at least, and if not, do the
@@ -109,7 +109,7 @@ $
       Set this to the HTTP principal if the principal is non-standard. This is not
       required if the principals were created with the steps above.
 
-  ```shell
+  # shell
   export CEREBRO_KERBEROS_PRINCIPAL=<principal>
   export CEREBRO_KERBEROS_KEYTAB_FILE=FULL_PATH_TO_KEYTAB_FILE
 

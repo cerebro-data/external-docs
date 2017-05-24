@@ -19,15 +19,18 @@ End-user database and dataset functionality is made available through a command 
 tool, dbcli.  The tool enables users to acquire tokens, list databases, list datasets in
 a database, show the schema for a dataset (describe), view a sample of data, create tables
 and grant permissions through Hive DDL.  
-See the [Database CLI](https://github.com/cerebro-data/external-docs/blob/master/DbCLI.md)
+
+See [Database CLI](https://github.com/cerebro-data/external-docs/blob/master/DbCLI.md)
 for details.
 
 **Basic Authentication using LDAP**  
 With this release, Basic authentication using LDAP is introduced, which should
-allow Cerebro users to authenticate using their Active Directory credentials.  
+allow Cerebro users to authenticate using their Active Directory credentials.
+
 The user now has an option to either use the REST API or the new
-web-based login UI to get their Cerebro token, using their Active Directory
+web-based login UI to get their Cerebro token using their Active Directory
 username and password.  
+
 See the [LDAP Basic Auth Document](https://github.com/cerebro-data/external-docs/blob/master/LdapAuthentication.md) for details.
 
 ### Changes
@@ -54,7 +57,7 @@ Deployment Manager restart (following a change in your configuration) if you wan
 manage a cluster in another AWS region.
 
 **Kerberos**  
-DeploymentManager allows kerberos principal for REST API to be explicitly specified.
+DeploymentManager allows a kerberos principal for the REST API to be explicitly specified.
 Previously this was assumed to be derived from the service principal
 (i.e. HTTP/<service_host>).
 See [Kerberos](https://github.com/cerebro-data/external-docs/blob/master/KerberosClusterSetup.md)
@@ -78,9 +81,9 @@ config has been updated to be the full path to the keytab. The path can be on th
 DeploymentManager machine (e.g. /etc/keytabs/cerebro.keytab) or on S3. No steps are
 now required to upload the keytab to the staging directory.
 
-The prior config will no longer validate. The DeploymentManager will not
+The prior config will no longer validate and the DeploymentManager will not
 start up. Users coming from a previous release will need to update their configs.
-For example, changing:
+For example, by changing:
 ```
 export CEREBRO_KERBEROS_KEYTAB_FILE=cerebro.keytab
 # to
@@ -105,7 +108,7 @@ file.
 
 **Unable to delete a launching cluster**  
 In some cases, it is not possible to immediately terminate a cluster that is launching
-and the delete will only go into affect after it is done launching. To get the cluster
+and the delete will only go into effect after it is done launching. To get the cluster
 to delete immediately, manually terminating/shutting down the launching machines will
 work.
 

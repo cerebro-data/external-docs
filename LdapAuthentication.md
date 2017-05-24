@@ -7,28 +7,27 @@ In this section we will cover:
   - [Prerequisites to enable LDAP Basic Authentication on Cerebro](#prerequisites-to-enable-ldap-basic-authentication-on-cerebro)
   - [Setting up LDAP related configurations](#setting-up-ldap-related-configurations)
   - [Verify LDAP Basic Authentication using curl](#verify-ldap-basic-authentication-using-curl)
-  - [Use the Web UI to authenticate and get Cerebro token](#use-the-web-ui-to-authenticate-and-get-cerebro-token)
+  - [Use the Web UI to authenticate and get a Cerebro token](#use-the-web-ui-to-authenticate-and-get-cerebro-token)
   - [Exploring LDAP related logs](#exploring-ldap-related-logs)
 
 ### Prerequisites to enable LDAP Basic authentication on Cerebro
 You will need the following pieces of information for CDAS to support LDAP:
   - **Hostname**  
-  This must be the IP address or the hostname of the Active Directory server instance you have running.
+  This must be the IP address or the hostname of the Active Directory server instance you are using.
   - **Port Number**  
-  This is the port number Active Directory instance is listening on. This default, `389`, is used,
-  if not specified.
+  This is the port number on which the Active Directory instance is listening. If none is specified the This default, `389`, is used.
   - **Base DN**  
   This refers to the Base Distinguished Name used by the AD server to look for users.
 
 ### Setting up LDAP related configurations
-To enable LDAP Basic authentication on your Cerebro, set the following environment variables in
+To enable LDAP Basic authentication for CDAS access, set the following environment variables in
 your `/etc/cerebro/env.sh` file:
   - **CEREBRO_LDAP_HOST**  
   eg. `example.com` or `127.0.0.4`.  
   - **CEREBRO_LDAP_PORT**  
   This has a **default value of 389** if not set.  
   - **CEREBRO_LDAP_BASE_DN**  
-  **Please note** Cerebro accepts the base DN is a particular notation as described here.  
+  **Please note** Cerebro accepts the base DN in a particular notation as described here.  
   If your base DN is of the format `dc=example,dc=com`, the value to be passed in should be
   `example.com`
 
@@ -92,8 +91,8 @@ authentication.
   }
   ```
 
-### Use the Web UI to authenticate and get Cerebro token
-It is now possible to get your Cerebro token using the Cerebro Web UI. Point your browser to the login
+### Use the Web UI to authenticate and get a Cerebro token
+It is now possible to get a Cerebro token using the Cerebro Web UI. Point your browser to the login
 page in the Web UI and enter your credentials.
 
 ### Exploring LDAP related logs

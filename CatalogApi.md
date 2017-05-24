@@ -5,7 +5,7 @@ clients can connect using existing APIs, such as the Hive Metastore API.
 
 The purpose of this API is to provide programmatic access to interact with the catalog.
 For users that want to interactively access the catalog, it is recommended to use the
-cerebro_cli, which provides a more traditional CLI experience built ontop of these APIs.
+cerebro_cli, which provides a more traditional CLI experience built on top of these APIs.
 
 ## Authentication
 Unless otherwise specified, the APIs require users to be authenticated. In general,
@@ -78,7 +78,7 @@ curl -X POST localhost:5000/api/datasets/cerebro_sample.sample
 
 ## Scanning a dataset
 Endpoint: /api/scan/{name} [GET] <br>
-Endpoint: /api/scanpage/{name} [GET]
+Endpoint: /api/scanpage/{name} [GET]< <br>
 Endpoint: /api/scan [POST] <br>
 Endpoint: /api/scanpage [POST]
 

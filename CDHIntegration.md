@@ -7,7 +7,7 @@ Prerequisites:
   - CDAS running. We need the endpoints for the Cerebro Catalog components referred
     to as CDAS HMS and CDAS Sentry. We also need the Cerebro planner endpoint referred
     to as CDAS Planner.
-  - If kerberized, the principal for CDAS (refereed to as CDAS Principal)
+  - If kerberized, the principal for CDAS (referred to as CDAS Principal)
   - CDH (5.7+) running and managed by Cloudera Manager (CM). This cluster should be fully
     functional with kerberos enabled (if desired) and Sentry enabled. This can included
     any subset of the CDH components.
@@ -66,13 +66,13 @@ can verify this is set properly by going to any gateway machine and looking in
 '/etc/hive/conf/hive-site.xml'
 
 #### Impala configs
-Impala will also need to configured to the Cerebro catalog. This involves updating
+Impala will also need to be configured to the Cerebro catalog. This involves updating
 the above two configs in Impala -> Impala Catalog Server ->
 Catalog Server Hive Advanced Configuration Snippet (Safety Valve)
 
 ## Sentry Store Configs
-For sentry we these configs set. Again, kerberos principal is only required for
-kerberized clusters.
+For sentry use, we require that these configs are set. Again, the kerberos principal is only
+required for kerberized clusters.
 ```
 <property>
   <name>sentry.service.client.server.rpc-address</name>
@@ -93,8 +93,8 @@ This will need to be set in:
 Hive -> Service Wide -> Hive Service Advanced Configuration Snippet (Safety Valve) for
 sentry-site.xml
 
-This will require restarting the dependent services. You can be verified by looking in
-the generated config for the HiveServer2 service (see above for the HMS config on details.
+This will require restarting the dependent services. These can be verified by looking in
+the generated config for the HiveServer2 service (see above for the HMS config on details).
 
 #### Impala
 This will need to be set in:
@@ -208,7 +208,7 @@ For example:
 </property>
 ```
 
-**NOTE**: For Impala integration, the impala principal's primary (typically
+**NOTE**: For Impala integration, the Impala principal's primary (typically
 'impala') must also be in the list of admins.
 
 Save and upload this file to Cerebro's install bucket, under the /etc/ directory.

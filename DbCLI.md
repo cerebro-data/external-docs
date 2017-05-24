@@ -10,12 +10,12 @@ For a fresh setup, you can install with:
 
     # OSX
     curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.0/cli/darwin/dbcli && chmod 755 ./dbcli
-    
-    # Verify the version
+
+    # Verify the download executes
     ./dbcli --help
 
 ## Configuration
-The service locations and/or default database can be specified to the cli through the
+The server location and/or default database can be specified to the cli through the
 'database use' command or can be configured from a configuration file which is helpful
 if interacting with the same server and/or database repeatedly. The configuration file
 is stored in ~/.cerebro/configs.json.
@@ -42,7 +42,7 @@ for the available options.
 
 For all commands entering:
 
-dbcli <command> --help
+dbcli *command* --help
 
 will display the available options and a brief description of each option.
 
@@ -50,7 +50,7 @@ To see your currently saved configuration options, you can enter:
 
    dbcli show configs
 
-## Database CLI getting started
+## Database Related Commands 
 
     dbcli show status
 
@@ -63,3 +63,8 @@ When the server is up and available. <host:port> reflects the configured server 
     dbcli database list
 
 Will list the databases available to you on the configured server.
+
+    dbcli dataset list
+
+Will list the datasets available to you in the selected database.
+
