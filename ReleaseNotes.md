@@ -1,3 +1,66 @@
+# 0.4.1 Release Notes
+
+## June-2017
+
+0.4.1 contains bug fixes for 0.4.0 and it is recommended to upgrade all 0.4.0 clusters.
+
+## Upgrading
+First, upgrade the DeploymentManager. While the upgrade is happening, existing CDAS
+clusters will continue to be operational.
+
+```
+cd /opt/cerebro # Or where your existing install directory is.
+
+# Get the tarball from S3.
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.1/deployment-manager-0.4.1.tar.gz
+
+# Extract the bits.
+rm -f deployment-manager
+tar xzf deployment-manager-0.4.1.tar.gz && rm deployment-manager-0.4.1.tar.gz && ln -s deployment-manager-0.4.1 deployment-manager
+
+# Restart the DeploymentManager
+/opt/cerebro/deployment-manager/bin/deployment-manager
+
+# Upon restarting, the new DeploymentManager will take a few seconds to health check
+# the existing services.
+```
+
+When all the existing clusters report READY, upgrade those clusters one by one. For
+each cluster, run:
+```
+cerebro_cli clusters upgrade --version=0.4.1 <CLUSTER_ID>
+```
+
+This will take a few minutes to download the updated binaries and restart the cluster
+afterwards. The existing services will be operational while the download is occurring.
+See the cluster admin docs for more details.
+
+## Bug Fixes
+  - Fixes to the Tableau WDC connector to be tolerant to catalog errors.
+  - Fixes for users specifying a custom 'core-site.xml' or 'hive-site.xml' config. In
+    0.4.0, we were not picking up these configs files correctly.
+
+## New Features
+In addition, we've added a new feature to allow the user to configure CNAMEs for
+service endpoints. This is useful for example, if end users should only access the
+cdas_rest_server API endpoint behind a CNAME.
+In the example below, the service endpoint `cdas_rest_server:api` maps to the CNAME
+`cname1.example.com`
+
+Update the CEREBRO_SERVICE_CNAME_MAP config in your env.sh file as follows:
+```shell
+$ export CEREBRO_SERVICE_CNAME_MAP="<service_endpoint_host>:<service_endpoint_port>:<CNAME>"
+```
+
+In the case of the above example this becomes:
+```shell
+$ export CEREBRO_SERVICE_CNAME_MAP="cdas_rest_server:api:cname1.example.com"
+```
+Once set, restart your DeploymentManager.
+
+**NOTE:** If you upgrade your DeploymentManager to 0.4.1, make sure you upgrade CDAS to 0.4.1 as
+well.
+
 # 0.4.0 Release Notes
 
 ## May-2017
