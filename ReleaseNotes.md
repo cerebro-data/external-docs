@@ -1,3 +1,21 @@
+# 0.4.5 Release Notes
+
+## June-2017
+
+0.4.5 contains support support for JSON Web Tokens (JWT) for authentication. Users not
+using JWTs do not need to upgrade to this version. For details on how to configure JWT
+support, see the install docs.
+
+### Incompatible and breaking changes
+**Planner_worker service port renamed**
+The cerebro_planner_worker service ports have been split into cerebro_planner and
+cerebro_worker. Specifically:
+  - cerebro_planner_worker:planner is now cerebro_planner:planner
+  - cerebro_planner_worker:worker is now cerebro_worker:worker
+
+This will need to be updated in the CEREBRO_PORT_CONFIGURATION value as well as the
+output of 'cerebro_cli clusters list.'
+
 # 0.4.1 Release Notes
 
 ## June-2017
