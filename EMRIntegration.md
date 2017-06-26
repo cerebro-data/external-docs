@@ -55,7 +55,17 @@ Once the cluster is up, the user can for example, use the spark shell with:
 $ spark-shell
 scala> import com.cloudera.recordservice.spark._
 scala> val context = new org.apache.spark.sql.SQLContext(sc)
-scala> context.setConf("recordservice.user", USER'S TOKEN)
+
+# If authentication is enabled, specify your credentials. You can also put this in
+# spark-defaults if the cluster is not multi-tenant.
+scala> context.setConf("spark.recordservice.delegation-token.token", <USER's TOKEN>)
+
+# For CDAS versions <= 0.4.5, you will aso need to specify the service name. This is
+# the first part of the cerebro service principal. For example, if the principal is
+# cerebro/hostname@REALM, this would be 'cerebro'.
+scala> context.setConf("spark.recordservice.delegation-token.service-name", <PLANNER's SERVICE NAME")
+
+# Load a cerebro table and you're good to go.
 scala> val df = context.load(DB.TABLE, "com.cloudera.recordservice.spark")
 scala> df.show()
 ```
@@ -80,13 +90,13 @@ required configuration is:
 
 ### Presto
 Presto requires configurations to be passed as arguments to the bootstrap script. This
-is instead of providing them as configurations. The boostrap action requires the planner
-host port to be specified via:
+is instead of providing them as configurations. The bootstrap action requires the planner
+host port to be specified. We also recommend specifying the user's access token.
 ```
 --planner-hostports <PLANNER ENDPOINT>
 # For example, if the planner is running on "10.1.10.251:12050", then, the bootstrap
 # arguments would be:
-cdas-emr-bootstrap.sh 0.4.0 --planner-hostports 10.1.10.251:12050 presto
+cdas-emr-bootstrap.sh 0.4.0 --planner-hostports 10.1.10.251:12050 --token <TOKEN> presto
 ```
 
 Once the cluster is up, the user can ssh onto the master and use presto-cli, for example:
