@@ -30,25 +30,25 @@ and services.
 Kubernetes deploys and schedules containers in groups called pods. A pod typically has one
 or more containers that provides a CDAS service.
 
-You may use the dashboard ui to list the various CDAS services and confirm that the desired number of pods is running for each service. Typically, you would run one cerebro-planner-worker pod and several cerebro-worker pods depending on your workload needs.<br />
+You may use the dashboard ui to list the various CDAS services and confirm that the desired number of pods is running for each service. Typically, you would run one cerebro-planner pod and several cerebro-worker pods depending on your workload needs.<br />
 
 For example, a 10-node CDAS cluster would have the following pods:
   - 1 canary pod
   - 1 cerebro-catatog pod
   - 1 cdas-rest-server pod
   - 1 zookeeper pod
-  - 1 cerebro-planner-worker pod
+  - 1 cerebro-planner pod
   - 9 cerebro-worker pods
 
 Let's try a few of sample dashboard operations:
   1. Keeping the namespace as 'default', click on 'Deployments' on the left navigation panel.
    Makes sure that all CDAS services are running. This should include cerebro-catalog,
-   cerebro-catalog-ui and cerebro-planner-worker.
+   cerebro-catalog-ui and cerebro-planner.
   2. Click on 'Pods' on the left navigation panel
    Make sure that the list is similar to the example above, including the desired number
    of pods.
   3. Click on 'Pods'.
-   Scroll to the right of the cerebro-planner-worker pod and click on the icon with small
+   Scroll to the right of the cerebro-planner pod and click on the icon with small
    horizontal bars. This will show the logs in a separate tab/window on your browser.
    The logs are a quick way to detect any issues with the pod.
 

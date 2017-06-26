@@ -19,7 +19,7 @@ to start a STANDALONE_CLUSTER or a CATALOG_CLUSTER with at least one DATA_ACCESS
 The steps in this tutorial can work with any of those configurations. We simply need 
 the endpoints for the different components to be available. We need:
   1. cdas_rest_server:api
-  2. cerebro_planner_worker:webui or cerebro_planner:webui
+  2. cerebro_planner:webui
 
 The remaining steps will use <catalog_endpoint> for 1. and <planner_endpoint> for 2.
 

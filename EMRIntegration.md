@@ -7,6 +7,7 @@ In general, we require:
   1. Specifying a bootstrap action which will download our client library on the cluster
      nodes.
   2. Specifying a configuration which configures the client library to use a CDAS install.
+     This is optional for some components.
 
 An EMR cluster that is using multiple components should apply each configuration.
 
@@ -27,10 +28,10 @@ the arguments "0.4.0 spark-2.x". If running EMR with spark-2 and pig, you can pr
 for example "0.4.0 spark-2.x pig".
 
 The complete list of supported components are:
-  - spark 1.x
-  - spark 2.x
+  - spark-1.x, spark-2.x
   - hadoop
   - pig
+  - presto
 
 Non-compute components can also be used and do not require any CDAS related steps.
 These include:
@@ -59,7 +60,7 @@ scala> val df = context.load(DB.TABLE, "com.cloudera.recordservice.spark")
 scala> df.show()
 ```
 
-The complete commandline to start up a cluster like this would be:
+The complete commandline to start up a spark cluster like this would be:
 ```
 aws emr create-cluster --auto-scaling-role EMR_AutoScaling_DefaultRole --applications Name=Spark --bootstrap-actions '[{"Path":"s3://cerebrodata-release-useast/utils/emr/cdas-emr-bootstrap.sh","Args":["0.4.0","spark-2.x"],"Name":"Custom action"}]' --ec2-attributes '{"KeyName":"ssh-key","InstanceProfile":"EMR_EC2_DefaultRole","SubnetId":"subnet-c4de3fa3","EmrManagedSlaveSecurityGroup":"sg-bf88dbd9","EmrManagedMasterSecurityGroup":"sg-b188dbd7"}' --service-role EMR_DefaultRole --release-label emr-5.6.0 --name 'Spark Cluster' --instance-groups '[{"InstanceCount":1,"InstanceGroupType":"CORE","InstanceType":"m3.xlarge","Name":"Core - 2"},{"InstanceCount":1,"InstanceGroupType":"MASTER","InstanceType":"m3.xlarge","Name":"Master - 1"}]' --configurations '[{"Classification":"spark-defaults","Properties":{"spark.recordservice.planner.hostports":"10.1.10.251:12050"},"Configurations":[]}]' --scale-down-behavior TERMINATE_AT_INSTANCE_HOUR --region us-west-2
 ```
@@ -75,6 +76,32 @@ required configuration is:
 
 ```
 [{"Classification":"spark-defaults","Properties":{"spark.recordservice.planner.hostports":"10.1.10.251:12050"}}]
+```
+
+### Presto
+Presto requires configurations to be passed as arguments to the bootstrap script. This
+is instead of providing them as configurations. The boostrap action requires the planner
+host port to be specified via:
+```
+--planner-hostports <PLANNER ENDPOINT>
+# For example, if the planner is running on "10.1.10.251:12050", then, the bootstrap
+# arguments would be:
+cdas-emr-bootstrap.sh 0.4.0 --planner-hostports 10.1.10.251:12050 presto
+```
+
+Once the cluster is up, the user can ssh onto the master and use presto-cli, for example:
+```
+$ presto-cli
+presto> show catalogs;
+# This should return 'recordservice' among others.
+
+# If authentication is enabled on your cluster, you will need to specify your
+# token for the subsequent commands.
+presto> SET SESSION recordservice.token='<TOKEN>'
+
+# Then you can query metadata and select form tables
+presto> SHOW TABLES in recordservice.cerebro_sample;
+presto> select * from recordservice.cerebro_sample.sample;
 ```
 
 ## Logging

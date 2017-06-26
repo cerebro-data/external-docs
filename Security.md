@@ -23,8 +23,9 @@ To enable Kerberos on the DeploymentManager REST API Server, set the following t
 environment variables:
 - **DM_PRINCIPAL** - The SNP goes here. For example, if your DeploymentManager is hosted
 at `http://hostname:8085`
-    - SNP should be `HTTP/hostname@<KDC_REALM>`
-    - DM_PRINCIPAL is `primary/instance`. For the example, it should be *HTTP/hostname*.
+    - DM_PRINCIPAL should be `HTTP/hostname@<KDC_REALM>`
+    - *Please ensure* that the DM_PRINCIPAL is a 3-part Kerberos Principal and has the 3
+    components - primary, instance and KDC_REALM.
 - **DM_KEYTAB_FILE** - The absolute path to the Keytab file corresponding to the SNP and
 DM_PRINCIPAL specified above.
 

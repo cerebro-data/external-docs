@@ -13,9 +13,9 @@ Prerequisites:
     any subset of the CDH components.
 
 The result of these configuration changes will have CDH use the Cerebro Catalog, replacing
-the HiveMetastore and Sentry Store components. Note that even if these components are still
-running, when properly configured, they will not be used. No clients should be interacting
-with them.
+the HiveMetastore and Sentry Store components. Note that even if these components are
+still running, when properly configured, they will not be used. No clients should be
+interacting with them.
 
 A summary of what we will do is:
 1. Configure HMS clients to talk to the Cerebro catalog. This includes other services
@@ -71,8 +71,8 @@ the above two configs in Impala -> Impala Catalog Server ->
 Catalog Server Hive Advanced Configuration Snippet (Safety Valve)
 
 ## Sentry Store Configs
-For sentry use, we require that these configs are set. Again, the kerberos principal is only
-required for kerberized clusters.
+For sentry use, we require that these configs are set. Again, the kerberos principal is
+only required for kerberized clusters.
 ```
 <property>
   <name>sentry.service.client.server.rpc-address</name>
@@ -187,10 +187,11 @@ s3://cerebrodata-release-useast/0.3.0/client
 ## Configuring CDAS
 CDAS supports Hadoop configurations. The configs can be uploaded to the Cerebro S3 bucket
 and will be picked up by the services on restart. The configs should have the same names
-as their equivalent Hadoop equivalents (e.g. core-site.xml, hive-site.xml, sentry-site.xml).
+as their equivalent Hadoop equivalents (e.g. core-site.xml, hive-site.xml,
+sentry-site.xml).
 
-The configs should just contain the individual properties in xml format. Refer to the examples
-below. Multiple configs can be put by having multiple property tags.
+The configs should just contain the individual properties in xml format. Refer to the
+examples below. Multiple configs can be put by having multiple property tags.
 
 ### Configuring Sentry admins example
 Create the file sentry-site.xml and populate it with:

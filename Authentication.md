@@ -1,21 +1,37 @@
 # Cerebro Data Access Service Authentication
 
-All Cerebro services are authenticated. We provide two mechanism for authentication:
+All Cerebro services are authenticated. We provide two mechanisms for authentication:
 
-1. Kerberos
-2. Cerebro Tokens
+1. Kerberos & Cerebro Tokens
+2. JSON Web Tokens (JWT)
 
-Kerberos authentication is required and is used to bootstrap the token mechanism. Token
+Users can configure either or both options. If both are configured, clients can
+authenticate using either method.
+
+# Cerebro Tokens
+Kerberos authentication is required and is used to bootstrap Cerebro tokens. Token
 based authentication is optional, depending on the needs of the client application. We
 recommend using Kerberos authentication if possible (e.g. Hadoop integration) and
 using token based authentication for non-kerberized clients (e.g. python).
 
-Note that to get a token, you are required to first connect with a kerberized connection.
-You cannot get a user token otherwise.
+Note that to get a Cerebro token, you are required to first connect with a kerberized
+connection. You cannot get a user token otherwise.
+
+# JWT Tokens
+
+Cerebro can use JWT tokens for authentication. These tokens are expected to be generated
+externally and provided to CDAS. All token management (creation, renew, timeout) is
+handled outside of Cerebro. If only JWT tokens is used for authentication, CDAS will also
+require that a system token be generated for it to use to authenticate internal services.
+This would, for example, be a token with 'cerebro' as the subject.
+
 
 ## Enabling authentication
-Authentication is enabled by setting CEREBRO_KERBEROS_PRINCIPAL and
+Kerberos uthentication is enabled by setting CEREBRO_KERBEROS_PRINCIPAL and
 CEREBRO_KERBEROS_KEYTAB_FILE when starting Cerebro.
+
+Using JWT keys for service authentication is configured by setting SYSTEM_JWT_TOKEN
+when starting Cerebro.
 
 ## Kerberos
 We assume that the user already has a ticket granting ticket (i.e. has run kinit) before
@@ -79,8 +95,8 @@ using the token. CDAS will resolve the token to the user that originally request
 The token can be used to authenticate all calls to the REST server by additionally
 providing it to the REST API.
 
-### Getting a token
-To get a token, call the get-token REST API. Note you must be kerberos authenticated.
+### Getting a Cerebro token
+To get a Cerebro token, call the get-token REST API. Note you must be kerberos authenticated.
 
 ```shell
 $ curl --negotiate -u : -X POST <CDAS REST HOST:PORT>/api/get-token
@@ -97,6 +113,14 @@ $ curl <CDAS REST HOST:PORT>/api/get-user/AARub25nABFub25nQENFUkVCUk8uVEVTVIoBWo
 }
 ```
 
+### Canceling a Cerebro token
+To cancel the token, call this REST API. Note this requires kerberos credentials and
+you can only cancel your own tokens.
+```shell
+$ curl --negotiate -u : -X DELETE <CDAS_REST_HOST:PORT>/api/cancel-token/<token>
+```
+
+
 ## Using the token
 To use the token, append '?user=<token>' to the request URL. For example, to scan data:
 ```shell
@@ -107,10 +131,11 @@ Similarly, to get the databases:
 $ curl <CDAS_REST_HOST:PORT>/api/databases?user=<token>
 ```
 
-### Canceling the token
-To cancel the token, call this REST API. Note this requires kerberos credentials and
-you can only cancel your own tokens.
-```shell
-$ curl --negotiate -u : -X DELETE <CDAS_REST_HOST:PORT>/api/cancel-token/<token>
-```
 
+## JWT
+To enable users to connect with JWT tokens, the services need access to the public key used
+to sign the tokens and need to be told what algorithm was used (RSA256, RSA512, etc.).
+To configure the public key, the environment variable JWT_PUBLIC_KEY should be a full path to the
+public key. NOTE: this key must be in openssl PKCS#8 format.
+To configure the algorithm, the environment variable JWT_ALGORITHM should be set to a string indicating
+the algorithm used. Currently support algorithms are "RSA256", "RSA512".
