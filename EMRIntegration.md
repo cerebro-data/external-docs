@@ -20,15 +20,19 @@ installed. The bootstrap script is located at:
 ```
 s3://cerebrodata-release-useast/utils/emr/cdas-emr-bootstrap.sh
 # Usage:
-# cdas-emr-bootstrap.sh <cdas version> <list of components>
+# cdas-emr-bootstrap.sh <cdas version> [options] <list of components>
 ```
 
 For example, to bootstrap a spark-2.x cluster from the 0.4.0 client release, provide
 the arguments "0.4.0 spark-2.x". If running EMR with spark-2 and pig, you can provide
-for example "0.4.0 spark-2.x pig".
+for example:
+```
+0.4.0 spark-2.x pig
+```
 
 The complete list of supported components are:
-  - spark-1.x, spark-2.x
+  - spark-1.x
+  - spark-2.x
   - hadoop
   - pig
   - presto
@@ -91,7 +95,8 @@ required configuration is:
 ### Presto
 Presto requires configurations to be passed as arguments to the bootstrap script. This
 is instead of providing them as configurations. The bootstrap action requires the planner
-host port to be specified. We also recommend specifying the user's access token.
+host port to be specified. For single tenant clusters, we also recommend specifying the
+user's access token.
 ```
 --planner-hostports <PLANNER ENDPOINT>
 # For example, if the planner is running on "10.1.10.251:12050", then, the bootstrap
@@ -99,15 +104,13 @@ host port to be specified. We also recommend specifying the user's access token.
 cdas-emr-bootstrap.sh 0.4.0 --planner-hostports 10.1.10.251:12050 --token <TOKEN> presto
 ```
 
-Once the cluster is up, the user can ssh onto the master and use presto-cli, for example:
+Once the cluster is up, the user can ssh onto the master and use presto-cli. If the user's
+token was not specified at boostrap them, it can instead be specified as the 'user' option
+when starting up the CLI.
 ```
-$ presto-cli
+$ presto-cli [--user <TOKEN>]
 presto> show catalogs;
 # This should return 'recordservice' among others.
-
-# If authentication is enabled on your cluster, you will need to specify your
-# token for the subsequent commands.
-presto> SET SESSION recordservice.token='<TOKEN>'
 
 # Then you can query metadata and select form tables
 presto> SHOW TABLES in recordservice.cerebro_sample;
