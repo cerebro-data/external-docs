@@ -65,31 +65,35 @@ Download and extract the DeploymentManager tarball
 # Recommended location is /opt/cerebro but can be any location.
 mkdir -p /opt/cerebro && cd /opt/cerebro
 
+# Update ownership of the destination directory
+echo `whoami` | xargs -I '{}' sudo chown -R '{}' /opt/cerebro
+
 # Get the tarball from S3.
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.1/deployment-manager-0.4.1.tar.gz
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.5.0/deployment-manager-0.5.0.tar.gz
 
 # Extract the bits.
-tar xzf deployment-manager-0.4.1.tar.gz && rm deployment-manager-0.4.1.tar.gz && ln -s deployment-manager-0.4.1 deployment-manager
+tar xzf deployment-manager-0.5.0.tar.gz && rm deployment-manager-0.5.0.tar.gz && ln -s deployment-manager-0.5.0 deployment-manager
 ```
 
-To install the preview release (0.4.5), run:
+Users still using 0.4.x should run 0.4.2. This includes bug fixes in the 0.4.x releases
+and we recommend all 0.4 users upgrade to 0.4.2 if they cannot upgrade to 0.5.0.
 ```shell
 # Recommended location is /opt/cerebro but can be any location.
 mkdir -p /opt/cerebro && cd /opt/cerebro
 
 # Get the tarball from S3.
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.5/deployment-manager-0.4.5.tar.gz
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.2/deployment-manager-0.4.2.tar.gz
 
 # Extract the bits.
-tar xzf deployment-manager-0.4.5.tar.gz && rm deployment-manager-0.4.5.tar.gz && ln -s deployment-manager-0.4.5 deployment-manager
+tar xzf deployment-manager-0.4.2.tar.gz && rm deployment-manager-0.4.2.tar.gz && ln -s deployment-manager-0.4.2 deployment-manager
 ```
 
 Download the shell binary. This depends on the OS running the CLI.
 ```shell
 # Linux
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.1/cli/linux/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.5.0/cli/linux/cerebro_cli && chmod +x cerebro_cli
 # OSX
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.1/cli/darwin/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.5.0/cli/darwin/cerebro_cli && chmod +x cerebro_cli
 
 # Verify the version
 ./cerebro_cli version
@@ -154,6 +158,22 @@ not need to be pre-created.
 export CEREBRO_DB_NAME=cerebro
 ```
 
+**CEREBRO_CATALOG_ADMINS**
+CDAS clusters will, by default, start up with one user which has admin on the system. The
+admin users can create and manage roles, grant roles to other users and read all datasets.
+This default admin user depends on which authentication mechanism was chosen:
+  - Kerberos: The admin user is the first part of the kerberos principal
+  - JWT: The admin user is the subject in the CEREBRO_SYSTEM_TOKEN_FILE
+  - Unauthenciated: The admin user is 'root'.
+To specify other admin users, specify the comma-separated list of admins and/or groups.
+```shell
+# Example:
+export CEREBRO_CATALOG_ADMINS=admin,username1,admin-group
+```
+
+Admins users can grant permissions to other users/groups including the ability to grant
+to other users. However, *only* admin users can create new roles.
+
 **CEREBRO_SERVER_HOSTPORT**
 This is the host:port to run the DeploymentManager. By default it listens to all
 interfaces and runs on port 8085 (e.g. 0.0.0.0:8085). This port does not need to
@@ -209,6 +229,9 @@ To enable Kerberos, specify these configs:
 - CEREBRO_KERBEROS_KEYTAB_FILE: Path to keytab file containing both principals.
   This path needs to be accessible from the DeploymentManager but can be on
   the local machine or in S3.
+- CEREBRO_KERBEROS_ENABLED_REALMS: List of comma-separated cross realms to accept
+  connections from. This does not need to be specified if only connections from
+  the CEREBRO_KERBEROS_PRINCIPAL realm is allowed to connect.
 
 ```shell
 # Example:
@@ -226,15 +249,23 @@ To enable authentication using Json Web Tokens (JWT), specify these configs:
   on the DeploymentManager machine but can be on the local machien or in S3.
 - CEREBRO_JWT_ALGORITHM: Algorithm to use to decrypt tokens. This currently must
   be "RSA256" or "RSA512"
-- CEREBRO_JWT_SERVICE_TOKEN_FILE: Path to a file that just contains the token
+- CEREBRO_JWT_AUTHENTICATION_SERVER_URL: URL that will authenticate JWT tokens. We
+  will issue a POST call to this URL, specifying the token to authenticate. This cannot
+  be set if CEREBRO_JWT_PUBLIC_KEY is set.
+- CEREBRO_SYSTEM_TOKEN: Path to a file that just contains the token
   (on a single line) that Cerebro services will use to authenticate itself.
   The subject for this token acts as the Cerebro system user.
 
 ```shell
 # Example:
+
+# Either these two
 export CEREBRO_JWT_PUBLIC_KEY="/etc/jwt.512.pub"
 export CEREBRO_JWT_ALGORITHM="RSA512"
-export CEREBRO_JWT_SERVICE_TOKEN_FILE="/etc/cerebro.token"
+# OR
+export CEREBRO_JWT_AUTHENTICATION_SERVER_URL="http://sso/verify-token"
+
+export CEREBRO_SYSTEM_TOKEN="/etc/cerebro.token"
 ```
 
 **LDAP**
@@ -270,36 +301,6 @@ With the DeploymentManager running, we can configure the CLI to connect with it.
 
 ## Starting up a CDAS cluster.
 With the DeploymentManager running, we can now start up CDAS clusters.
-
-
-### Configuring cluster admins
-CDAS clusters will, by default, start up with one user which has admin on the system. The
-admin users can create and manage roles, grant roles to other users and read all datasets.
-This default admin user depends on which authentication mechanism was chosen:
-  - Kerberos: The admin user is the first part of the kerberos principal
-  - JWT: The admin user is the subject in the CEREBRO_JWT_SERVICE_TOKEN_FILE
-  - Unauthenciated: The admin user is 'root'.
-
-Admins users can grant permissions to other users/groups including the ability to grant
-to other users. However, *only* admin users can create new roles.
-
-To configure other admin users, create a config file 'sentry-site.xml', populate the
-config below and upload it to $CEREBRO_S3_STAGING_DIR/etc. For example to add all users
-in the 'admin' group and the user 'system-account' as admins, do
-
-```xml
-<property>
-  <!-- This can be either users or groups -->
-  <name>sentry.service.admin.group</name>
-  <value>admin,system-account</value>
-</property>
-```
-and
-```shell
-$ aws s3 cp ./sentry-site.xml s3://$CEREBRO_S3_STAGING_DIR/etc/
-```
-
-Restarting a CDAS cluster will refresh the configs.
 
 ### Configure machine settings
 Cluster launch is broken up into two parts:
@@ -372,6 +373,8 @@ will share the same metadata. For example, to create two clusters that share met
 ./cerebro_cli clusters create --name=prod --numNodes=1 --type=STANDALONE_CLUSTER --environmentid=1 --catalogDbNamePrefix=metadata
 ./cerebro_cli clusters create --name=prod-backup --numNodes=1 --type=STANDALONE_CLUSTER --environmentid=1 --catalogDbNamePrefix=metadata
 ```
+NOET: If the --catalogDbNamePrefix was not explicitly specified on cluster creation, then
+it is the name of the cluster.
 
 # Cerebro Upgrade
 Starting with 0.4.0, Cerebro upgrades to newer CDAS versions and patches can be applied

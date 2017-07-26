@@ -38,7 +38,7 @@ curl -H "Content-Type: application/json" -X PUT -d
 '{"name":"products", "database":"tutorial", "storage_url":"s3://cerebrodata/products"}' localhost:5000/api/datasets
 ```
 This registers the dataset in the 'tutorials' database called products. It is
-backed by data stored in S3. By default, only the owning user hash access.
+backed by data stored in S3. By default, only the owning user has access.
 
 In this particular case, the dataset is self describing so it is ready to be
 read. In other cases, the PUT request can specify the HiveQL that is necessary

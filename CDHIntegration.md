@@ -181,7 +181,7 @@ available at
 ```
 s3://cerebrodata-release-useast/<version>/client
 # For example:
-s3://cerebrodata-release-useast/0.3.0/client
+s3://cerebrodata-release-useast/0.5.0/client
 ```
 
 ## Configuring CDAS

@@ -6,10 +6,10 @@ The Database CLI provides client access to running Cerebro Database services.
 For a fresh setup, you can install with:
 
     # Linux
-    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.0/cli/linux/dbcli && chmod 755 ./dbcli
+    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.5/cli/linux/dbcli && chmod 755 ./dbcli
 
     # OSX
-    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.0/cli/darwin/dbcli && chmod 755 ./dbcli
+    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.5/cli/darwin/dbcli && chmod 755 ./dbcli
 
     # Verify the download executes
     ./dbcli --help
@@ -23,9 +23,49 @@ is stored in ~/.cerebro/configs.json.
 To configure the location of the catalog service, the file should contain:
 ```
 {
-  "catalog_hostport": "<host:port of catalog admin>"
+  "cdas_rest_server": "<host:port of catalog admin>"
   "database": "<name of the database>"
 }
+```
+
+## Quick start
+Below are the set of commands to get started with the DBCli and demonstrate some of
+Cerebro's capabilities. In this tutorial, authentication is done using tokens that
+have already been created.
+
+```shell
+# Configure DBCLI as admin user, verify it can see the sample tables
+./dbcli database --cdas_rest_server <host:port of catalog admin> use cerebro_sample
+./dbcli set-token <TOKEN>
+./dbcli show configs
+./dbcli database list
+./dbcli dataset cat sample
+
+# We, by default, create a single role, the admin_role, which has system wide access. As
+# the admin, you can create and grant roles. We'll create a role, "test_role" and grant
+# that to users in the "test" group.
+./dbcli dataset hive-ddl "show tables in cerebro_sample"
+./dbcli dataset hive-ddl "show roles"
+./dbcli dataset hive-ddl "grant role test_role to group test"
+
+# Next, we will give SELECT (aka read) access to the sample table to this new role"
+./dbcli dataset hive-ddl "grant select on table cerebro_sample.sample to role test_role"
+
+# Switch to a user that only has the test role, they should now be able to read from
+# the sample table. You'll notice they don't have access to the other tables and dbs.
+<switch to user with group 'test'>
+# Run 
+./dbcli set-token <TOKEN>
+./dbcli dataset list
+./dbcli dataset cat sample
+# Trying to read from the users table will fail with an authorization error as this role
+# has only been granted one table.
+./dbcli dataset cat users
+
+# To register new databases/datasets, use the database hive-ddl command. This
+# is HiveQL compatible. For example:
+./dbcli dataset hive-ddl "create database test_db"
+./dbcli dataset hive-ddl "create external table test_db.new_table(...) LOCATION 's3://...'"
 ```
 
 ## Getting started

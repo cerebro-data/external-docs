@@ -1,3 +1,69 @@
+# 0.5.0 Release Notes (July 2017)
+
+0.5.0 is a  major release. It contains all the bug fixes from 0.4.1 and 0.4.2 and
+numerous other bug fixes.
+
+## New Features
+**JSON Web Token and SSO support**
+This release adds support for authentication with CDAS using JSON Web Tokens(JWT).
+These tokens can verified by CDAS using either public/private keys or via an
+external SSO server. This can be used in addition to or instead of kerberos
+authentication. If an external SSO server is configured, Cerebro can also be
+configured to generated SSO tokens in our webui.
+
+**Support for joins with views**
+Support has been added to create views which contain joins. Previously, views only
+support filters and projections. This enables use cases where the sensitive data
+needs to be joined against a (dynamic) whitelist. After creating the view, the
+identical grant/revoke statements can be used to control access to it. The kind
+of joins we enable is limited, see [here](TODO) for more details.
+
+**Improved support for EMR, including Hive and Presto**
+While previous versions could support EMR, we've improved the integration experience,
+providing a bootstrap action which enables deeper integration. See the
+[EMR Integration Docs](https://github.com/cerebro-data/external-docs/blob/master/EMRIntegration.md)
+docs for details.
+
+**Simplified Install Process**
+DeploymentManager config verification has been improved significantly to catch
+more configuration issues as well as report the issues more intuitively. Please
+let us know how to improve this further. We've also removed the steps to upload
+any config files to S3 manually as part of the install.
+
+## Incompatible and breaking changes
+**Planner_worker service port renamed**
+The cerebro_planner_worker service ports have been split into cerebro_planner and
+cerebro_worker. Specifically:
+  - cerebro_planner_worker:planner is now cerebro_planner:planner
+  - cerebro_planner_worker:worker is now cerebro_worker:worker
+
+This will need to be updated in the CEREBRO_PORT_CONFIGURATION value as well as the
+output of 'cerebro_cli clusters list.'
+
+**Java client token authentication change**
+Previously, Hadoop java clients (e.g. MapReduce, Spark, Pig, etc) needed to specify
+the service name if they were using token authentication. This service name had to
+match the principal of the cerebro cluster. For example, if the Cerebro cluster had
+the kerberos principal 'cdas/service@REALM', the service name had to be 'cdas'. This
+value could change from CDAS cluster to CDAS cluster which can be difficult.
+
+In 0.5.0, we've update it so this value should always be 'cerebro' and we recommend
+that clients not set it at all (it is the default in the updated client jars). Clients
+that were setting it will see connection failures.
+
+For example, in spark, applications should remove specifying:
+'spark.recordservice.delegation-token.service-name'.
+
+# 0.4.2 Release Notes (July-2017)
+
+0.4.2 contains a critical bug fix for users running a newer kernel with the Stack Guard.
+protection. This will result in the CDAS services (planner and worker) crashing on start.
+
+Kernels with this version are known to be affected: kernel-3.10.0-514.21.2.el7.x86_64
+We recommend all 0.4.x users upgrade.
+
+For more information, see [this](https://access.redhat.com/solutions/3091371)
+
 # 0.4.5 Release Notes
 
 ## June-2017
