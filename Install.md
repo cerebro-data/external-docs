@@ -163,7 +163,7 @@ CDAS clusters will, by default, start up with one user which has admin on the sy
 admin users can create and manage roles, grant roles to other users and read all datasets.
 This default admin user depends on which authentication mechanism was chosen:
   - Kerberos: The admin user is the first part of the kerberos principal
-  - JWT: The admin user is the subject in the CEREBRO_SYSTEM_TOKEN_FILE
+  - JWT: The admin user is the subject in the CEREBRO_SYSTEM_TOKEN
   - Unauthenciated: The admin user is 'root'.
 To specify other admin users, specify the comma-separated list of admins and/or groups.
 ```shell

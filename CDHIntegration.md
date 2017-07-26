@@ -103,6 +103,9 @@ sentry-site.xml
 
 This will require restarting Impala.
 
+**NOTE**: For Impala integration, the Impala principal's primary (typically
+'impala') must also be in the list of Cerebro catalog admins (env: CEREBRO_CATALOG_ADMINS).
+
 ## RecordService Configs
 RecordService configs can be set in either mapred-site.xml or yarn-site.xml depending
 on which one you are using. The configuration is:
@@ -131,7 +134,7 @@ To use these jars from maven, you can configure the pom to use our repo and vers
 This can be added to the pom.
 ```
   <properties>
-    <recordservice.version>1.0.0-beta-1</recordservice.version>
+    <recordservice.version>1.0.0-beta-6</recordservice.version>
   </properties>
 
   <!-- For MapReduce -->
@@ -183,39 +186,3 @@ s3://cerebrodata-release-useast/<version>/client
 # For example:
 s3://cerebrodata-release-useast/0.5.0/client
 ```
-
-## Configuring CDAS
-CDAS supports Hadoop configurations. The configs can be uploaded to the Cerebro S3 bucket
-and will be picked up by the services on restart. The configs should have the same names
-as their equivalent Hadoop equivalents (e.g. core-site.xml, hive-site.xml,
-sentry-site.xml).
-
-The configs should just contain the individual properties in xml format. Refer to the
-examples below. Multiple configs can be put by having multiple property tags.
-
-### Configuring Sentry admins example
-Create the file sentry-site.xml and populate it with:
-```xml
-<property>
-  <name>sentry.service.admin.group</name>
-  <value>COMMA SEPARATED LIST OF USERS/GROUPS</value>
-</property>
-```
-For example:
-```xml
-<property>
-  <name>sentry.service.admin.group</name>
-  <value>cerebro,impala,hive,admin</value>
-</property>
-```
-
-**NOTE**: For Impala integration, the Impala principal's primary (typically
-'impala') must also be in the list of admins.
-
-Save and upload this file to Cerebro's install bucket, under the /etc/ directory.
-
-For example:
-```shell
-$ aws s3 cp ./sentry-site.xml s3://<CEREBRO_BUCKET>/etc/
-```
-

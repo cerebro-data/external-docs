@@ -27,6 +27,17 @@ The specific limitations are:
 
 Subquery rewrites are supported but must be executable subject to the same constraints.
 
-TODO: add the config flags to set to control this
+## Configurations
+Configurations can be specified at cluster creation time via the CLI.
 
+By default, joins are enabled with a maximum memory of 128MB per join.
 
+**Disabling entirely**
+```
+cerebro_cli clusters create --plannerConfigs "enable_joins=false" ...
+```
+
+**Controlling the maximum memory allowed per join**
+```
+cerebro_cli clusters create --workerConfigs "join_max_mem=<value in bytes>" ...
+```

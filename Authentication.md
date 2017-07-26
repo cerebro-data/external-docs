@@ -128,6 +128,7 @@ To use the token, append '?user=<token>' to the request URL. For example, to sca
 ```shell
 $ curl <CDAS_REST_HOST:PORT>/api/scan/<dataset>?user=<token>
 ```
+
 Similarly, to get the databases:
 ```shell
 $ curl <CDAS_REST_HOST:PORT>/api/databases?user=<token>
@@ -168,3 +169,10 @@ The configuration for the external token-granting endpoint is SSO_URL.
 example:
 export JWT_AUTHENTICATION_SERVER_URL=http://10.1.11.153:8900/idp/userinfo.openid
 export SSO_URL=http://10.1.11.153:8900/as/token.oauth2
+
+## Using a JWT with curl
+To list the databases via curl, the JWT can be passed in the authorization header.
+
+```shell
+$ curl <CDAS_REST_HOST:PORT>/api/databases -H 'authorization: Bearer <token>'
+```

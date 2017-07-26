@@ -58,6 +58,16 @@ cerebro_cli clusters upgrade --components=cdas:0.4.0,catalog-ui:0.4.5 2
 cerebro_cli clusters upgrade --version=0.4.5 3 
 ```
 
+### Upgrading new clusters to a new version of CDAS
+To configure the DeploymentManager so that new clusters use upgraded version of CDAS components, use
+'cerebro_cli clusters set_default_version'.
+
+Example: If your current version is 0.5.0, and would like to upgrade any new cluster to be
+running version 0.5.0 of the product, but with the planner and workers updated to 0.5.1
+```shell
+cerebro_cli clusters set_default_version --version=0.5.0 --components=cdas:0.5.1
+```
+Note that --components option is required. It may be specified as an empty string("").
 
 Available in: 0.4.0+.
 

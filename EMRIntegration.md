@@ -20,15 +20,16 @@ installed. The bootstrap script is located at:
 ```
 s3://cerebrodata-release-useast/utils/emr/cdas-emr-bootstrap.sh
 # Usage:
-# cdas-emr-bootstrap.sh <cdas version> [options] <list of components>
+cdas-emr-bootstrap.sh <cdas version> [options] <list of components>
+
+# Options:
+# --planner-hostports <HOSTPORT> link to the cerebro_planner:planner endpoint
+# --token <TOKEN> the token that identifies the user
 ```
 
 For example, to bootstrap a spark-2.x cluster from the 0.5.0 client release, provide
-the arguments "0.5.0 spark-2.x". If running EMR with spark-2 and pig, you can provide
-for example:
-```
-0.5.0 spark-2.x pig
-```
+the arguments `0.5.0 spark-2.x`. If running EMR with spark-2 and hive, provide
+`0.5.0 spark-2.x hive`.
 
 The complete list of supported components are:
   - spark-1.x
@@ -41,77 +42,168 @@ These include:
   - Zeppelin
   - Ganglia
   - ZooKeeper
+  - Hue
 
 ## End to End example
-As an end to end example of starting up an EMR-5.6.0 cluster running just spark 2.x
-configured to run against CDAS planner running at 10.1.10.251:12050, you would need
-to do:
+As an end to end example, we will start up a multi-tenant EMR-5.7.0 cluster running spark
+2.x, hive, and presto configured to run against CDAS planner running at 10.1.10.104:12050.
 
-Pick Spark and specify the Spark specific configs (more details below):
-![EMR Config](https://s3.amazonaws.com/cerebro-data-docs/images/EMRConfig.png)
+  - Pick Spark, Hive, and Presto from the list of EMR components and set the Spark and
+    Hive specific configs (more details below).
+    Optionally pick Hue and Zeppelin as components that do not require CDAS related steps:
+    ![EMR Config](https://s3.amazonaws.com/cerebro-data-docs/images/EMRConfig2.png)
 
-Use our provided bootstrap script and specify spark-2
-![EMR Bootstrap](https://s3.amazonaws.com/cerebro-data-docs/images/EMRBootstrap.png)
+  - Use our bootstrap script and do the following:
+    - Specify the `--planner-hostports` option. Since this is multi-tenant, we will not
+      be providing an access token to the bootstrap script. All options need to be
+      specified before the list of components.
+    - Add the list of supported components to the bootstrap script.
+      Since we're starting with Hive, Presto and Spark, specify `hive`, `presto`,
+      and `spark-2.x`:
+    ![EMR Bootstrap](https://s3.amazonaws.com/cerebro-data-docs/images/EMRBootstrap2.png)
 
-Once the cluster is up, the user can for example, use the spark shell with:
-```
-$ spark-shell
-scala> import com.cloudera.recordservice.spark._
-scala> val context = new org.apache.spark.sql.SQLContext(sc)
+Create the EMR cluster and wait for it to be ready at which point the Cerebro components
+will already have been installed and configured.
 
-# If authentication is enabled, specify your credentials. You can also put this in
-# spark-defaults if the cluster is not multi-tenant.
-scala> context.setConf("spark.recordservice.delegation-token.token", <USER's TOKEN>)
+Since this is a multi-tenant cluster, care needs to be taken to manage users that have
+access to this cluster. Each user can authenticate to Cerebro with their own token with
+access control handled by Cerebro. In the example below, we will assume we are the default
+`hadoop` user. Note that this does not need to be the same as the subject in the user's
+access token; when we authenticate the user, we use what is specified in the token.
 
-# For CDAS versions <= 0.4.5, you will aso need to specify the service name. This is
-# the first part of the cerebro service principal. For example, if the principal is
-# cerebro/hostname@REALM, this would be 'cerebro'.
-scala> context.setConf("spark.recordservice.delegation-token.service-name", <PLANNER's SERVICE NAME")
+  - Store the access token in the user's home directory at the path `~/.cerebro/token`.
+    This file should contain a single line that contains the user's token.
+    ```shell
+    $ mkdir -p ~/.cerebro/
+    # Assuming the user's token is "longstringtoken"
+    $ echo "longstringtoken" >> ~/.cerebro/token
+    ```
 
-# Load a cerebro table and you're good to go.
-scala> val df = context.load(DB.TABLE, "com.cloudera.recordservice.spark")
-scala> df.show()
-```
-
-The complete commandline to start up a spark cluster like this would be:
-```
-aws emr create-cluster --auto-scaling-role EMR_AutoScaling_DefaultRole --applications Name=Spark --bootstrap-actions '[{"Path":"s3://cerebrodata-release-useast/utils/emr/cdas-emr-bootstrap.sh","Args":["0.5.0","spark-2.x"],"Name":"Custom action"}]' --ec2-attributes '{"KeyName":"ssh-key","InstanceProfile":"EMR_EC2_DefaultRole","SubnetId":"subnet-c4de3fa3","EmrManagedSlaveSecurityGroup":"sg-bf88dbd9","EmrManagedMasterSecurityGroup":"sg-b188dbd7"}' --service-role EMR_DefaultRole --release-label emr-5.6.0 --name 'Spark Cluster' --instance-groups '[{"InstanceCount":1,"InstanceGroupType":"CORE","InstanceType":"m3.xlarge","Name":"Core - 2"},{"InstanceCount":1,"InstanceGroupType":"MASTER","InstanceType":"m3.xlarge","Name":"Master - 1"}]' --configurations '[{"Classification":"spark-defaults","Properties":{"spark.recordservice.planner.hostports":"10.1.10.251:12050"},"Configurations":[]}]' --scale-down-behavior TERMINATE_AT_INSTANCE_HOUR --region us-west-2
-```
+  At this point, the user can use the EMR components to access data managed by Cerebro:
+  - An example use of `presto-cli` is as follows:
+    ```shell
+    presto> show catalogs;
+    # This should return 'recordservice' among others.
+    presto> SHOW TABLES in recordservice.cerebro_sample;
+    presto> select * from recordservice.cerebro_sample.sample;
+    ```
+  - An example use of `hive` is as follows:
+    ```shell
+    $ hive
+    hive> show databases;
+    hive> select * from cerebro_sample.sample;
+    ```
+  - An example use of `beeline` is as follows:
+    ```shell
+    $ beeline -u jdbc:hive2://localhost:10000/default -n hadoop
+    beeline> show tables in cerebro_sample;
+    beeline> select * from cerebro_sample.users limit 100;
+    ```
+  - An example use of `spark-shell` is as follows:
+    ```shell
+    $ spark-shell
+    scala> spark.conf.set("spark.recordservice.delegation-token.token", "<USER TOKEN>")
+    scala> val df = spark.sql.SQLContext.load("cerebro_sample.sample", "com.cloudera.recordservice.spark")
+    scala> df.show()
+      ```
+## Storing Tokens on Multi Tenant clusters
+For multi-tenant EMR clusters, make sure that the token is stored at `~/.cerebro/token`.
+Follow the steps below:
+  - Get a token.
+  - SSH into your EMR cluster
+  - Run the following command
+  ```shell
+  $ mkdir -p ~/.cerebro/
+  $ echo "<USER TOKEN>" >> ~/.cerebro/token
+  ```
 
 ## Per component configs
-In the section below, we will detail the configurations required to configure
-each supported EMR component.
+In the section below, we will detail the configurations required to configure each
+supported EMR component.
+
+With all components, we requires specifying the planner hostport and can optionally
+take the access token. For single-tenant clusters, specifying the token removes the
+need to specify it after the cluster is up. It should not be used in a multi-tenant
+cluster.
 
 ### Spark
-Spark requires a single config which specifies the endpoint(s) for the CDAS planner.
-For example, if the planner endpoint is running at "10.1.10.251:12050", then the
-required configuration is:
-
+#### Setting up spark
+Multi-tenant cluster:
 ```
 [
   {
     "Classification":"spark-defaults",
     "Properties": {
-       "spark.recordservice.planner.hostports":"10.1.10.251:12050"
+       "spark.recordservice.planner.hostports":"10.1.10.104:12050"
      }
   }
 ]
 ```
 
-### Hive Single Tenant
-In this case, we are launching a cluster with hive with all access using a single token.
-Hive requires specifying 'hive' as a component to the CDAS bootstrap action script. In
-addition, the configuration should include the planner host port as well as the cluster's
-token.
-
+Single-tenant cluster:
 ```
-# Example connecting to planner at 10.1.10.251:12050
+[
+  {
+    "Classification":"spark-defaults",
+    "Properties": {
+       "spark.recordservice.planner.hostports":"10.1.10.104:12050"
+     }
+  },
+  {
+    "Classification":"spark-defaults",
+    "Properties": {
+       "spark.recordservice.delegation-token.token":"<TOKEN>"
+     }
+  }
+]
+```
+
+#### Using Spark
+Once the cluster is set-up, the user can interact with the spark-shell as follows:
+```shell
+$ spark-shell
+# Specify the user's token if this was not specified above.
+scala> spark.conf.set("spark.recordservice.delegation-token.token", "<USER TOKEN>")
+
+# For CDAS versions <= 0.4.5, you will aso need to specify the service name. This is
+# the first part of the cerebro service principal. For example, if the principal is
+# cerebro/hostname@REALM, this would be 'cerebro'.
+# This can also be specified as part of the bootstrap configuration.
+scala> spark.conf.set("spark.recordservice.delegation-token.service-name", "<PLANNER SERVICE NAME>")
+
+# Load a cerebro table and you're good to go.
+scala> val df = spark.sql.SQLContext.load("<DB.TABLE>", "com.cloudera.recordservice.spark")
+scala> df.show()
+```
+
+### Hive
+#### Setting up Hive
+In addition to the common flags, hive requires another configuration
+'hive.metastore.rawstoreimpl' to integrate with the Cerebro catalog.
+
+Multi-tenant cluster:
+```
+# Example connecting to planner at 10.1.10.104:12050
 [
   {
     "classification":"hive-site",
     "properties":{
       "hive.metastore.rawstore.impl":"com.cerebro.hive.metastore.CerebroObjectStore",
-      "recordservice.planner.hostports":"10.1.10.251:12050"
+      "recordservice.planner.hostports":"10.1.10.104:12050"
+    }
+  }
+]
+```
+
+Single-tenant cluster:
+```
+# Example connecting to planner at 10.1.10.104:12050
+[
+  {
+    "classification":"hive-site",
+    "properties":{
+      "hive.metastore.rawstore.impl":"com.cerebro.hive.metastore.CerebroObjectStore",
+      "recordservice.planner.hostports":"10.1.10.104:12050"
     }
   },
   {
@@ -123,70 +215,49 @@ token.
 ]
 ```
 
-When the EMR cluster is launched, the user can interact hive as typical, for example:
+#### Using Hive
+Users can use hive very similar to before, by using hive
 ```shell
-> hive
+$ hive
 hive> show databases;
 hive> select * from cerebro_sample.sample;
 ```
 
-Or connecting via beeline:
+or beeline. Note that users must specify their local linux user (i.e. hadoop) at
+connection time:
 ```shell
-> beeline -u jdbc:hive2://localhost:10000/default
+> beeline -u jdbc:hive2://localhost:10000/default -n hadoop
 beeline> show tables in cerebro_sample;
-beeline> select * from cerebro-sample.users limit 100;
-```
-
-### Hive Multi-Tenant
-To start up a hive cluster with multiple users, each specifying their own access token,
-specify 'hive' as a bootstrap component to the CDAS bootstrap script and specify these
-configs.
-
-```
-# Example connecting to planner at 10.1.10.251:12050
-[
-  {
-    "classification":"hive-site",
-    "properties":{
-      "hive.metastore.rawstore.impl":"com.cerebro.hive.metastore.CerebroObjectStore",
-      "recordservice.planner.hostports":"10.1.10.251:12050"
-    }
-  },
-  {
-    "classification":"hdfs-site",
-    "properties":{
-      "dfs.namenode.fs-limits.max-component-length":2048
-    }
-  }
-]
-```
-
-After the cluster is launched, users can *only* connect with beeline and must specify
-their token at connection time.
-
-```shell
-> beeline -u jdbc:hive2://localhost:10000/default -n <TOKEN>
-beeline> show tables in cerebro_sample;
-beeline> select * from cerebro-sample.users limit 100;
+beeline> select * from cerebro_sample.users limit 100;
 ```
 
 ### Presto
-Presto requires configurations to be passed as arguments to the bootstrap script. This
-is instead of providing them as configurations. The bootstrap action requires the planner
-host port to be specified. For single tenant clusters, we also recommend specifying the
-user's access token.
+#### Setting up Presto
+Presto requires configurations to be passed as arguments to the bootstrap script instead
+of providing them as configurations but otherwise requires similar configs as the
+other components. Note that the options must come *before* the list of components.
+
+Multi-tenant:
 ```
 --planner-hostports <PLANNER ENDPOINT>
-# For example, if the planner is running on "10.1.10.251:12050", then, the bootstrap
+# For example, if the planner is running on "10.1.10.104:12050", then, the bootstrap
 # arguments would be:
-cdas-emr-bootstrap.sh 0.5.0 --planner-hostports 10.1.10.251:12050 --token <TOKEN> presto
+cdas-emr-bootstrap.sh 0.5.0 --planner-hostports 10.1.10.104:12050 presto
 ```
 
-Once the cluster is up, the user can ssh onto the master and use presto-cli. If the user's
-token was not specified at boostrap time, it can instead be specified as the 'user' option
-when starting up the CLI.
+Single-tenant:
 ```
-$ presto-cli [--user <TOKEN>]
+--planner-hostports <PLANNER ENDPOINT> --token <TOKEN>
+# For example, if the planner is running on "10.1.10.104:12050", then, the bootstrap
+# arguments would be:
+cdas-emr-bootstrap.sh 0.5.0 --planner-hostports 10.1.10.104:12050 --token <TOKEN> presto
+```
+
+#### Using Presto
+Once the EMR cluster is launched and token has been stored if necessary, the user can
+interact with `presto-cli` as they typically do.
+```
+$ presto-cli
 presto> show catalogs;
 # This should return 'recordservice' among others.
 
@@ -197,7 +268,8 @@ presto> select * from recordservice.cerebro_sample.sample;
 
 ## Logging
 On the EMR machines, the bootstrapping logs will be located in /var/log/bootstrap-actions/.
-This can be helpful if the cluster is not starting up.
+This can be helpful if the cluster is not starting up and could indicate a
+misconfiguration of the bootstrap action.
 
 ## Configs
 Configs are generally written to /etc/[component]. These should replicate the
