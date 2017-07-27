@@ -107,15 +107,32 @@ access token; when we authenticate the user, we use what is specified in the tok
     scala> df.show()
       ```
 ## Storing Tokens on Multi Tenant clusters
-For multi-tenant EMR clusters, make sure that the token is stored at `~/.cerebro/token`.
-Follow the steps below:
-  - Get a token.
-  - SSH into your EMR cluster
-  - Run the following command
-  ```shell
-  $ mkdir -p ~/.cerebro/
-  $ echo "<USER TOKEN>" >> ~/.cerebro/token
-  ```
+Cerebro supports multi-tenant EMR clusters as each Cerebro request includes the token
+of the caller. Different users on the same EMR cluster using different tokens will
+be authorized by Cerebro's access controls and potentially see different data.
+
+However, it is the responsibility of the EMR cluster to ensure that it is not easy
+for users on the same cluster to access, either by accident or intentionally, other
+users tokens (or data). The token is never logged in its entirety by Cerebro but the user
+needs to ensure that the token is not accidentally exposed through the OS. For a secure
+multi-tenant cluster, we recommend that users logging in do not log in as the same
+user e.g. `hadoop` and that the users logging in does not have root permissions. Otherwise,
+the local cluster OS is not secure. Similarly, this will also ensure that users cannot
+look at other user's intermediate files in HDFS.
+
+We recommend that each user on the cluster persist their token under their home directory
+and ensure the directory is not world readable. For example:
+```shell
+$ mkdir -p ~/.cerebro/
+$ echo "<USER TOKEN>" >> ~/.cerebro/token
+```
+
+Note that the EMR user does not need to match the token's subject. Cerebro authenticates
+the user using the token only.
+
+The cluster can also be locked down in other ways, for example, not letting users SSH
+or submitting jobs from a higher level application. Please reach out to the Cerebro
+team to discuss best practices.
 
 ## Per component configs
 In the section below, we will detail the configurations required to configure each
@@ -229,6 +246,44 @@ connection time:
 > beeline -u jdbc:hive2://localhost:10000/default -n hadoop
 beeline> show tables in cerebro_sample;
 beeline> select * from cerebro_sample.users limit 100;
+```
+
+#### Cluster local DBs
+With the default install, the Hive Metastore (HMS) running on the cluster populates
+all of its contents from the Cerebro catalog. There may be cases where it is useful
+to use HMS to register cluster local (tmp) tables, for example for intermediate results.
+This can be done by configuring (either during bootstrap or updating hive-site.xml and
+restarting HMS) the set of databases that should be only local. For example, it can be
+configured that any hive operation to the database `localdb` is cluster local. This
+includes tables, views, etc. This database is never reflected in the Cerebro and access
+to data or metadata in these databases do not use Cerebro in any way.
+
+Spark, by default, uses the `global_temp` exactly this way. If Spark is included in the
+EMR cluster, this database will automatically be setup to be cluster local.
+
+In the case where the local database has the same name as a Cerebro database, the local
+database takes precendence and the user will not be able see the contents in that Cerebro
+database from Hive.
+
+The configuration in hive-site.xml is:
+```
+<property>
+  <name>cerebro.local.dbs</name>
+  <value>localdb,testdb</value>
+  <description>
+    Comma-separate list of local database names. These don't need to already exist.
+  </description>
+</property>
+```
+
+The equivalent as a bootstrap action is:
+```
+{
+  classification":"hive-site",
+    "properties":{
+      "cerebro.local.dbs":"localdb,testdb"
+    }
+}
 ```
 
 ### Presto
