@@ -189,7 +189,7 @@ scala> spark.conf.set("spark.recordservice.delegation-token.token", "<USER TOKEN
 scala> spark.conf.set("spark.recordservice.delegation-token.service-name", "<PLANNER SERVICE NAME>")
 
 # Load a cerebro table and you're good to go.
-scala> val df = spark.sql.SQLContext.load("<DB.TABLE>", "com.cloudera.recordservice.spark")
+scala> val df = spark.sqlContext.load("<DB.TABLE>", "com.cloudera.recordservice.spark")
 scala> df.show()
 ```
 
