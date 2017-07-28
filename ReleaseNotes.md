@@ -74,9 +74,9 @@ CEREBRO_SYSTEM_TOKEN. Users upgrading from 0.4.5 will need to update this config
 ## Known issues
 **Unable to see databases if user has only been granted columns to objects in database**
 
-If a user has been granted granted only partial access to all objects (table or views)
+If a user has been granted only partial access to all objects (table or views)
 in a database, they are not able to see the database or any of the contents in it. Users
-are only able to properly see the objects if they've been granted at full access to at
+are only able to properly see the objects if they've been granted full access to at
 least one table or view in that database (at which point the access controls work as
 expected).
 
@@ -187,18 +187,21 @@ Once set, restart your DeploymentManager.
 ## May-2017
 
 ### New Features
-**Cluster Administration**  
+**Cluster Administration**
+
 Cluster administration has been significantly enhanced to protect your cluster from
 accidental termination, scaling an existing cluster, and upgrading to newer versions
 of CDAS components.  
 See [Cluster Administration](https://github.com/cerebro-data/external-docs/blob/master/ClusterAdmin.md)
 for further details.
 
-**SQL Statement Processing**  
+**SQL Statement Processing**
+
 The Record Service daemon and catalog-admin rest endpoint scan and scanpage APIs now
 process SQL statements through a POST interface.
 
-**Database Command Line Interface (CLI)**  
+**Database Command Line Interface (CLI)**
+
 End-user database and dataset functionality is made available through a command line (CLI)
 tool, dbcli.  The tool enables users to acquire tokens, list databases, list datasets in
 a database, show the schema for a dataset (describe), view a sample of data, create tables
@@ -207,7 +210,8 @@ and grant permissions through Hive DDL.
 See [Database CLI](https://github.com/cerebro-data/external-docs/blob/master/DbCLI.md)
 for details.
 
-**Basic Authentication using LDAP**  
+**Basic Authentication using LDAP**
+
 With this release, Basic authentication using LDAP is introduced, which should
 allow Cerebro users to authenticate using their Active Directory credentials.
 
@@ -218,7 +222,8 @@ username and password.
 See the [LDAP Basic Auth Document](https://github.com/cerebro-data/external-docs/blob/master/LdapAuthentication.md) for details.
 
 ### Changes
-**cerebro_cli utility**  
+**cerebro_cli utility**
+
 The following subcommands were added:
 * `cerebro_cli agents state`
     * lists the state of all agents, grouped by cluster
@@ -234,31 +239,36 @@ The following subcommands were added:
       component settings. The --version argument must be a valid version,
       --components is also required but can be an empty string.
 
-**AWS Region Configuration**  
+**AWS Region Configuration**
+
 Deployment Manager will now detect the AWS region that it is running in if one is not
 configured via the AWS_DEFAULT_REGION value. The result is cached, requiring a
 Deployment Manager restart (following a change in your configuration) if you want to
 manage a cluster in another AWS region.
 
-**Kerberos**  
+**Kerberos**
+
 DeploymentManager allows a kerberos principal for the REST API to be explicitly specified.
 Previously this was assumed to be derived from the service principal
 (i.e. HTTP/<service_host>).
 See [Kerberos](https://github.com/cerebro-data/external-docs/blob/master/KerberosClusterSetup.md)
 docs for more details.
 
-**Deployment Manager**  
+**Deployment Manager**
+
 The S3_STAGING_DIR environment variable is now validated during Deployment Manager
 startup.
 Improved reporting of issues that arise during agent startup.
 Configured service port uniqueness is now enforced during Deployment Manager startup.
 
-**Using Encrypted S3 buckets**  
+**Using Encrypted S3 buckets**
+
 Writes to S3 buckets now set the server-side encryption flag on the S3 write or copy
 request if the S3_STAGING_ENCRYPTION configuration is set to true.
 
 ### Incompatible and Breaking Changes
-**Change to CEREBRO_KERBEROS_KEYTAB_FILE config**  
+**Change to CEREBRO_KERBEROS_KEYTAB_FILE config**
+
 Previously, this config used to be the basename of the keytab file and the user was
 required to upload the file to Cerebro's S3 staging directory. In this release, this
 config has been updated to be the full path to the keytab. The path can be on the
@@ -274,7 +284,8 @@ export CEREBRO_KERBEROS_KEYTAB_FILE=cerebro.keytab
 export CEREBRO_KERBEROS_KEYTAB_FILE=/path/on/deployment-manager/cerebro.keytab
 ```
 
-**Rename database to db**  
+**Rename database to db**
+
 Some REST APIs used the field name 'database' and others used the field name 'db'.
 All APIs were changed to consistently use the term 'db'  This impacts the following APIs:
 
@@ -285,12 +296,14 @@ For detail see: [Catalog REST API](https://github.com/cerebro-data/external-docs
 
 ### Known issues
 **Errors during Deployment Manager configuration file writes prevent restart**
+
 If the configuration file for Deployment Manager is not correctly written to RDS (due to
 an issue occurring during the write), then the Deployment Manager  will not be able to
 start again. The workaround is to manually update (correct) the underlying configuration
 file.
 
-**Unable to delete a launching cluster**  
+**Unable to delete a launching cluster**
+
 In some cases, it is not possible to immediately terminate a cluster that is launching
 and the delete will only go into effect after it is done launching. To get the cluster
 to delete immediately, manually terminating/shutting down the launching machines will
@@ -303,77 +316,94 @@ This is the feature complete release candidate of CDAS.
 
 ### New Features
 **Tableau Cerebro Catalog Integration**
+
 You can access data stored in Cerebro using Tableau.
 See [Tableau WDC](https://github.com/cerebro-data/external-docs/blob/master/TableauWDC.md) for details.
 
 **Catalog UI**
+
 Beta release of the catalog webui. You can see the datasets that are in the system and
 how to read them from a variety of integration points. Just navigate to the
 cerebro_catalog_ui:webui end point and log in with your user token.
 
-**Catalog REST API Integration**  
+**Catalog REST API Integration**
+
 Changes were made to the Catalog REST API.  See [Catalog API](https://github.com/cerebro-data/external-docs/blob/master/CatalogApi.md) and the [tutorial](https://github.com/cerebro-data/external-docs/blob/master/CatalogApiTutorial.md) for further details.
 
-**Installation Process**  
+**Installation Process**
+
 The installation process has been enhanced by providing customizable templates for
 launching EC2 instances and initializing cluster nodes.  See:
 [Installation Guide](https://github.com/cerebro-data/external-docs/blob/master/Install.md), "Starting up a CDAS cluster" for details.
 
 **Authentication**
-With this release, all Cerebro services can run with authentication enabled end-to-end. See:
-[Authentication](https://github.com/cerebro-data/external-docs/blob/master/Authentication.md)
-for further details. This includes non-kerberized clients (for example the catalog webui) using
-tokens.  
+
+With this release, all Cerebro services can run with authentication enabled end-to-end.
+See: [Authentication](https://github.com/cerebro-data/external-docs/blob/master/Authentication.md)
+for further details. This includes non-kerberized clients (for example the catalog webui)
+using tokens.
+
 For information on setting up a Kerberized cluster, see: [Kerberized Cluster Setup](https://github.com/cerebro-data/external-docs/blob/master/KerberosClusterSetup.md)
 
 ### Changes
-**Admin Dashboard**  
+**Admin Dashboard**
+
 The Kubernetes admin dashboard has been upgraded to version 1.5.1 from version 1.4.2.
 See [Kubernetes Quickstart](https://github.com/cerebro-data/external-docs/blob/master/KubernetesDashboardQuickStart.md)
 for details.
 
-**Kubernetes**  
+**Kubernetes**
+
 Kubernetes has been upgraded to version 1.5.3 from version 1.4.2.
 
 ### Incompatible and Breaking Changes
-Renamed *cerebro\_catalog\_ui* to *cdas\_rest\_server*.  This is a port configuration change and will
-require users to update their env file. Note that this point will also need to be exposed.
+Renamed *cerebro\_catalog\_ui* to *cdas\_rest\_server*.  This is a port configuration
+change and will require users to update their env file. Note that this point will also
+need to be exposed.
 
-Installation instructions moved components from /var/run/cerebro to /etc/cerebro. Prior versions of
-the install script recommended you place various files (on the DeploymentManager machine) in /var/run/cerebro.
-If you have built scripts and automation following those steps, those should be adapted to use /etc/cerebro
-instead.
+Installation instructions moved components from /var/run/cerebro to /etc/cerebro. Prior
+versions of the install script recommended you place various files (on the
+DeploymentManager machine) in /var/run/cerebro.
+If you have built scripts and automation following those steps, those should be adapted
+to use /etc/cerebro instead.
 
 ### Known issues
-Catalog UI sometimes does not refresh databases correctly. Refresh from the browser as a workaround.
+Catalog UI sometimes does not refresh databases correctly. Refresh from the browser as a
+workaround.
 
 # 0.2.0 Release Notes
 
 ## 02-03-2017
-0.2.0 Cerebro CDAS release makes significant improvements on usability, security and reliability.
+0.2.0 Cerebro CDAS release makes significant improvements on usability, security and
+reliability.
 
 ### New Features
-**Installation**  
+**Installation**
+
 Install process has been further simplified with fewer steps and faster deployment.
 Configuration steps include examples. See `Install.md`
 Logging improvements assist in faster problem determination, if any.
 
-**Server**  
+**Server**
+
 Deployment Manager(DM) server has evolved to an agent architecture. Each of the cluster
 nodes will now run a DM agent to deploy and launch Kubernetes services.
 
 See `Install.md` for details.
 
-**Security**  
+**Security**
+
 With this release, REST api to deployment manager can be secured using Kerberos.
 Along with Kerberos authentication, authorization may be configured for admin access to deployment manager.
 See `Security.md` for additional details.
 
-**Admin Dashboard**  
+**Admin Dashboard**
+
 You may now use the Kubernetes admin dashboard for managing the Cerebro cluster.
 See `KubernetesDashboardQuickStart.md` for details.
 
-**CLI interface**  
+**CLI interface**
+
 cerebro_cli has new commands to interact with the DM REST API and the agents.
 See `CerebroCLI.md` for details. `Install.md` has a few examples.
 Run `cerebro_cli help` to see the much improved command line options.
@@ -382,19 +412,19 @@ Run `cerebro_cli help` to see the much improved command line options.
 No known incompatibilities exist.
 
 ### Known issues
-**Cluster create fails occasionally**  
-This manifests with an error message like:  
-Unreachable external machine: 10.1.10.101:8085.  
+**Cluster create fails occasionally**
+
+This manifests with an error message like:
+Unreachable external machine: 10.1.10.101:8085.
 Expecting Cerebro agent to be running at: 10.1.10.101:8085.
 
 The workaround is to rerun the command few seconds later.
 
-**Duplicate IP address in cluster machine list will cause launch failures**  
+**Duplicate IP address in cluster machine list will cause launch failures**
 If an IP address appears more than once in the machines list, the install process
 will fail.
 
 The workaround is to ensure that there are no dups.
-
 
 # Release Notes
 
@@ -404,12 +434,14 @@ changes are not backwards compatible.
 
 ### New Features
 **CLI interface for catalog**
+
 The REST API was intended for programmatic access. While it is possible to use it
 interactively (using curl), it is not very user friendly. We have added a CLI that
 sits on top of the REST API. It provides identical capabilities to going against the
 REST API directly.
 
 **Permissions API**
+
 We added a permissions API to both the REST API and CLI which can be useful to examine
 the aggregate result of the policies that have been set. It is useful to answer
 questions such as:
@@ -418,6 +450,7 @@ questions such as:
 
 ### Incompatible Changes
 **Policy API has changed**.
+
 The endpoints are different (/api/grant-policy, /api/revoke-policy). The arguments are
 largely the same. It is no longer necessary to delete policies and not possible to view
 them.

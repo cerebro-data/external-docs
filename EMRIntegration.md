@@ -103,7 +103,7 @@ access token; when we authenticate the user, we use what is specified in the tok
     ```shell
     $ spark-shell
     scala> spark.conf.set("spark.recordservice.delegation-token.token", "<USER TOKEN>")
-    scala> val df = spark.sql.SQLContext.load("cerebro_sample.sample", "com.cloudera.recordservice.spark")
+    scala> val df = spark.sqlContext.load("cerebro_sample.sample", "com.cloudera.recordservice.spark")
     scala> df.show()
       ```
 ## Storing Tokens on Multi Tenant clusters
