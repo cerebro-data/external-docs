@@ -27,9 +27,9 @@ cdas-emr-bootstrap.sh <cdas version> [options] <list of components>
 # --token <TOKEN> the token that identifies the user
 ```
 
-For example, to bootstrap a spark-2.x cluster from the 0.5.0 client release, provide
-the arguments `0.5.0 spark-2.x`. If running EMR with spark-2 and hive, provide
-`0.5.0 spark-2.x hive`.
+For example, to bootstrap a spark-2.x cluster from the 0.5.1 client release, provide
+the arguments `0.5.1 spark-2.x`. If running EMR with spark-2 and hive, provide
+`0.5.1 spark-2.x hive`.
 
 The complete list of supported components are:
   - spark-1.x
@@ -51,7 +51,7 @@ As an end to end example, we will start up a multi-tenant EMR-5.7.0 cluster runn
   - Pick Spark, Hive, and Presto from the list of EMR components and set the Spark and
     Hive specific configs (more details below).
     Optionally pick Hue and Zeppelin as components that do not require CDAS related steps:
-    ![EMR Config](https://s3.amazonaws.com/cerebro-data-docs/images/EMRConfig2.png)
+    ![EMR Config](https://s3.amazonaws.com/cerebro-data-docs/images/EMRConfig3.png)
 
   - Use our bootstrap script and do the following:
     - Specify the `--planner-hostports` option. Since this is multi-tenant, we will not
@@ -153,6 +153,12 @@ Multi-tenant cluster:
     "Properties": {
        "spark.recordservice.planner.hostports":"10.1.10.104:12050"
      }
+  },
+  {
+    "classification":"spark-hive-site",
+    "properties":{
+      "recordservice.planner.hostports":"10.1.10.104:12050"
+    }
   }
 ]
 ```
@@ -163,14 +169,15 @@ Single-tenant cluster:
   {
     "Classification":"spark-defaults",
     "Properties": {
-       "spark.recordservice.planner.hostports":"10.1.10.104:12050"
+       "spark.recordservice.planner.hostports":"10.1.10.104:12050",
+       "spark.recordservice.delegation-token.token":"<TOKEN>"
      }
   },
   {
-    "Classification":"spark-defaults",
-    "Properties": {
-       "spark.recordservice.delegation-token.token":"<TOKEN>"
-     }
+    "classification":"spark-hive-site",
+    "properties":{
+      "recordservice.planner.hostports":"10.1.10.104:12050"
+    }
   }
 ]
 ```
@@ -297,7 +304,7 @@ Multi-tenant:
 --planner-hostports <PLANNER ENDPOINT>
 # For example, if the planner is running on "10.1.10.104:12050", then, the bootstrap
 # arguments would be:
-cdas-emr-bootstrap.sh 0.5.0 --planner-hostports 10.1.10.104:12050 presto
+cdas-emr-bootstrap.sh 0.5.1 --planner-hostports 10.1.10.104:12050 presto
 ```
 
 Single-tenant:
@@ -305,7 +312,7 @@ Single-tenant:
 --planner-hostports <PLANNER ENDPOINT> --token <TOKEN>
 # For example, if the planner is running on "10.1.10.104:12050", then, the bootstrap
 # arguments would be:
-cdas-emr-bootstrap.sh 0.5.0 --planner-hostports 10.1.10.104:12050 --token <TOKEN> presto
+cdas-emr-bootstrap.sh 0.5.1 --planner-hostports 10.1.10.104:12050 --token <TOKEN> presto
 ```
 
 #### Using Presto

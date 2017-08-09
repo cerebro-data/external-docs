@@ -69,31 +69,31 @@ mkdir -p /opt/cerebro && cd /opt/cerebro
 echo `whoami` | xargs -I '{}' sudo chown -R '{}' /opt/cerebro
 
 # Get the tarball from S3.
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.5.0/deployment-manager-0.5.0.tar.gz
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.5.1/deployment-manager-0.5.1.tar.gz
 
 # Extract the bits.
-tar xzf deployment-manager-0.5.0.tar.gz && rm deployment-manager-0.5.0.tar.gz && ln -s deployment-manager-0.5.0 deployment-manager
+tar xzf deployment-manager-0.5.1.tar.gz && rm deployment-manager-0.5.1.tar.gz && ln -s deployment-manager-0.5.1 deployment-manager
 ```
 
-Users still using 0.4.x should run 0.4.2. This includes bug fixes in the 0.4.x releases
-and we recommend all 0.4 users upgrade to 0.4.2 if they cannot upgrade to 0.5.0.
+Users still using 0.4.x should run 0.4.3. This includes bug fixes in the 0.4.x releases
+and we recommend all 0.4 users upgrade to 0.4.3 if they cannot upgrade to 0.5.1.
 ```shell
 # Recommended location is /opt/cerebro but can be any location.
 mkdir -p /opt/cerebro && cd /opt/cerebro
 
 # Get the tarball from S3.
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.2/deployment-manager-0.4.2.tar.gz
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.3/deployment-manager-0.4.3.tar.gz
 
 # Extract the bits.
-tar xzf deployment-manager-0.4.2.tar.gz && rm deployment-manager-0.4.2.tar.gz && ln -s deployment-manager-0.4.2 deployment-manager
+tar xzf deployment-manager-0.4.3.tar.gz && rm deployment-manager-0.4.3.tar.gz && ln -s deployment-manager-0.4.3 deployment-manager
 ```
 
 Download the shell binary. This depends on the OS running the CLI.
 ```shell
 # Linux
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.5.0/cli/linux/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.5.1/cli/linux/cerebro_cli && chmod +x cerebro_cli
 # OSX
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.5.0/cli/darwin/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.5.1/cli/darwin/cerebro_cli && chmod +x cerebro_cli
 
 # Verify the version
 ./cerebro_cli version

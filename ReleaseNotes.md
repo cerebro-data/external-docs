@@ -1,3 +1,23 @@
+# 0.4.3 and 0.5.1 Release Notes (August 2017)
+0.4.3 and 0.5.1 are minor patch release that contain significant performance fixes
+as well as critical fixes for the Hive EMR integration.
+
+It is recommended that all 0.4.x and 0.5.x users upgrade.
+
+In particular:
+  - Significant speedups handling tables with larger number of partitions
+  - Improved column pruning and predicate pushdown when using Hive in EMR.
+
+## New Features
+
+The EMR integration has been updated on the configs that are required for better
+Spark and Hive integration. In particular, we recommend specifying the Cerebro
+planner.hostports config for *Spark's* hive-site.xml config. This has been
+updated in the [EMR docs](https://github.com/cerebro-data/external-docs/blob/master/EMRIntegration.md).
+
+We've also updated the client versions to 0.5.1 and EMR clusters should be
+bootstrapped with this version (from 0.5.0).
+
 # 0.5.0 Release Notes (July 2017)
 
 0.5.0 is a  major release. It contains all the bug fixes from 0.4.1 and 0.4.2 and
@@ -68,6 +88,7 @@ For example, in spark, applications should remove specifying:
 'spark.recordservice.delegation-token.service-name'.
 
 **Environment variable name change**
+
 The environment variable CEREBRO_JWT_SERVICE_TOKEN_FILE has been replaced with
 CEREBRO_SYSTEM_TOKEN. Users upgrading from 0.4.5 will need to update this config.
 
