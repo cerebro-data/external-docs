@@ -27,9 +27,9 @@ cdas-emr-bootstrap.sh <cdas version> [options] <list of components>
 # --token <TOKEN> the token that identifies the user
 ```
 
-For example, to bootstrap a spark-2.x cluster from the 0.5.1 client release, provide
-the arguments `0.5.1 spark-2.x`. If running EMR with spark-2 and hive, provide
-`0.5.1 spark-2.x hive`.
+For example, to bootstrap a spark-2.x cluster from the 0.5.2 client release, provide
+the arguments `0.5.2 spark-2.x`. If running EMR with spark-2 and hive, provide
+`0.5.2 spark-2.x hive`.
 
 The complete list of supported components are:
   - spark-1.x
@@ -304,7 +304,7 @@ Multi-tenant:
 --planner-hostports <PLANNER ENDPOINT>
 # For example, if the planner is running on "10.1.10.104:12050", then, the bootstrap
 # arguments would be:
-cdas-emr-bootstrap.sh 0.5.1 --planner-hostports 10.1.10.104:12050 presto
+cdas-emr-bootstrap.sh 0.5.2 --planner-hostports 10.1.10.104:12050 presto
 ```
 
 Single-tenant:
@@ -312,7 +312,7 @@ Single-tenant:
 --planner-hostports <PLANNER ENDPOINT> --token <TOKEN>
 # For example, if the planner is running on "10.1.10.104:12050", then, the bootstrap
 # arguments would be:
-cdas-emr-bootstrap.sh 0.5.1 --planner-hostports 10.1.10.104:12050 --token <TOKEN> presto
+cdas-emr-bootstrap.sh 0.5.2 --planner-hostports 10.1.10.104:12050 --token <TOKEN> presto
 ```
 
 #### Using Presto

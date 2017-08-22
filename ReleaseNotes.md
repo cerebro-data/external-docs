@@ -1,3 +1,10 @@
+# 0.5.2 Release Notes (August 2017)
+0.5.2 is a minor release that fixes two issues:
+  - Fix user/group resolution for grant statements when using Json Web Tokens (JWT). This
+    only affects users that are using *only* JWTs for authentication. Users that are also
+    using kerberos are unaffected.
+  - Dramatically reduce the memory requirement for big joins.
+
 # 0.4.3 and 0.5.1 Release Notes (August 2017)
 0.4.3 and 0.5.1 are minor patch release that contain significant performance fixes
 as well as critical fixes for the Hive EMR integration.
