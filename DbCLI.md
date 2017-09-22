@@ -3,25 +3,28 @@
 The Database CLI provides client access to running Cerebro Database services.
 
 ## Installation
+
 For a fresh setup, you can install with:
 
     # Linux
-    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.5/cli/linux/dbcli && chmod 755 ./dbcli
+    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.0/cli/linux/dbcli && chmod 755 ./dbcli
 
     # OSX
-    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.5/cli/darwin/dbcli && chmod 755 ./dbcli
+    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.0/cli/darwin/dbcli && chmod 755 ./dbcli
 
     # Verify the download executes
     ./dbcli --help
 
 ## Configuration
+
 The server location and/or default database can be specified to the cli through the
 'database use' command or can be configured from a configuration file which is helpful
 if interacting with the same server and/or database repeatedly. The configuration file
 is stored in ~/.cerebro/configs.json.
 
 To configure the location of the catalog service, the file should contain:
-```
+
+```shell
 {
   "cdas_rest_server": "<host:port of catalog admin>"
   "database": "<name of the database>"
@@ -29,6 +32,7 @@ To configure the location of the catalog service, the file should contain:
 ```
 
 ## Quick start
+
 Below are the set of commands to get started with the DBCli and demonstrate some of
 Cerebro's capabilities. In this tutorial, authentication is done using tokens that
 have already been created.
@@ -54,7 +58,7 @@ have already been created.
 # Switch to a user that only has the test role, they should now be able to read from
 # the sample table. You'll notice they don't have access to the other tables and dbs.
 <switch to user with group 'test'>
-# Run 
+# Run
 ./dbcli set-token <TOKEN>
 ./dbcli dataset list
 ./dbcli dataset cat sample
@@ -69,6 +73,7 @@ have already been created.
 ```
 
 ## Getting started
+
 To get started, run:
 
     dbcli --help
@@ -90,7 +95,7 @@ To see your currently saved configuration options, you can enter:
 
    dbcli show configs
 
-## Database Related Commands 
+## Database Related Commands
 
     dbcli show status
 
@@ -107,4 +112,3 @@ Will list the databases available to you on the configured server.
     dbcli dataset list
 
 Will list the datasets available to you in the selected database.
-

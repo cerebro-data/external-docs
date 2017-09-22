@@ -134,7 +134,7 @@ To use these jars from maven, you can configure the pom to use our repo and vers
 This can be added to the pom.
 ```
   <properties>
-    <recordservice.version>1.0.0-beta-6</recordservice.version>
+    <recordservice.version>1.0.0-beta-8</recordservice.version>
   </properties>
 
   <!-- For MapReduce -->
@@ -184,5 +184,5 @@ available at
 ```
 s3://cerebrodata-release-useast/<version>/client
 # For example:
-s3://cerebrodata-release-useast/0.5.0/client
+s3://cerebrodata-release-useast/0.6.0/client
 ```

@@ -1,4 +1,5 @@
 # Catalog REST API
+
 This document describes the REST API of the Cerebro Catalog. This is intended for
 clients that want to leverage all of the Cerebro functionality. In addition to this,
 clients can connect using existing APIs, such as the Hive Metastore API.
@@ -8,14 +9,21 @@ For users that want to interactively access the catalog, it is recommended to us
 cerebro_cli, which provides a more traditional CLI experience built on top of these APIs.
 
 ## Authentication
+
 Unless otherwise specified, the APIs require users to be authenticated. In general,
 authentication can be done via Kerberos or by tokens. For token based authentication,
-simply append "?user=<TOKEN>" to the API call.
+simply specify the token in the auth header: `authorization: Bearer <TOKEN>`.
 
 See the [authentication document](https://github.com/cerebro-data/external-docs/blob/master/Authentication.md)
 for details on how to get tokens and check if token authentication is working.
 
+## SSL
+
+If ssl is enabled, all the calls should be made against https, instead of http. They are
+otherwise unchanged.
+
 ## Executing Hive DDL
+
 Endpoint: /api/hive-ddl [POST]
 
 This API allows you to execute HiveQL DDL statements. This can be used to create datasets,
@@ -30,11 +38,12 @@ The POST request takes as a parameter:
 ```
 
 Example:
-```
-curl -H "Content-Type: application/json" -X POST -d '{"query":"show databases"}' localhost:5000/api/hive-ddl?user=<TOKEN>
+```shell
+curl -H "Content-Type: application/json" -X POST -d '{"query":"show databases"}' localhost:5000/api/hive-ddl
 ```
 
 ## Listing databases
+
 Endpoint: /api/databases [GET]<br>
 Endpoint: /api/databases [POST]
 
@@ -47,6 +56,7 @@ The POST request takes as a parameter:
 ```
 
 ## Listing datasets
+
 Endpoint: /api/datasets [GET]<br>
 Endpoint: /api/datasets [POST]
 
@@ -60,6 +70,7 @@ The POST request takes as a parameter:
 ```
 
 ## Details of a dataset
+
 Endpoint: /api/datasets/{name} [POST]
 
 Returns: Dataset information as json. This includes the schema as well as other information.
@@ -77,6 +88,7 @@ curl -X POST localhost:5000/api/datasets/cerebro_sample.sample
 ```
 
 ## Scanning a dataset
+
 Endpoint: /api/scan/{name} [GET] <br>
 Endpoint: /api/scanpage/{name} [GET]< <br>
 Endpoint: /api/scan [POST] <br>
@@ -120,4 +132,3 @@ Each returned object contains:
   'session_id' [String]: Key used to return subsequent 'pages'.  Each page contains up to 'records' entries.  When the final page is returned, 'session_id' is "-1".
 }
 ```
-

@@ -1,26 +1,137 @@
-# 0.5.2 Release Notes (August 2017)
-0.5.2 is a minor release that fixes two issues:
-  - Fix user/group resolution for grant statements when using Json Web Tokens (JWT). This
-    only affects users that are using *only* JWTs for authentication. Users that are also
-    using kerberos are unaffected.
-  - Dramatically reduce the memory requirement for big joins.
+# 0.6.0 (Sep 2017)
+
+0.6.0 is a major release. It includes major new features and numerous improvements
+across the Cerebro services.
+
+## New Features
+
+**New Web UI**
+
+The Web UI has been revamped with a new look-and-feel, enhanced stability, and
+several new features, including improvements to dataset discoverability, metadata, and
+account information.
+
+Datasets are now searchable from the dataset browser; search for datasets by name.
+
+Dataset information has been expanded. We now explicitly display which columns the
+current user has access to and which groups grant access to those columns without
+access. We also show which columns are partitioning columns. Finally, a description
+of how to integrate a dataset with `R` has been added.
+
+On the home page, account details are displayed, including the token for the current
+user, which groups the current user belongs to, the roles the current user has,
+and the groups granting those roles.
+
+See the
+[docs](https://github.com/cerebro-data/external-docs/blob/master/WebUI.md)
+for more information.
+
+**Significantly improved integration with EMR**
+
+EMR integration has been significantly improved, allowing better pushdown into CDAS
+across the engines, improved multi-tenant user experience, work scheduling, etc. See
+[EMR docs](https://github.com/cerebro-data/external-docs/blob/master/EMRIntegration.md)
+for more details.
+
+**Support for SSL**
+
+This release adds SSL support to the REST server and WebUI. If configured, users should
+switch to https, whenever interacting with either of these services.
+
+## Minor Features
+
+- Added cli commands to specify the number of planners. See
+[docs](https://github.com/cerebro-data/external-docs/blob/master/ClusterAdmin.md) for
+more details.
+- Added cli commands to specify additional arguments for the planners and workers.
+- Improved load balancing for worker tasks. Users should see more consistent load on
+workers, particularly in the case when there are a smaller number of total tasks.
+- Significantly reduced memory usage when executing joins.
+- Improved install times. Cerebro binary sizes have been significantly reduced.
+
+## Incompatible and breaking changes
+
+**Deprecating specifying user token as part of URL for REST server**
+
+We will be deprecating supporting specifying user tokens as part of the URL in a
+subsequent release and recommend users start switching now when using the REST server.
+For example, instead of querying `rest-server-host:port/api/databases?user=<TOKEN>`,
+clients should instead specify the token as part of the Authorization header. See these
+[docs](https://github.com/cerebro-data/external-docs/blob/master/Authentication.md) for
+more details.
+
+**WebUI port renamed**
+
+The name of the webui port has been renamed from `cerebro_catalog_ui:webui` to
+`cerebro_web:webui`. This value is used when configuring ports
+(`CEREBRO_PORT_CONFIGURATION`) as well as the output from listing the service endpoints.
+
+**Permission roles are now consistently case insensitive**
+
+Case sensitivity in roles was inconsistent and now we've made them consistently case
+insensitive. This means that commands such as `CREATE ROLE admin_role` and
+`CREATE ROLE ADMIN_ROLE` now are identical.
+
+**Output of `cerebro_cli clusters nodes` changed**
+
+The output is no space separated and not commas to make it easier to interop with
+ecosystem tools. If this was consumed from scripts, they may need to be updated.
+
+## Known issues
+
+**Dataset preview in Web UI or Catalog REST API shows 0s instead of NULLs**
+
+When navigating to a particular dataset in the Web UI and clicking "Show Preview",
+if the value of a particular cell is NULL, it is displayed as 0. This issue
+additionally exists when querying the Catalog REST API at `/api/scanpage/<dataset>`.
+
+The workaround to determine the correct value of the cell is to query the dataset
+records via alternate Cerebro clients, like `dbcli`.
+
+**Unable to upgrade an existing cluster from 0.5 to 0.6**
+
+The install binary format has changed in 0.6, meaning clusters prior to 0.6 will not
+be able to handle the binary images. Note that the metadata stored in a 0.5 cluster *can*
+be read by a 0.6 cluster. Users can create a new 0.6 cluster instead. If upgrading an
+existing cluster is important, contact us and we can manually do this.
+
+**Unable to see databases if user has only been granted columns to objects in database**
+
+If a user has been granted only partial access to all objects (table or views)
+in a database, they are not able to see the database or any of the contents in it. Users
+are only able to properly see the objects if they've been granted full access to at
+least one table or view in that database (at which point the access controls work as
+expected).
+
+Workaround: create a dummy table in these database and grant users full select on this
+table.
+
+**Hive in EMR does not support all DDL commands**
+
+The Hive Cerebro integration for EMR does not currently support all DDL commands. It
+does not support GRANT/REVOKE statement and ALTER TABLE statements.
+
+Workaround: use the DbCli or connect through a kerberized Hive installation.
 
 # 0.4.3 and 0.5.1 Release Notes (August 2017)
+
 0.4.3 and 0.5.1 are minor patch release that contain significant performance fixes
 as well as critical fixes for the Hive EMR integration.
 
 It is recommended that all 0.4.x and 0.5.x users upgrade.
 
 In particular:
-  - Significant speedups handling tables with larger number of partitions
-  - Improved column pruning and predicate pushdown when using Hive in EMR.
+
+- Significant speedups handling tables with larger number of partitions
+- Improved column pruning and predicate pushdown when using Hive in EMR.
 
 ## New Features
 
 The EMR integration has been updated on the configs that are required for better
 Spark and Hive integration. In particular, we recommend specifying the Cerebro
 planner.hostports config for *Spark's* hive-site.xml config. This has been
-updated in the [EMR docs](https://github.com/cerebro-data/external-docs/blob/master/EMRIntegration.md).
+updated in the EMR.
+[docs](https://github.com/cerebro-data/external-docs/blob/master/SupportedSQL.md)
 
 We've also updated the client versions to 0.5.1 and EMR clusters should be
 bootstrapped with this version (from 0.5.0).
@@ -31,6 +142,7 @@ bootstrapped with this version (from 0.5.0).
 numerous other bug fixes.
 
 ## New Features
+
 **JSON Web Token and SSO support**
 
 This release adds support for authentication with CDAS using JSON Web Tokens(JWT).
@@ -100,6 +212,7 @@ The environment variable CEREBRO_JWT_SERVICE_TOKEN_FILE has been replaced with
 CEREBRO_SYSTEM_TOKEN. Users upgrading from 0.4.5 will need to update this config.
 
 ## Known issues
+
 **Unable to see databases if user has only been granted columns to objects in database**
 
 If a user has been granted only partial access to all objects (table or views)
@@ -219,7 +332,7 @@ Once set, restart your DeploymentManager.
 
 Cluster administration has been significantly enhanced to protect your cluster from
 accidental termination, scaling an existing cluster, and upgrading to newer versions
-of CDAS components.  
+of CDAS components.
 See [Cluster Administration](https://github.com/cerebro-data/external-docs/blob/master/ClusterAdmin.md)
 for further details.
 
@@ -233,7 +346,7 @@ process SQL statements through a POST interface.
 End-user database and dataset functionality is made available through a command line (CLI)
 tool, dbcli.  The tool enables users to acquire tokens, list databases, list datasets in
 a database, show the schema for a dataset (describe), view a sample of data, create tables
-and grant permissions through Hive DDL.  
+and grant permissions through Hive DDL.
 
 See [Database CLI](https://github.com/cerebro-data/external-docs/blob/master/DbCLI.md)
 for details.
@@ -245,7 +358,7 @@ allow Cerebro users to authenticate using their Active Directory credentials.
 
 The user now has an option to either use the REST API or the new
 web-based login UI to get their Cerebro token using their Active Directory
-username and password.  
+username and password.
 
 See the [LDAP Basic Auth Document](https://github.com/cerebro-data/external-docs/blob/master/LdapAuthentication.md) for details.
 

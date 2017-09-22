@@ -43,19 +43,23 @@ Edition product.
     acquired by referring to the 'Getting a token' section of
     [Authentication](https://github.com/cerebro-data/cerebro/blob/master/docs/user/Authentication.md).
 
-   6. Click the 'Get Data!' link when it becomes highlighted.
+   6. (Optional) Modify the "Max records" field. This field will dictate how many
+    records per dataset will be fetched at most. Lower numbers can significantly
+    improve performance.
 
-   7. A page similar to the following page should appear.  Please note that the data sets
+   7. Click the 'Get Data!' link when it becomes highlighted.
+
+   8. A page similar to the following page should appear.  Please note that the data sets
     in this list are illustrative only.
 
    ![Tableau Web Data Connector Data Sets](https://s3.amazonaws.com/cerebro-data-docs/images/TableauDataSets.png)
 
-   8. Select a data set from the left hand list.  The schema of the selected data set
+   9. Select a data set from the left hand list.  The schema of the selected data set
     should appear.  The page should be similar to the following:
 
    ![Tableau Web Data Connector Schema](https://s3.amazonaws.com/cerebro-data-docs/images/TableauSchema.png)
 
-   9. Click the 'Update Now' link to load the data.  A page similar to the following
+   10. Click the 'Update Now' link to load the data.  A page similar to the following
     should appear.  The length of time for this step to complete will vary depending on
      the amount of data in your selected data set.
 

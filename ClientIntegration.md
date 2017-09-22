@@ -1,29 +1,70 @@
 # Cerebro Data Access Service Integration
+
 This documents describes how to use Cerebro Data Access Service (CDAS) from a user's
-perspective. It describes how Cerebro can be used from various existing tools to:
-  - Explore and create new data sets and views.
-  - Define fine-grained access policies over datasets.
-  - Read datasets.
+perspective. It describes how to configure those tools to use Cerebro.
 
-Note that currently CDAS does not support data writes but many use cases can be
-covered by writing using the existing tools and then creating a dataset in CDAS.
+## Hadoop ecosystem tools (spark, mapreduce, hive, presto)
 
-This document will through various tools we are integrated with. It might not
-make sense to do all of the above with each tool.
+### Client libraries
 
-### HiveServer2/Beeline
-HiveServer2 provides a service to run SQL. Typically clients connect to it through
-beeline, which gives a traditional SQL client shell. HS2/Beeline is suitable to
-do all tasks above. The original hive shell ('hive') is not supported.
+For all of the hadoop ecosystem tools, it is required to include the Cerebro client
+libraries. These libraries leverage the analystic tool's pluggable interfaces to
+communicate and handle the communication and data exchange with the Cerebro servers.
+Depending on the analytics tool, this library can be provided in different ways. For
+example, it can be installed on a system wide class path, can be provided at the time
+the job is submitted (e.g. spark submit --jars) or bundled into the application (e.g. by
+including it with maven).
+
+### Configurations
+
+In addition to the library, we require a couple of configs to be set. We also expose
+various optional configs to fine tune the system behavior.
+
+Note: when the configs are set in spark, they are prefixed with "spark.". For example,
+the config "recordservice.kerberos.principal", when configured for spark, should be
+"spark.recordservice.kerberos.principal." This is true for all configs.
+
+#### Required
+
+**recordservice.planner.hostports**
+
+This is always required and is a comma separated list of host:ports where the CDAS
+planners are running.
+
+#### Authentication configs
+
+**recordservice.kerberos.principal**
+
+This is the principal of the planner service to connect to. This is a 3 part principal:
+`SERVICE_NAME/SERVICE_HOST@REALM`, for example, `cerebro/planner.cerebro.com@CEREBRO.COM`.
+This is required if the client is authenticating with CDAS using kerberos.
+
+**recordservice.delegation-token.token**
+
+This is the token string for this user. CDAS can be configured to accept multiple kinds
+of tokens but it is the same config for clients.
+
+**recordservice.delegation-token.service-name**
+
+This is only required for versions < 0.4.5 and should *not* be set on newer versions.
+This must be set if token based auth is being used and should match the SERVICE_NAME
+portion of the planner principal. In the above example, this value would be `cerebro`.
+
+Note: If both the token and principal is specified, the client will only authenticate
+using the token.
+
+## Tool ingegration.
+
+### HiveServer2/Beeline/hive cli
+HiveServer2 provides a service to run SQL.
+
+
+ The original hive shell ('hive') is not supported.
 
 From the user's point of view, they simply connect to HS2 as always. HS2 in fact
 is not provided by Cerebro and clients talk to the same HS2 without directly
 interacting with Cerebro (HS2 is configured and integrated with Cerebro). Authentication
 works exactly as always.
-
-Here is an example that registers and external dataset, creates a role, creates
-a view of the data and grants access to that role. In all of these steps, there
-should be no difference between how these commands work with or without Cerebro.
 
 ##### Setting up the admin role quick start
 These are quick start steps to set up the admin role which has full access to
@@ -37,7 +78,7 @@ beeline> GRANT ALL ON SERVER server1 TO ROLE admin_role;
 beeline> GRANT ROLE admin_role TO GROUP <YOUR ADMIN USER/GROUP>;
 ```
 
-**Note**: These steps assume a few things about your set up that are no different than 
+**Note**: These steps assume a few things about your set up that are no different than
 typical HS2 requirements. The admin user or group that is granted must exist on the unix
 system in both Cerebro and HS2.
 
@@ -53,8 +94,8 @@ At this point we have added a dataset to Cerebro By default only the admin user/
 has access to the dataset, which is now accessible to all the Cerebro integrated clients.
 Other users accessing this dataset should see the request fail.
 
-**Note:** These steps also assumes that the beeline client has access to this location. 
-This, for example,  involves IAM roles or AWS access keys to be set up if the data is in 
+**Note:** These steps also assumes that the beeline client has access to this location.
+This, for example,  involves IAM roles or AWS access keys to be set up if the data is in
 S3.
 
 **Note:** Creating non-external table is currently considered undefined behavior and should
@@ -221,3 +262,55 @@ Reading the data into a panda data frame is very simple with the REST API.
 import pandas as pd
 df = pd.read_json('http://<hostport>/api/scan/<dataset>')
 ```
+
+## Advance configurations
+
+#### Network related configs
+
+This configs are often not required and the defaults should suffice. These can be
+adjusted if the the client observes timeout behavior.
+
+**recordservice.planner.retry.attempts**
+
+Optional configuration for the maximum number of attempts to retry RPCs with planner.
+
+**recordservice.worker.retry.attempts**
+
+Optional configuration for the maximum number of attempts to retry RPCs with worker.
+
+**recordservice.planner.retry.sleepMs**
+
+Optional configuration for sleep between retry attempts with planner.
+
+**recordservice.worker.retry.sleepMs**
+
+Optional configuration for sleep between retry attempts with worker.
+
+**recordservice.planner.connection.timeoutMs**
+
+Optional configuration for timeout when initially connecting to the planner service.
+
+**recordservice.worker.connection.timeoutMs**
+
+Optional configuration for timeout when initially connecting to the worker service.
+
+**recordservice.planner.rpc.timeoutMs**
+
+Optional configuration for timeout for planner RPCs (after connection is established).
+
+**recordservice.worker.rpc.timeoutMs**
+
+Optional configuration for timeout for worker RPCs (after connection ie established).
+
+#### Performance related configs
+
+These settings can fine tune the performance behavior. It is generally not needed to set
+these as the server will compute a good value automatically.
+
+**recordservice.task.fetch.size**
+
+Optional configuration option for performance tuning that configures the max number of
+records returned when fetching results from the workers.
+
+**recordservice.task.plan.maxTasks**
+Optional configuration for the hinted maximum number of tasks to generate per PlanRequest.
