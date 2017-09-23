@@ -8,7 +8,7 @@ perspective. It describes how to configure those tools to use Cerebro.
 ### Client libraries
 
 For all of the hadoop ecosystem tools, it is required to include the Cerebro client
-libraries. These libraries leverage the analystic tool's pluggable interfaces to
+libraries. These libraries leverage the analytic tool's pluggable interfaces to
 communicate and handle the communication and data exchange with the Cerebro servers.
 Depending on the analytics tool, this library can be provided in different ways. For
 example, it can be installed on a system wide class path, can be provided at the time
@@ -44,13 +44,7 @@ This is required if the client is authenticating with CDAS using kerberos.
 This is the token string for this user. CDAS can be configured to accept multiple kinds
 of tokens but it is the same config for clients.
 
-**recordservice.delegation-token.service-name**
-
-This is only required for versions < 0.4.5 and should *not* be set on newer versions.
-This must be set if token based auth is being used and should match the SERVICE_NAME
-portion of the planner principal. In the above example, this value would be `cerebro`.
-
-Note: If both the token and principal is specified, the client will only authenticate
+Note: If both token and principal are specified, the client will only authenticate
 using the token.
 
 ## Tool ingegration.
@@ -58,8 +52,7 @@ using the token.
 ### HiveServer2/Beeline/hive cli
 HiveServer2 provides a service to run SQL.
 
-
- The original hive shell ('hive') is not supported.
+The original hive shell ('hive') is also supported.
 
 From the user's point of view, they simply connect to HS2 as always. HS2 in fact
 is not provided by Cerebro and clients talk to the same HS2 without directly

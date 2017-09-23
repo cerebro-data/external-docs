@@ -63,8 +63,8 @@ The main features on this page include
       - Access (whether you have read-access to view the cells in this column)
     - If a column's name has a gray background, it is a partitioning column
     - If you do not have access to a column, click "See Groups" in the row
-      - You will see the list of groups to which your account will need to be added
-   in order to get access to this column
+      - You will see a list of groups; your account will need to be added to at least
+      one of these groups to gain access to the column
   - Dataset preview
     - After clicking on a dataset from the dataset browser, click on "Show Preview"
   in the upper right part of the page

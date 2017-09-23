@@ -20,8 +20,5 @@ Spark DataFrames
 | double | double | DoubleType |
 | timestamp | int96 | TimestampType |
 | string | byte_array | StringType |
-| date | byte_array | NA |
-| datetime | byte_array | NA |
 | binary | byte_array | NA |
 | decimal | fixed_len_byte_array | createDecimalType() |
-
