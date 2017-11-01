@@ -22,13 +22,13 @@ Edition product.
 
    1. Open Tableau Desktop.  The following screen should appear:
 
-   ![Tableau Opening Screen](https://s3.amazonaws.com/cerebro-data-docs/images/TableauOpeningScreen.png)
+   ![Tableau Opening Screen](https://s3.amazonaws.com/cerebrodata-docs/images/TableauOpeningScreen.png)
 
    2. Select Web Data Connector from the left-hand navigation menu
 
    3. The following screen should appear:
 
-   ![Tableau Selection Page](https://s3.amazonaws.com/cerebro-data-docs/images/TableauConnectorSelection.png)
+   ![Tableau Selection Page](https://s3.amazonaws.com/cerebrodata-docs/images/TableauConnectorSelection.png)
 
    NOTE: the list of 'Recent Connectors' is illustrative and may not match your list.
 
@@ -36,7 +36,7 @@ Edition product.
     of the _cdas_rest_api_ in the box followed by **/wdc**.  The following page will
     appear:
 
-   ![Tableau Web Data Connectior](https://s3.amazonaws.com/cerebro-data-docs/images/TableauWebDataConnector.png)
+   ![Tableau Web Data Connectior](https://s3.amazonaws.com/cerebrodata-docs/images/TableauWebDataConnector.png)
 
    5. Enter a valid authentication token in the text box above the 'Accept Auth Token'
     button and press the 'Accept Auth Token' button.  A valid authentication token can be
@@ -52,18 +52,18 @@ Edition product.
    8. A page similar to the following page should appear.  Please note that the data sets
     in this list are illustrative only.
 
-   ![Tableau Web Data Connector Data Sets](https://s3.amazonaws.com/cerebro-data-docs/images/TableauDataSets.png)
+   ![Tableau Web Data Connector Data Sets](https://s3.amazonaws.com/cerebrodata-docs/images/TableauDataSets.png)
 
    9. Select a data set from the left hand list.  The schema of the selected data set
     should appear.  The page should be similar to the following:
 
-   ![Tableau Web Data Connector Schema](https://s3.amazonaws.com/cerebro-data-docs/images/TableauSchema.png)
+   ![Tableau Web Data Connector Schema](https://s3.amazonaws.com/cerebrodata-docs/images/TableauSchema.png)
 
    10. Click the 'Update Now' link to load the data.  A page similar to the following
     should appear.  The length of time for this step to complete will vary depending on
      the amount of data in your selected data set.
 
-   ![Tableau Data View](https://s3.amazonaws.com/cerebro-data-docs/images/TableauDataView.png)
+   ![Tableau Data View](https://s3.amazonaws.com/cerebrodata-docs/images/TableauDataView.png)
 
 ## Error Handling
 
@@ -81,11 +81,11 @@ The catalog entries could fail to load due to any number of issues, for example:
 When errors are detected, because of either user error, system error or communication
 error the following dialog will be presented:
 
-   ![Tableau Exception Report](https://s3.amazonaws.com/cerebro-data-docs/images/TableauExceptionReport.png)
+   ![Tableau Exception Report](https://s3.amazonaws.com/cerebrodata-docs/images/TableauExceptionReport.png)
 
 Clicking on 'Show Details' presents additional information, such as:
 
-   ![Tableau Exception Detail](https://s3.amazonaws.com/cerebro-data-docs/images/TableauExceptionDetail.png)
+   ![Tableau Exception Detail](https://s3.amazonaws.com/cerebrodata-docs/images/TableauExceptionDetail.png)
 
 The contents of these pages are illustrative only.  The actual contents may vary,
 depending on the reason for the error or exception.

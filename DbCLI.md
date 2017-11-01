@@ -7,10 +7,10 @@ The Database CLI provides client access to running Cerebro Database services.
 For a fresh setup, you can install with:
 
     # Linux
-    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.0/cli/linux/dbcli && chmod 755 ./dbcli
+    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.1/cli/linux/dbcli && chmod 755 ./dbcli
 
     # OSX
-    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.0/cli/darwin/dbcli && chmod 755 ./dbcli
+    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.1/cli/darwin/dbcli && chmod 755 ./dbcli
 
     # Verify the download executes
     ./dbcli --help

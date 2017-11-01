@@ -72,8 +72,9 @@ To upgrade specific components to a different version, specify components only.
 ```shell
 cerebro_cli clusters upgrade --components=<comp:version list> <CLUSTER_ID>
 
-# For example to upgrade cluster 2 components cdas to version 0.4.0 and catalog-ui to 0.4.5,
-cerebro_cli clusters upgrade --components=cdas:0.4.0,catalog-ui:0.4.5 2
+# For example to upgrade cluster 2's CDAS components to version 0.6.0 and web UI
+# to 0.6.1:
+cerebro_cli clusters upgrade --components=cdas:0.6.0,web-ui:0.6.1 2
 
 # To upgrade all CDAS components in cluster 3 to version 0.4.5.
 cerebro_cli clusters upgrade --version=0.4.5 3

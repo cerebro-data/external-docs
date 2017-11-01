@@ -33,9 +33,9 @@ cdas-emr-bootstrap.sh <cdas version> [options] <list of components>
 # --token <TOKEN> the token that identifies the user
 ```
 
-For example, to bootstrap a spark-2.x cluster from the 0.6.0 client release, provide
-the arguments `0.6.0 spark-2.x`. If running EMR with spark-2 and hive, provide
-`0.6.0 spark-2.x hive`.
+For example, to bootstrap a spark-2.x cluster from the 0.6.1 client release, provide
+the arguments `0.6.1 spark-2.x`. If running EMR with spark-2 and hive, provide
+`0.6.1 spark-2.x hive`.
 
 The complete list of supported components are:
 
@@ -57,11 +57,11 @@ As an end to end example, we will start up a multi-tenant EMR-5.7.0 cluster runn
 2.x, hive, and presto configured to run against CDAS planner running at 10.1.10.104:12050.
 
 - Select "Go to advanced options" at the top of the "Create Cluster" screen
-  ![EMR Config](https://s3.amazonaws.com/cerebro-data-docs/images/CreateCluster.png)
+  ![EMR Config](https://s3.amazonaws.com/cerebrodata-docs/images/CreateCluster.png)
 - Pick Spark, Hive, and Presto from the list of EMR components and set the Spark and
   Hive specific configs (more details below).
   Optionally pick Hue and Zeppelin as components that do not require CDAS related steps:
-  ![EMR Config](https://s3.amazonaws.com/cerebro-data-docs/images/EMRConfig3.png)
+  ![EMR Config](https://s3.amazonaws.com/cerebrodata-docs/images/EMRConfig3.png)
   Configuration example:
 ```json
 [
@@ -96,13 +96,13 @@ Additional configuration examples can be found in the program-specific sections 
   - Add the list of supported components to the bootstrap script.
     Since we're starting with Hive, Presto and Spark, specify `hive`, `presto`,
     and `spark-2.x`:
-  ![EMR Bootstrap](https://s3.amazonaws.com/cerebro-data-docs/images/EMRBootstrap2.png)
+  ![EMR Bootstrap](https://s3.amazonaws.com/cerebrodata-docs/images/EMRBootstrap2.png)
 
 - When setting up the security options, you will likely need to specify additional
 security groups in order for your EMR cluster to be able to communicate with your
 CDAS cluster. Add whatever security group(s) you specified for your CDAS hosts to both
 the Master as well as Core & Task rows.
-![EMR Config](https://s3.amazonaws.com/cerebro-data-docs/images/AdditionalSecurityGroups.png)
+![EMR Config](https://s3.amazonaws.com/cerebrodata-docs/images/AdditionalSecurityGroups.png)
 
 Create the EMR cluster and wait for it to be ready at which point the Cerebro components
 will already have been installed and configured.
@@ -372,7 +372,7 @@ Multi-tenant:
 --planner-hostports <PLANNER ENDPOINT>
 # For example, if the planner is running on "10.1.10.104:12050", then, the bootstrap
 # arguments would be:
-cdas-emr-bootstrap.sh 0.6.0 --planner-hostports 10.1.10.104:12050 presto
+cdas-emr-bootstrap.sh 0.6.1 --planner-hostports 10.1.10.104:12050 presto
 ```
 
 Single-tenant:
@@ -381,7 +381,7 @@ Single-tenant:
 --planner-hostports <PLANNER ENDPOINT> --token <TOKEN>
 # For example, if the planner is running on "10.1.10.104:12050", then, the bootstrap
 # arguments would be:
-cdas-emr-bootstrap.sh 0.6.0 --planner-hostports 10.1.10.104:12050 --token <TOKEN> presto
+cdas-emr-bootstrap.sh 0.6.1 --planner-hostports 10.1.10.104:12050 --token <TOKEN> presto
 ```
 
 #### Using Presto

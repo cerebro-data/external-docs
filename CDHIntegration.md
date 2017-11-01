@@ -179,10 +179,12 @@ This can be added to the pom.
 ```
 
 ## Downloading the jars
+
 All of the release jars are also available in S3 in the release location. They are
 available at
-```
+
+```shell
 s3://cerebrodata-release-useast/<version>/client
 # For example:
-s3://cerebrodata-release-useast/0.6.0/client
+s3://cerebrodata-release-useast/0.6.1/client
 ```

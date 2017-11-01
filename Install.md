@@ -84,25 +84,25 @@ Download and extract the DeploymentManager tarball
 
 ```shell
 # Recommended location is /opt/cerebro but can be any location.
-mkdir -p /opt/cerebro && cd /opt/cerebro
+[sudo] mkdir -p /opt/cerebro && cd /opt/cerebro
 
 # Update ownership of the destination directory
 echo `whoami` | xargs -I '{}' sudo chown -R '{}' /opt/cerebro
 
 # Get the tarball from S3.
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.0/deployment-manager-0.6.0.tar.gz
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.1/deployment-manager-0.6.1.tar.gz
 
 # Extract the bits.
-tar xzf deployment-manager-0.6.0.tar.gz && rm deployment-manager-0.6.0.tar.gz && ln -s deployment-manager-0.6.0 deployment-manager
+tar xzf deployment-manager-0.6.1.tar.gz && rm deployment-manager-0.6.1.tar.gz && ln -s deployment-manager-0.6.1 deployment-manager
 ```
 
 Download the shell binary. This depends on the OS running the CLI.
 
 ```shell
 # Linux
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.0/cli/linux/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.1/cli/linux/cerebro_cli && chmod +x cerebro_cli
 # OSX
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.0/cli/darwin/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.1/cli/darwin/cerebro_cli && chmod +x cerebro_cli
 
 # Verify the version
 ./cerebro_cli version
@@ -125,7 +125,8 @@ For a standard install:
 
 # DeploymentManager user needs exclusive access to those directories. If those
 # directories are created as different user than the DeploymentManager user, run:
-[sudo] chown <user running deployment manager> /var/log/cerebro
+echo `whoami` | xargs -I '{}' sudo chown -R '{}' /var/log/cerebro
+echo `whoami` | xargs -I '{}' sudo chown -R '{}' /etc/cerebro
 [sudo] chown <user running deployment manager> /etc/cerebro
 ```
 
@@ -300,11 +301,17 @@ Setting these, enables HTTPS on the REST server and web ui.
 
 - CEREBRO_SSL_CERTIFICATE_FILE: Path to the certificate file.
 - CEREBRO_SSL_KEY_FILE: Path to the file with the private key.
+- CEREBRO_SSL_FQDN: [Optional] Fully qualified domain name for the cluster. If set, this
+must be a valid 'Subject Alternate Name' in the certifcate. This can be the FQDN for any
+node in this cluster (typically the CNAME for the REST service). This is required for
+some clients (e.g. newer versions of chrome) which do not allow IP addresses if SSL is
+enabled.
 
 ```shell
 # Example:
 export CEREBRO_SSL_CERTIFICATE_FILE=/etc/cerebro.cert
 export CEREBRO_SSL_KEY_FILE=/etc/cerebro.key
+export CEREBRO_SSL_FQDN=rest-server.cerebro.com
 ```
 
 **LDAP**
@@ -316,6 +323,12 @@ For more details on interactions with authenticated Cerebro, see:
 
 - [Authentication](https://github.com/cerebro-data/external-docs/blob/master/Authentication.md)
 - [Security](https://github.com/cerebro-data/external-docs/blob/master/Security.md)
+
+**OAuth**
+Cerebro can be deployed with OAuth enabled for easier Web UI login. For more
+information, see:
+
+- [OAuth Guide](https://github.com/cerebro-data/external-docs/blob/master/OAuthGuide.md)
 
 ## Starting the DeploymentManager
 
@@ -395,12 +408,14 @@ cerebro_cli environments create --name=<Name> --provider=AWS --launchScript=<Abs
 ```
 
 ## Restarting failed cluster after addressing issues
-When a Cerebro environment is created, the launch, init scripts and config files for that environment
-are copied to the Cerebro install directory. This is to ensure that the clusters using that environment
-are unaffected by any new environments or clusters with diffent configurations.
+When a Cerebro environment is created, the launch, init scripts and config files for that
+environment are copied to the Cerebro install directory. This is to ensure that the
+clusters using that environment are unaffected by any new environments or clusters with
+diffent configurations.
 
-If the script or config files in the environment have any errors, then those need to be corrected and
-the affected clusters restarted. These include launch-ec2.sh and any init scripts.
+If the script or config files in the environment have any errors, then those need to be
+corrected and the affected clusters restarted. These include launch-ec2.sh and any init
+scripts.
 
 The Cerebro install scripts and config files are located at the
 $DEPLOYMENT_MANAGER_INSTALL_DIR/env/<environmentid> directory.

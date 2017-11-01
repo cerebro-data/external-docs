@@ -1,3 +1,38 @@
+# 0.6.1 (Oct 2017)
+
+0.6.1 is a minor release and we recommend all 0.6.0 users upgrade.
+
+## New Features
+
+**OAUTH integration**
+
+The Web UI now supports authentication using OAUTH. If configured, users will be
+redirected to the identity provider's login page, for example logging in with their
+gmail account.
+
+**Improved SSL support**
+
+Some clients (e.g. latest version of chrome) require the REST server to have a DNS
+domain name (instead of IP) if SSL is enabled as additional security. In this release, we
+added a configuration to specify the DNS name for the REST server. This is not required
+for SSL to be enabled and not all clients require the server to be configured this way.
+
+This configuration is `CEREBRO_SSL_FQDN`. For example:
+
+```shell
+export CEREBRO_SSL_FQDN=cluster1.cloud.com
+```
+
+Note that due to our traffic routing, this can be the DNS name of any machine in the
+cluster, for example, the CNAME for the cluster.
+
+## Bug Fixes
+
+**Support for EMR up to 5.9**
+Hive in EMR 5.8, introduced a non backwards compatible change which caused issues for
+older versions (0.6 and before) of Cerebro EMR clients. This has been fixed in 0.6.1
+and now supports all versions from 5.3 to 5.9.
+
 # 0.6.0 (Sep 2017)
 
 0.6.0 is a major release. It includes major new features and numerous improvements

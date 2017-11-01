@@ -86,7 +86,7 @@ For example, with the MaskUDF it would be:
 ```sql
 CREATE FUNCTION cerebro_sample.mask(STRING)
   RETURNS STRING
-  LOCATION 's3://cerebro-udfs/mask-udf-1.0.0.jar'
+  LOCATION 's3://cerebrodata-public-east/udfs/mask-udf.jar'
   SYMBOL='com.cerebro.hiveudf.MaskUDF'
 ```
 
