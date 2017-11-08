@@ -1,3 +1,12 @@
+# 0.5.3  (November 2017)
+
+0.5.3 is a minor release consisting of backports of select fixes from the
+0.6.1 release. Those patches are:
+* Invalid JSON encountered when retrieving cluster status
+* Incorrect user when using /api/scanpage endpoint
+* add_date function does not work with view creation
+* REST server scaling issues
+
 # 0.6.1 (Oct 2017)
 
 0.6.1 is a minor release and we recommend all 0.6.0 users upgrade.

@@ -13,7 +13,7 @@ In general, we require:
 
 An EMR cluster that is using multiple components should apply each configuration.
 
-Note that EMR versions 5.3.0 through 5.7.0 are supported.
+Note that EMR versions 5.3.0 through 5.9.0 are supported.
 
 ## Bootstrap action
 
@@ -53,8 +53,8 @@ These include:
 
 ## End to End example
 
-As an end to end example, we will start up a multi-tenant EMR-5.7.0 cluster running spark
-2.x, hive, and presto configured to run against CDAS planner running at 10.1.10.104:12050.
+As an end to end example, we will start up a multi-tenant EMR cluster running Spark
+2.x, Hive, and Presto configured to run against CDAS planner running at 10.1.10.104:12050.
 
 - Select "Go to advanced options" at the top of the "Create Cluster" screen
   ![EMR Config](https://s3.amazonaws.com/cerebrodata-docs/images/CreateCluster.png)

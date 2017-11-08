@@ -127,7 +127,6 @@ For a standard install:
 # directories are created as different user than the DeploymentManager user, run:
 echo `whoami` | xargs -I '{}' sudo chown -R '{}' /var/log/cerebro
 echo `whoami` | xargs -I '{}' sudo chown -R '{}' /etc/cerebro
-[sudo] chown <user running deployment manager> /etc/cerebro
 ```
 
 ### Cerebro Configuration
