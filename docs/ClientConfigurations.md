@@ -3,8 +3,8 @@
 This document describes configurations available to the client for Hadoop ecosystem tools.
 
 Note: when the configs are set in spark, they are prefixed with `spark.`. For example,
-the config `recordservice.kerberos.principal`, when configured for spark, should be
-`spark.recordservice.kerberos.principal`. This is true for all configs.
+the config `recordservice.kerberos.principal`, when configured for spark, should
+be `spark.recordservice.kerberos.principal`. This is true for all configs.
 
 ## Specifying configs
 
@@ -38,9 +38,10 @@ planners are running.
 
 **recordservice.kerberos.principal**
 
-This is the principal of the planner service to connect to. This is a 3 part principal:
-`SERVICE_NAME/SERVICE_HOST@REALM`, for example, `cerebro/planner.cerebro.com@CEREBRO.COM`.
-This is required if the client is authenticating with CDAS using kerberos.
+This is the principal of the planner service to connect to. This is a 3 part
+principal: `SERVICE_NAME/SERVICE_HOST@REALM`, for example,
+`cerebro/planner.cerebro.com@CEREBRO.COM`. This is required if the client is
+authenticating with CDAS using kerberos.
 
 **recordservice.delegation-token.token**
 
@@ -104,4 +105,5 @@ Optional configuration option for performance tuning that configures the max num
 records returned when fetching results from the workers.
 
 **recordservice.task.plan.maxTasks**
+
 Optional configuration for the hinted maximum number of tasks to generate per PlanRequest.

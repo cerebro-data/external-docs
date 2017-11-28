@@ -1,3 +1,128 @@
+# 0.7.0 (Nov 2017)
+
+0.7.0 is a major release.
+
+## New Features
+
+**JSON structured audit logs**
+
+By default, the planner audit log is now output as json in the planner logs. The new
+format contains more information, is much easier to parse and will be stable over time.
+For more information on its schema and how to use it, see the [docs](Auditing.md).
+
+**Support for Hive SerDes**
+
+Prior versions of CDAS had limited support for tables which require a custom Hive SerDe
+to read. In this release, we extended the support to all the CDAS supported types, the
+ability to read SerDe libraries from S3 and builtin, HiveQL compatible support in the
+various CDAS `hive-ddl` APIs. For more information, see [here](ExtendingCDAS.md).
+
+**Support for external views**
+
+In prior version of CDAS, views created in Cerebro had to be evaluated in CDAS. This is
+critical for views which enforce data security related transformations. For example, if
+the view anonymizes user data, the view must be evaluated in CDAS before it is returned
+to the client. In this release, we added support for `external views`, which are used
+to store views to store data transformations and have no security implications. These
+views are used strictly for tracking what can be evaluated in CDAS or in the compute
+application.
+For more details, see [here](SupportedSQL.md).
+
+**Support to drop permissions when dropping catalog objects**
+
+Dropping a database, table or view does not drop the permissions on the object. This
+means if the same object with the same name is created, it will retain the permissions
+from the dropped object. This pattern is sometimes used, for example in ETL, where
+the permissions and catalog object (re)creation are decoupled. This behavior is not
+ideal in other cases. In this release we extended the `DROP [DATABASE|TABLE|VIEW]`
+DDL commands to support optionally dropping the associated permissions as well. If not
+specified, this command is backwards compatible and keeps the previous semantics.
+For more information see [this](SupportedSQL.md).
+
+**Dynamic REST API scan page size**
+
+Previously the REST scan page size was fixed (by default 10000 records). This can be
+problematic for tables with very many columns and requests would cause timeouts or
+other bad behavior. In this release, the page size is dynamic (up to 10000 by default)
+and adjusts based on how long the requests are taking.
+
+**Improved client connection related errors**
+
+Previously, the errors related to failed connections from the Java client libraries
+required looking at the CDAS service logs. These errors should now be returned to
+the client. Note that this requires updating the client library to the latest version
+(beta-9) as well. Older clients are compatible and will continue to work, but may not
+see the improved error reporting in all cases.
+
+**Filtered dataset search in the UI**
+
+The Cerebro UI now has enhanced dataset search capabilities, allowing users to search
+for datasets by name and/or database name, as well as filter by any set of databases.
+
+**Dataset access inspection in the UI**
+
+Dataset stewards (or anyone with all access to a dataset) can inspect which groups or set
+of groups has access to their datasets as well as which fields in those datasets.
+
+## Bug Fixes
+
+* Fixed an issue where the 30-second timeout for session\_ids issued
+by the /api/scanpage endpoint was starting from the beginning of a query,
+resulting in the user being "charged" for system time. This was corrected
+and the timer now starts when CDAS begins returning data to the user.
+
+* Fixed /api/scanpage endpoint so that for fetching more than 10,000 records, the total number of
+records to be fetched only needs to be specified on the first call. Subsequent calls can use the
+session_id to return the remaining records in batches of up to 10,000 entries. If the record number
+is specified in subsequent calls, it will be ignored.
+
+* Unable to see a database if the user has only been granted access to that database's
+columns. This issue has been resolved and the user can properly see a database even if
+they only have partial access to objects in the database.
+
+* Allow dropping views even if its metadata becomes invalid. In previous versions, it
+would sometimes not be possible to drop views if its metadata became invalid. This can
+happen for example, if the base table for the views are deleted. These views can now
+be dropped.
+
+* Fixed an issue where permission granted to a top-level S3 bucket was not being
+propagated to sub-directories.
+
+* Fixed an issue were detailed error messages were not being returned to clients for
+server-side errors (they were being overwritten with generic error messages).
+
+* Fixed an issue where Hive in EMR 5.8 and later would not work with CDAS.
+EMR 5.8.0 upgraded Hive from 2.1.1 to 2.3.0 which introduced a backward compatibility
+breaking api change, which has been addressed.
+
+### Incompatible and Breaking Changes
+
+* The records parameter for the /api/scanpage REST endpoint now indicates
+the total number of records that the query should return. This had
+previously indicated the batch size to be used for each page. Results are
+now returned in batches of up to 10,000 entries.
+
+* Number of services in standalone cluster reduced from 8 to 7. In the release, the
+earlier version of the UI was completely removed, reducing the number of services by 1.
+In 0.6.x, this service was running but not externally exposed by default (for example,
+even in 0.6.x, endpoints did not report the earlier UI).
+
+* Root user required to run kubectl commands on kubernetes master.
+Previously, `kubectl` could be run as any user, for example, `ec2-user`. It is now required
+to be `root` to run `kubectl`.
+
+## Known issues
+
+**After installing a new version of DM, upgrading a component in existing cluster does not work
+
+The workaround is to upgrade the existing cluster component(s) to the newer version before newer
+DM is installed and restarted.
+
+** Java 9 is not supported
+
+There is an issue with the new module changes in Java 9 that will be addressed in future
+versions of CDAS.
+
 # 0.5.3  (November 2017)
 
 0.5.3 is a minor release consisting of backports of select fixes from the
@@ -66,16 +191,13 @@ On the home page, account details are displayed, including the token for the cur
 user, which groups the current user belongs to, the roles the current user has,
 and the groups granting those roles.
 
-See the
-[docs](https://github.com/cerebro-data/external-docs/blob/master/WebUI.md)
-for more information.
+See the [docs](WebUI.md) for more information.
 
 **Significantly improved integration with EMR**
 
 EMR integration has been significantly improved, allowing better pushdown into CDAS
 across the engines, improved multi-tenant user experience, work scheduling, etc. See
-[EMR docs](https://github.com/cerebro-data/external-docs/blob/master/EMRIntegration.md)
-for more details.
+[EMR docs](EMRIntegration.md) for more details.
 
 **Support for SSL**
 
@@ -85,8 +207,7 @@ switch to https, whenever interacting with either of these services.
 ## Minor Features
 
 - Added cli commands to specify the number of planners. See
-[docs](https://github.com/cerebro-data/external-docs/blob/master/ClusterAdmin.md) for
-more details.
+[docs](ClusterAdmin.md) for more details.
 - Added cli commands to specify additional arguments for the planners and workers.
 - Improved load balancing for worker tasks. Users should see more consistent load on
 workers, particularly in the case when there are a smaller number of total tasks.
@@ -101,8 +222,7 @@ We will be deprecating supporting specifying user tokens as part of the URL in a
 subsequent release and recommend users start switching now when using the REST server.
 For example, instead of querying `rest-server-host:port/api/databases?user=<TOKEN>`,
 clients should instead specify the token as part of the Authorization header. See these
-[docs](https://github.com/cerebro-data/external-docs/blob/master/Authentication.md) for
-more details.
+[docs](Authentication.md) for more details.
 
 **WebUI port renamed**
 
@@ -174,8 +294,7 @@ In particular:
 The EMR integration has been updated on the configs that are required for better
 Spark and Hive integration. In particular, we recommend specifying the Cerebro
 planner.hostports config for *Spark's* hive-site.xml config. This has been
-updated in the EMR.
-[docs](https://github.com/cerebro-data/external-docs/blob/master/SupportedSQL.md)
+updated in the EMR. [docs](SupportedSQL.md)
 
 We've also updated the client versions to 0.5.1 and EMR clusters should be
 bootstrapped with this version (from 0.5.0).
@@ -201,16 +320,13 @@ Support has been added to create views which contain joins. Previously, views on
 support filters and projections. This enables use cases where the sensitive data
 needs to be joined against a (dynamic) whitelist. After creating the view, the
 identical grant/revoke statements can be used to control access to it. The kind
-of joins we enable is limited, see
-[docs](https://github.com/cerebro-data/external-docs/blob/master/SupportedSQL.md)
-for more details.
+of joins we enable is limited, see [docs](SupportedSQL.md) for more details.
 
 **Improved support for EMR, including Hive and Presto**
 
 While previous versions could support EMR, we've improved the integration experience,
 providing a bootstrap action which enables deeper integration. See the
-[EMR Integration docs](https://github.com/cerebro-data/external-docs/blob/master/EMRIntegration.md)
-for details.
+[EMR Integration docs](EMRIntegration.md) for details.
 
 **Simplified Install Process**
 
@@ -372,13 +488,13 @@ Once set, restart your DeploymentManager.
 ## May-2017
 
 ### New Features
+
 **Cluster Administration**
 
 Cluster administration has been significantly enhanced to protect your cluster from
 accidental termination, scaling an existing cluster, and upgrading to newer versions
 of CDAS components.
-See [Cluster Administration](https://github.com/cerebro-data/external-docs/blob/master/ClusterAdmin.md)
-for further details.
+See [Cluster Administration](ClusterAdmin.md) for further details.
 
 **SQL Statement Processing**
 
@@ -392,8 +508,7 @@ tool, dbcli.  The tool enables users to acquire tokens, list databases, list dat
 a database, show the schema for a dataset (describe), view a sample of data, create tables
 and grant permissions through Hive DDL.
 
-See [Database CLI](https://github.com/cerebro-data/external-docs/blob/master/DbCLI.md)
-for details.
+See [Database CLI](DbCLI.md) for details.
 
 **Basic Authentication using LDAP**
 
@@ -404,7 +519,7 @@ The user now has an option to either use the REST API or the new
 web-based login UI to get their Cerebro token using their Active Directory
 username and password.
 
-See the [LDAP Basic Auth Document](https://github.com/cerebro-data/external-docs/blob/master/LdapAuthentication.md) for details.
+See the [LDAP Basic Auth Document](LdapAuthentication.md) for details.
 
 ### Changes
 **cerebro_cli utility**
@@ -436,8 +551,7 @@ manage a cluster in another AWS region.
 DeploymentManager allows a kerberos principal for the REST API to be explicitly specified.
 Previously this was assumed to be derived from the service principal
 (i.e. HTTP/<service_host>).
-See [Kerberos](https://github.com/cerebro-data/external-docs/blob/master/KerberosClusterSetup.md)
-docs for more details.
+See [Kerberos](KerberosClusterSetup.md) docs for more details.
 
 **Deployment Manager**
 
@@ -477,7 +591,7 @@ All APIs were changed to consistently use the term 'db'  This impacts the follow
 * api/datasets [POST]
 * api/datasets/{name} [POST]
 
-For detail see: [Catalog REST API](https://github.com/cerebro-data/external-docs/blob/master/CatalogApi.md).
+For detail see: [Catalog REST API](CatalogApi.md).
 
 ### Known issues
 **Errors during Deployment Manager configuration file writes prevent restart**
@@ -503,7 +617,7 @@ This is the feature complete release candidate of CDAS.
 **Tableau Cerebro Catalog Integration**
 
 You can access data stored in Cerebro using Tableau.
-See [Tableau WDC](https://github.com/cerebro-data/external-docs/blob/master/TableauWDC.md) for details.
+See [Tableau WDC](TableauWDC.md) for details.
 
 **Catalog UI**
 
@@ -513,29 +627,30 @@ cerebro_catalog_ui:webui end point and log in with your user token.
 
 **Catalog REST API Integration**
 
-Changes were made to the Catalog REST API.  See [Catalog API](https://github.com/cerebro-data/external-docs/blob/master/CatalogApi.md) and the [tutorial](https://github.com/cerebro-data/external-docs/blob/master/CatalogApiTutorial.md) for further details.
+Changes were made to the Catalog REST API.  See [Catalog API](CatalogApi.md) and the
+[tutorial](CatalogApiTutorial.md) for further details.
 
 **Installation Process**
 
 The installation process has been enhanced by providing customizable templates for
 launching EC2 instances and initializing cluster nodes.  See:
-[Installation Guide](https://github.com/cerebro-data/external-docs/blob/master/Install.md), "Starting up a CDAS cluster" for details.
+[Installation Guide](Install.md), "Starting up a CDAS cluster" for details.
 
 **Authentication**
 
 With this release, all Cerebro services can run with authentication enabled end-to-end.
-See: [Authentication](https://github.com/cerebro-data/external-docs/blob/master/Authentication.md)
+See: [Authentication](Authentication.md)
 for further details. This includes non-kerberized clients (for example the catalog webui)
 using tokens.
 
-For information on setting up a Kerberized cluster, see: [Kerberized Cluster Setup](https://github.com/cerebro-data/external-docs/blob/master/KerberosClusterSetup.md)
+For information on setting up a Kerberized cluster, see:
+[Kerberized Cluster Setup](KerberosClusterSetup.md)
 
 ### Changes
 **Admin Dashboard**
 
 The Kubernetes admin dashboard has been upgraded to version 1.5.1 from version 1.4.2.
-See [Kubernetes Quickstart](https://github.com/cerebro-data/external-docs/blob/master/KubernetesDashboardQuickStart.md)
-for details.
+See [Kubernetes Quickstart](KubernetesDashboardQuickStart.md) for details.
 
 **Kubernetes**
 

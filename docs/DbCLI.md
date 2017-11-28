@@ -1,26 +1,29 @@
-# Cerebro Database Cli
+# Cerebro Database Command-Line Interface
 
-The Database CLI provides client access to running Cerebro Database services.
+The Database Command-line Interface (CLI) provides client access to running Cerebro
+Database services.
 
 ## Installation
 
 For a fresh setup, you can install with:
 
-    # Linux
-    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.1/cli/linux/dbcli && chmod 755 ./dbcli
+```shell
+# Linux
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.7.0/cli/linux/dbcli && chmod 755 ./dbcli
 
-    # OSX
-    curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.6.1/cli/darwin/dbcli && chmod 755 ./dbcli
+# OSX
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.7.0/cli/darwin/dbcli && chmod 755 ./dbcli
 
-    # Verify the download executes
-    ./dbcli --help
+# Verify the download executes
+./dbcli --help
+```
 
 ## Configuration
 
-The server location and/or default database can be specified to the cli through the
-'database use' command or can be configured from a configuration file which is helpful
+The server location and/or default database can be specified to the CLI through the
+`database use` command or can be configured from a configuration file which is helpful
 if interacting with the same server and/or database repeatedly. The configuration file
-is stored in ~/.cerebro/configs.json.
+is stored in `~/.cerebro/configs.json`.
 
 To configure the location of the catalog service, the file should contain:
 
@@ -31,7 +34,7 @@ To configure the location of the catalog service, the file should contain:
 }
 ```
 
-## Quick start
+## Quick Start
 
 Below are the set of commands to get started with the DBCli and demonstrate some of
 Cerebro's capabilities. In this tutorial, authentication is done using tokens that
@@ -41,6 +44,7 @@ have already been created.
 # Configure DBCLI as admin user, verify it can see the sample tables
 ./dbcli database --cdas_rest_server <host:port of catalog admin> use cerebro_sample
 ./dbcli set-token <TOKEN>
+./dbcli set-ssl enable (only required if SSL is enabled in CDAS)
 ./dbcli show configs
 ./dbcli database list
 ./dbcli dataset cat sample
@@ -49,6 +53,7 @@ have already been created.
 # the admin, you can create and grant roles. We'll create a role, "test_role" and grant
 # that to users in the "test" group.
 ./dbcli dataset hive-ddl "show tables in cerebro_sample"
+./dbcli dataset hive-ddl "create role test_role"
 ./dbcli dataset hive-ddl "show roles"
 ./dbcli dataset hive-ddl "grant role test_role to group test"
 
@@ -76,39 +81,56 @@ have already been created.
 
 To get started, run:
 
-    dbcli --help
+```
+dbcli --help
+```
 
-Which will display the list of available commands.  To use most commands, you
-will need a login token.  Use:
+Which will display the list of available commands. To use most commands, you will need
+a login token. Use:
 
+```
 dbcli get-token --help
+```
 
 for the available options.
 
-For all commands entering:
+For all commands entering
 
+```
 dbcli *command* --help
+```
 
 will display the available options and a brief description of each option.
 
 To see your currently saved configuration options, you can enter:
 
-   dbcli show configs
+```
+dbcli show configs
+```
 
 ## Database Related Commands
 
-    dbcli show status
+```
+dbcli show status
+```
 
 Will return a response in the form:
 
+```
 Server <host:port> is up and accessible.
+```
 
-When the server is up and available. <host:port> reflects the configured server and port.
+When the server is up and available. `<host:port>` reflects the configured server
+and port.
 
-    dbcli database list
+```
+dbcli database list
+```
 
 Will list the databases available to you on the configured server.
 
-    dbcli dataset list
+```
+dbcli dataset list
+```
 
 Will list the datasets available to you in the selected database.
