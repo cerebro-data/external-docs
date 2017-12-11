@@ -274,3 +274,9 @@ $ ./dbcli dataset cat multibyte_db.cedilla_sample
     }
 ]
 ```
+
+## Permission Cascading
+
+When permissions are granted on S3 URIs, they are applied to any subdirectories contained
+within the directory that the permissions are granted on. This allows access to be granted
+on a top-level S3 bucket or any arbitrarily deep subdirectory.

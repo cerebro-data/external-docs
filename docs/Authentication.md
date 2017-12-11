@@ -186,6 +186,14 @@ export JWT_AUTHENTICATION_SERVER_URL=http://10.1.11.153:8900/idp/userinfo.openid
 export SSO_URL=http://10.1.11.153:8900/as/token.oauth2
 ```
 
+### Using both approaches
+
+If you have the need to support both approaches, simply configure the environment
+variables for both and they will each be instantiated. The external endpoint will
+be used first and if the JWT is not validated by that service, it will then be
+passed to the public key authenticator for validation.
+
+
 ## Using a JWT with curl
 
 Usage of the token is identical to a Cerebro token and can be used interchangeably.

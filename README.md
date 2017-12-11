@@ -50,6 +50,7 @@ Table of Contents:
 * [Client Configuration][clientconfig] - Details about client configuration options.
 * [Supported Data Types][data] - Lists the supported data types.
 * [Extending CDAS][extendingcdas] - Introduces the concepts of UDFs and SerDes.
+Describes S3 permission inheritance.
 * [Supported SQL][supportedsql] - Describes the Cerebro supported SQL syntax.
 
 <!-- internal link references -->

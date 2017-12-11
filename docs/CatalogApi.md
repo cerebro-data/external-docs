@@ -45,6 +45,16 @@ Example:
 curl -H "Content-Type: application/json" -X POST -d '{"query":"show databases"}' localhost:5000/api/hive-ddl
 ```
 
+As is the case with most SQL dialects, user names containing a dash need to be escaped.
+This is accomplished by wrapping the username in backticks.
+
+Example:
+
+```shell
+curl -H "Content-Type: application/json" -X POST -d '{"query":"create role `user-one`"}' localhost:5000/api/hive-ddl
+```
+
+
 ## Listing databases
 
 Endpoint: `/api/databases` [GET]<br/>

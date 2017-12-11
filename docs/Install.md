@@ -23,9 +23,9 @@ Cerebro depends on a few AWS services to be set up before installing Cerebro.
 - S3 Bucket. Cerebro uses this bucket to store log files as well as stage intermediate
 config files. This bucket should be readable and writable by all instances running any
 Cerebro components. This bucket will be referred to as `CEREBRO_S3_STAGING_DIR`.
-- RDS instance with MySQL 5.6 provisioned. This can be provisioned with the configuration
-of your choice. Cerebro instances need read and write access to this database. This
-document will refer to this as `CEREBRO_DB_URL`.
+- RDS instance with MySQL 5.6 or Aurora (MpSQL 5.6.x compatible) provisioned. This can
+be provisioned with the configuration of your choice. Cerebro instances need read and
+write access to this database. This document will refer to this as `CEREBRO_DB_URL`.
 - IAM credentials. Cerebro instances need read and write access to the above two. The
 DeploymentManager needs the ability to provision instances and the cluster machines
 will need credentials to your data. These can be one IAM profile with all the credentials
@@ -40,21 +40,21 @@ does not need to be its own machine.
 
 DeploymentManager machine:
 
-- Needs to run Linux
-- Have Java 7+ installed (OpenJDK or Sun JVM).
-  - Java 9 is not currently supported due to a known issue
-  - Java 8 is recommended as Sun has ceased providing security updates for Java 7
-- Machine needs to have `IAM_MANAGER` credentials.
-- Minimum instance type should be `t2.small`
-- Have `awscli` installed
+* Needs to run Linux
+* Have Java 7+ installed (OpenJDK or Sun JVM).
+  * Java 9 is not currently supported due to a known issue
+  * Java 8 is recommended as Sun has ceased providing security updates for Java 7
+* Machine needs to have `IAM_MANAGER` credentials.
+* Minimum instance type should be `t2.small`
+* Have `awscli` installed
 
-Cluster machine (this will be created by the deployment manager based on a user-defined 
+Cluster machine (this will be created by the deployment manager based on a user-defined
 launch script described later):
 
 - RHEL 7: Cerebro will try to install java if not present. If your environment uses
 non-standard package management, see additional steps below.
 - Machine needs to have `IAM_CLUSTER` credentials.
-- Minimum instance type should be `t2.large`.
+- Minimum instance type should be `t2.large` with at least 40GB of local storage.
 
 Network:
 
@@ -130,9 +130,7 @@ environment.
 For a standard install:
 
 ```shell
-sudo mkdir -p /var/log/cerebro
-sudo mkdir -p /etc/cerebro
-sudo chmod 700 /etc/cerebro
+sudo mkdir -p /var/log/cerebro && sudo mkdir -p /etc/cerebro && sudo chmod 700 /etc/cerebro
 
 # DeploymentManager user needs exclusive access to those directories. If those
 # directories are created as different user than the DeploymentManager user, run:
@@ -144,13 +142,12 @@ echo `whoami` | xargs -I '{}' sudo chown -R '{}' /etc/cerebro
 
 DeploymentManager needs to be configured before it can run. These configurations are
 done via environment variables before starting up the server. It is recommended you
-copy the template configuration, update it and then source it. Steps below assume the
+copy the template configuration and update it. Steps below assume the
 standard install paths were used.
 
 ```shell
 cp /opt/cerebro/deployment-manager/conf/env-template.sh /etc/cerebro/env.sh
 # open and edit env.sh, modifying it as necessary
-source /etc/cerebro/env.sh
 ```
 
 The config script from `/etc/cerebro/env.sh` will automatically be loaded when starting
@@ -374,7 +371,7 @@ to as the *init-scripts*.
 The launch-script is required and when called, should provision a new EC2 instance.
 This will be run from the DeploymentManager machine. This script should launch the
 machine with all the required EC2 configurations described for the 'Cluster machine' in
-the prerequisites (e.g. VPC, security groups, IAM Roles, etc). It is also the best place 
+the prerequisites (e.g. VPC, security groups, IAM Roles, etc). It is also the best place
 to tag machines or do any other setup as your organization requires.
 
 The init scripts is an optional list of scripts that will be run when the instance is
@@ -439,6 +436,7 @@ watch cerebro_cli clusters status 1
 # end points, run
 cerebro_cli clusters endpoints 1
 ```
+
 ### Restarting Failed Cluster after Addressing Issues
 
 When a Cerebro environment is created, the launch, init scripts and config files for that

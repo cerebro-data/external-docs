@@ -1,3 +1,27 @@
+# 0.7.1 (Dec 2017)
+
+## New Features
+
+* Support for Json Web Token (JWT) authentication using public key and external server.
+In previous releases, CDAS could only be configured to use one or the other. It is not
+possible to configure both at the same time. For more information see
+[here](Authentication.md).
+
+## Bug Fixes
+
+* Support for non-reneweable keytabs
+0.6.2 contains a single fix for kerberized clusters. All CDAS services have been updated
+to be more robust to non-renewable keytabs. Previously, services may become unstable
+when the kerberos tickets expired when using these kind of keytabs.
+
+# Bug Fixes
+
+# 0.6.2 (Dec 2017)
+
+0.6.2 contains a single fix for kerberized clusters. All CDAS services have been updated
+to be more robust to non-renewable keytabs. Previously, services may become unstable
+when the kerberos tickets expired when using these kind of keytabs.
+
 # 0.7.0 (Nov 2017)
 
 0.7.0 is a major release.
@@ -110,6 +134,16 @@ even in 0.6.x, endpoints did not report the earlier UI).
 * Root user required to run kubectl commands on kubernetes master.
 Previously, `kubectl` could be run as any user, for example, `ec2-user`. It is now required
 to be `root` to run `kubectl`.
+
+* Existing launch scripts will not work with 0.7.0. We have enhanced our validation of
+launch scripts when they are registered during the cerebro_cli "environments create"
+call. The changes required to perform that validation necessitates that all launch scripts
+must to be replaced with ones based on the new template provided in the 0.7.0 release.
+Launch scripts based on earlier templates will cause the "environments create" call
+to fail. All of the values that need to be configured have been moved to a dedicated section
+towards the top of the script in the new template, so porting older launch files should
+be fairly quick. Launch scripts based on the 0.7.0 template are backwards compatible with
+older CDAS releases.
 
 ## Known issues
 

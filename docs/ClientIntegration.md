@@ -274,6 +274,12 @@ curl <hostport>/api/scan/sample
 curl --negotiate -u : hostport/api/scan/sample
 ```
 
+Note that this API, like the other CDAS scan APIs, is intended to feed data into analytics tools.
+The analytics tools perform any final computation. For example, an aggregate query like
+"select count(*) from nytaxi.parquet_data" may return multiple rows with partial sums.
+Here, the client (pandas/R/presto etc.) would perform the final computation and return a single row.
+
+
 ### Python Pandas Integration
 
 Reading the data into a panda data frame is very simple with the REST API.
