@@ -48,7 +48,7 @@ Type: `STANDALONE_CLUSTER`
 | 7     | Web UI      |
 
 > **Note:** The number of services for a standalone cluster changed in 0.7.0. Before
-that version a cluster had eight (8) services. With 0.7.0 there are only seven (7)
+that version a cluster had eight (8) services. With 0.7.x there are only seven (7)
 services.
 
 ---

@@ -14,6 +14,11 @@ possible to configure both at the same time. For more information see
 to be more robust to non-renewable keytabs. Previously, services may become unstable
 when the kerberos tickets expired when using these kind of keytabs.
 
+* UI no longer shows zero datasets in the case that some failed to load
+In 0.7.0 and previous releases, the UI would show no datasets in the Datasets page
+list, even if only one failed to load. In 0.7.1, the UI will show all datasets
+that were loaded without error.
+
 # Bug Fixes
 
 # 0.6.2 (Dec 2017)
