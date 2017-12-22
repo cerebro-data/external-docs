@@ -27,3 +27,17 @@ to use the external HMS config.
 
 It is possible to have multiple CDAS clusters use the same external HMS, subject to the
 concurrency settings of your HMS.
+
+## Advanced Networking
+
+### Configuring the IP range that a CDAS cluster should use for internal routing
+
+Each Cerebro cluster configures a private network for communication within the cluster.
+By default, Cerebro will use the 172.30.0.0/16 range for internal communication.
+The environment variable CEREBRO_CDAS_INTERNAL_NETWORK_IP_RANGE on the DM can be
+used to configure this setting.
+
+NOTE: AWS attaches an HTTP server to every instance at IP address 169.254.169.254.
+You should never configure an internal network range that would overlap with that
+IP address. If that occurs, then AWS libraries will not be able to query the HTTP
+server for the instance's IAM credentials, precluding access to AWS resources.

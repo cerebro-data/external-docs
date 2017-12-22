@@ -153,6 +153,25 @@ cp /opt/cerebro/deployment-manager/conf/env-template.sh /etc/cerebro/env.sh
 The config script from `/etc/cerebro/env.sh` will automatically be loaded when starting
 the DeploymentManager. If this is the path used, it is not necessary to source the script.
 
+NOTE:
+The environment variables set in the env.sh script are stored by the deployment manager
+when it starts up. When a deployment manager creates a Cerebro cluster, the current values
+of those environment variables are applied to the new cluster and the cluster will retain
+those values independent of any subsequent configuration changes on the deployment manager.
+To change the values used by a deployment manager, you must either update the env.sh script
+(assuming that it's in the default location of /etc/cerebro/) or update your environment
+variables. Then, restart the deployment manager by running:
+```shell
+/opt/cerebro/deployment-manager/bin/deployment-manager
+```
+Clusters created after the deployment manager is restarted will use the new
+configuration values.
+
+An existing Cerebro cluster that is restarted via a deployment manager will not pick up
+any changes in the deployment manager's configuration. Rather, the Cerebro cluster
+will retain the configuration values that were used during that cluster's creation.
+
+
 **CEREBRO_S3_STAGING_DIR**
 This is the `CEREBRO_S3_STAGING_DIR` for logs and install files. It can be anywhere in
 s3 that makes sense for your organization. Cerebro will create a number of subdirectories
@@ -391,8 +410,25 @@ cp  /opt/cerebro/deployment-manager/bin/start-ec2-machine-example.sh /etc/cerebr
 To verify the launch script, we recommend running it with no arguments from the
 DeploymentManager machine as the same user as the DeploymentManager, with identical
 proxy settings (if any) and identical AWS settings. The script should run successfully
-with no arguments and it should output the instance-id and ip address of the newly
+with no arguments and it should output the instance-id and ip addresses of the newly
 launched instance.
+
+Launch script validation was recently added to CDAS. This requires that launch scripts
+support a "--dryrun" flag and exit with a status of zero when invoked  with that flag.
+As example:
+```
+$ /etc/cerebro/launch-ec2.sh --dryrun
+Dry run succeeded
+$ echo $?
+0
+```
+The "Dry run succeeded" line is not required.
+
+When a launch script is invoked without the "--dryrun" flag, it is expected to
+return a string of the form: ```<instance id>,<public ip>,<private ip>```
+NOTE: the public ip value is optional. If your setup does not use it, simply output
+```<instance id>,,<private ip>```
+
 
 With the script built, you can start a cluster from the CLI. We will first create an
 environment. An environment captures all the configurations required to launch clusters.

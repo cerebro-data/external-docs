@@ -216,7 +216,7 @@ At this point, the user can use the EMR components to access data managed by Cer
   ```shell
   $ spark-shell
   scala> spark.conf.set("spark.recordservice.delegation-token.token", "<USER TOKEN>")
-  scala> val df = spark.sqlContext.load("cerebro_sample.sample", "com.cerebro.recordservice.spark")
+  scala> val df = spark.sqlContext.read.format("com.cerebro.recordservice.spark").load("cerebro_sample.sample")
   scala> df.show()
   ```
 
@@ -315,7 +315,7 @@ scala> spark.conf.set("spark.recordservice.delegation-token.token", "<USER TOKEN
 scala> spark.conf.set("spark.recordservice.delegation-token.service-name", "<PLANNER SERVICE NAME>")
 
 # Load a cerebro table and you're good to go.
-scala> val df = spark.sqlContext.load("<DB.TABLE>", "com.cerebro.recordservice.spark")
+scala> val df = spark.sqlContext.read.format("com.cerebro.recordservice.spark").load("<DB.TABLE>")
 scala> df.show()
 ```
 

@@ -95,7 +95,7 @@ intend to use for authentication:
   The following curl command should return a Cerebro token on successful authentication
 
     ```shell
-    $ curl <CDAS_REST_SERVER>/api/get-token -u <AD_USERNAME>
+    $ curl -X POST <CDAS_REST_SERVER>/api/get-token -u <AD_USERNAME>
     Enter host password for user '<AD_USERNAME>':
     {
       "token": "<Token>"
@@ -103,7 +103,7 @@ intend to use for authentication:
 
     # An example for Catalog REST server running at localhost:5000, and AD username
     # "testuser" is as follows
-    $ curl localhost:5000/api/get-token -u testuser
+    $ curl -X POST localhost:5000/api/get-token -u testuser
     Enter host password for user 'testuser':
     {
       "token": "AAdzYXVyYWJoAAdzYXVyYWJoigFcIb5C_IoBXEXKxvwBAg$$.xvm3yXp3_CZX377y0BqFVBmjKIY$"

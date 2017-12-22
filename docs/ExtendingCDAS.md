@@ -221,8 +221,8 @@ CREATE TABLE apachelog (
   referrer STRING,
   agent STRING)
 ROW FORMAT
-SERDE 's3://my-company/serdes/regex-serde.jar'
-SYMBOL 'org.apache.hadoop.hive.serde2.RegexSerDe'
+SERDE 'org.apache.hadoop.hive.serde2.RegexSerDe'
+JAR_PATH 's3://my-company/serdes/regex-serde.jar'
 WITH SERDEPROPERTIES (
   "input.regex" = "([^]*) ([^]*) ([^]*) (-|\\[^\\]*\\]) ([^ \"]*|\"[^\"]*\") (-|[0-9]*) (-|[0-9]*)(?: ([^ \"]*|\".*\") ([^ \"]*|\".*\"))?"
 )
@@ -233,7 +233,7 @@ WITH SERDEPROPERTIES (
 As an end to end example, we'll load a dataset in S3 which uses the [Cedilla-C](https://en.wikipedia.org/wiki/Ç)
 as the delimiter, using Hive's [MultiDelimitSerde](https://github.com/apache/hive/blob/0af6cb42725659740a022044c6cc464ef1cf4e6b/contrib/src/java/org/apache/hadoop/hive/contrib/serde2/MultiDelimitSerDe.java).
 
-The folder being used in this tutorial is available publicly at  
+The folder being used in this tutorial is available publicly at
 ```s3://cerebro-datasets/cedilla_sample/```.
 
 The folder contains a file named `cedilla_sample.txt`, the contents of which are
