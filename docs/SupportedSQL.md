@@ -8,11 +8,22 @@ describes the subset that is supported.
 CDAS in general supports the identical data model as Apache Hive and is generally
 compatible with HiveQL.
 
-## DDL
+* [Data Definition Statements](#data-definition-language-ddl-statements)
+* [Data Manipulation Statements](#data-manipulation-language-dml-statements)
+
+## Data Definition Language (DDL) statements
 
 CDAS generally supports the HiveQL DDL statements and tries to be compatible. In some
 cases, CDAS is not compatible and in others, the supported SQL has been extended for
-CDAS specific capabilities.
+CDAS specific capabilities. These include all statements that modify the catalog
+and do not read any data (e.g. create, drop, alter).
+
+### MSCK Repair
+
+CDAS does not support the Hive `MSCK REPAIR TABLE [table_name]` and instead supports
+the alternative, `ALTER TABLE [table_name] RECOVER PARTITIONS`. This command behaves
+identically otherwise and automatically add partitions to the table based on the
+storage directory structure.
 
 ### Extensions
 
@@ -105,10 +116,18 @@ partitioning on the base table is preserved for the view.
 This is disallowed as it is unclear what the semantics are if the partitioning specified
 in the view is different than the base table and the performance implications.
 
-## DML statements
+## Data Manipulation Language (DML) statements
 
-CDAS only supports a subset SELECT statements (no INSERT, DELETE, UPDATE). SELECT
-statements with projections and filters are fully supported.
+CDAS is not a distributed SQL engine and only support a subset of SQL statements. It does
+not support the other DML statements (e.g. INSERT, DELETE, UPDATE, etc). For SELECT
+statements, only a subset of the SQL standard is supported. A typical configuration is
+to run a SQL engine (e.g Spark or Presto) on top of CDAS.
+
+SELECT statements with projection and filters are fully supported.
+
+The only AGGREGATION that is supported is `count(*)` with no grouping. In this case
+multiple records will be returned for this query, each containing a partial count.
+Summing up all the counts returns the complete result.
 
 ### JOINs
 
