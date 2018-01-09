@@ -1,3 +1,43 @@
+# 0.8.0-beta
+
+## New Since Last Beta
+
+* Support for configuring an existing Hive metastore db for CDAS.
+
+* Support for `CREATE TABLE AS SELECT` (CTAS) when run from Hive in EMR. We require that
+the Hive warehouse has been configured to use S3 as the storage location (and not the
+cluster local HDFS) for this to be supported.
+
+* Support for `ALTER TABLE RECOVER PARTITIONS`. In this version, this must be run
+through `dbcli` and can be used to create the partitioning structure.
+
+# 0.7.2 (Dec 2017)
+
+0.7.2 includes minor bug fixes. We recommend all 0.7.0/0.7.1 users upgrade.
+
+## Bug Fixes
+
+* Fixed deployment in environments which require HTTP proxy configurations. Some of
+the new validations added in 0.7 were not properly using HTTP proxy configurations in all
+cases, causing those calls to fail. No configuration changes are required. We now
+properly use the proxy configurations if set.
+
+* Fixed deployment when the cluster's private IP range conflicts with what CDAS
+requires. Specifically, in 0.7.2, we resolved the conflict on the IP range `10.32.0.0/12`.
+
+* Fixed token expiration display for Json Web Tokens (JWT) in the UI. The value displayed
+in the previous version was incorrect and much longer than the actual expiration. Note
+that this was a presentation issue only; the tokens would have expired correctly.
+
+* Fixed issue where catalog does not load properly when there are invalid catalog objects.
+These catalog objects are unreadable by Cerebro but now this no longer causes other
+catalog objects to be skipped.
+
+* Support LDAP default domains and SSL enabled servers. Previously, CDAS only supported
+distinguished names. Now it is possible to login with a domain name, for example
+`USERS\user`. It is also possible to configure a default domain and just login with
+`user`.
+
 # 0.7.1 (Dec 2017)
 
 ## New Features

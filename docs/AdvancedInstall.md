@@ -28,6 +28,32 @@ to use the external HMS config.
 It is possible to have multiple CDAS clusters use the same external HMS, subject to the
 concurrency settings of your HMS.
 
+## Sharing Existing Hive Metastore RDBMS
+
+It is also possible to start a Cerebro catalog which shares the same RDBMS database as
+an existing Hive Metastore. This is useful, for example, during migration to have the
+Cerebro catalog use the same underlying database as the existing Hive Metastore. This
+allows the existing catalog information to be automatically visible through Cerebro.
+
+To do so, configure `CEREBRO_DB_URL` (when starting up the DeploymentManager) to be
+the same database instance (i.e. same MySQL server) as the one used by the existing
+Hive Metastore, and then when creating the cluster, specify `--hmsDbName` when creating
+the cluster from the CLI.
+
+For example, if an existing HMS was running ontop of a MySQL instance at
+`hms.db.mycompany.com:3306` with metadata in `hive_db`, you can:
+
+In env.sh:
+```shell
+export CEREBRO_DB_URL=hms.db.mycompany.com:3306
+```
+
+And when creating the cluster:
+```shell
+./cerebro_cli clusters create --hmsDbName=hive_db --name=fintech_prod --numNodes=1 --type=STANDALONE_CLUSTER --environmentid=1
+```
+
+
 ## Advanced Networking
 
 ### Configuring the IP range that a CDAS cluster should use for internal routing

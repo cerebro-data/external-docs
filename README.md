@@ -79,4 +79,3 @@ Describes S3 permission inheritance.
 [supportedsql]: docs/SupportedSQL.md
 [tableauwdc]: docs/TableauWDC.md
 [webui]: docs/WebUI.md
-

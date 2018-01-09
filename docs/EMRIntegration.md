@@ -397,6 +397,27 @@ to data or metadata in these databases do not use Cerebro in any way.
 Spark, by default, uses the `global_temp` exactly this way. If Spark is included in the
 EMR cluster, this database will automatically be setup to be cluster local.
 
+Local dbs are also useful in creating materialized views (caches of datasets from queries)
+for faster access. An example would be to create a table in localdb using data from Cerebro
+datasets (using create table as select statement). For example:
+
+```sql
+CREATE TABLE localdb.european_users AS SELECT * FROM users WHERE region = 'europe'
+```
+
+The location for these tables can be changed to S3 bucket. This can be set in
+hive-site.xml. Example:
+
+```xml
+property>
+  <name>hive.metastore.warehouse.dir</name>
+  <value>s3://cerebrodata/warehouse</value>
+  <description>location of default database for the warehouse</description>
+</property>
+```
+
+External storage location is supported for S3 buckets only.
+
 In the case where the local database has the same name as a Cerebro database, the local
 database takes precedence and the user will not be able see the contents in that Cerebro
 database from Hive.
