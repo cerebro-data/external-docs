@@ -30,6 +30,7 @@ Table of Contents:
 
 * [Auditing][auditing] - Describes the audit logging performed by the Cerebro services.
 * [Cluster Administration][clusteradmin] - Explains how to administrate a running Cerebro cluster.
+* [Cluster Sizing][sizing] - Explains sizing considerations when deploying Cerebro.
 * [Cluster Launch API][clusterlaunchpluginapi] - For custom cluster launch functionality.
 * [Database CLI][dbcli] - This command line tool enables interaction with the Cerebro database.
 * [Kubernetes Dashboard Quickstart][kubernetesdashboardquickstart] - Introduction to the Kubernetes dashboard.
@@ -76,6 +77,7 @@ Describes S3 permission inheritance.
 [oauthguide]: docs/OAuthGuide.md
 [relnotes]: docs/ReleaseNotes.md
 [security]: docs/Security.md
+[sizing]: docs/ClusterSizing.md
 [supportedsql]: docs/SupportedSQL.md
 [tableauwdc]: docs/TableauWDC.md
 [webui]: docs/WebUI.md

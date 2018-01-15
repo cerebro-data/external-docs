@@ -445,6 +445,23 @@ The equivalent as a bootstrap action is:
 }
 ```
 
+#### Known Incompatibilies
+
+With CDAS installation, Hive uses externalized metadata managed by CDAS.
+
+As a result, it is not possible to alter the location of a table or partition to a Cerebro
+dataset via Hive. This instead, needs to be done via a native Cerebro client, for example,
+the dbcli.
+
+Hive treats external table created using hive against CDAS, as external, non-native type.
+"Alter table" is not supported on external non-native tables.
+
+Dbcli example to alter the table location:
+
+```sql
+dbcli dataset hive-ddl "alter table cerebro.users set location 's3a://cerebrodata/correctedlocation'"
+```
+
 ### Presto
 
 #### Setting up Presto
