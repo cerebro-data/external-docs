@@ -203,3 +203,23 @@ To list the databases via curl, the JWT can be passed in the authorization heade
 ```shell
 curl <CDAS_REST_HOST:PORT>/api/databases -H 'authorization: Bearer <token>'
 ```
+
+## Automating token management
+
+As a means of simplifying the end-user experience,
+a script can be specified via the CEREBRO_TOKEN_RETRIEVAL_SCRIPT environment variable
+that will be used for acquiring and refreshing tokens.
+The value associated with that environment variable should be the absolute path
+to an executable that can be called without supplying any arguments and that, when run,
+returns a single string containing a valid token.
+
+This script will be called in any of the following situations:
+* a query is issued to CDAS when there is no token present
+* a CDAS query fails due to an expired token
+
+In either scenario, if the specified script successfully executes, the returned value
+will be placed into a token file in the home directory of the user that
+attempted to run the query. Subsequent queries will use this token. Should
+the token expire, the resulting failure will trigger another execution
+of the configured script and the expired token will be replaced with
+the new, valid token.

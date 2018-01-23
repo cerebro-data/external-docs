@@ -40,7 +40,7 @@ the _cdas_rest_api_ in the box followed by **/wdc**. The following page will app
 
 5. Enter a valid authentication token in the text box above the 'Accept Auth Token'
 button and press the 'Accept Auth Token' button. A valid authentication token can be
-acquired by referring to the 'Getting a token' section of [Authentication](https://github.com/cerebro-data/cerebro/blob/master/docs/user/Authentication.md).
+acquired by referring to the 'Getting a token' section of [authentication document](Authentication.md).
 
 6. (Optional) Modify the "Max records" field. This field will dictate how many records
 per dataset will be fetched at most. Lower numbers can significantly improve performance.

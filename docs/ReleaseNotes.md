@@ -1,8 +1,13 @@
 # 0.8.0-beta
 
-The latest beta release version is `0.8.0-beta2` (1/15/2018).
+The latest beta release version is `0.8.0-beta3` (1/22/2018).
 
 ## New Since Last Beta
+
+* Updated packaged docker version from 1.12.2 to 1.12.6, which includes multiple
+stability fixes.
+
+## New in 0.8.0
 
 * Improved support for partitioned tables when using them from EMR. In previous releases,
 Cerebro would return the tables as unpartitioned tables to hive. While this allowed the
@@ -11,8 +16,6 @@ predicate pushdown mechanism), it meant that commands such as `show partitions` 
 not work. In this release, we more faithfully return the partitioning information to
 Hive, and the Cerebro partitioned tables behave much more similar to standard hive
 partitioned tables.
-
-## New in 0.8.0
 
 * Support for configuring an existing Hive metastore db for CDAS.
 
