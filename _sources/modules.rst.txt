@@ -1,0 +1,7 @@
+cerebro
+=======
+
+.. toctree::
+   :maxdepth: 4
+
+   cerebro

@@ -1,0 +1,22 @@
+cerebro package
+===============
+
+Submodules
+----------
+
+cerebro.cdas module
+-------------------
+
+.. automodule:: cerebro.cdas
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: cerebro
+    :members:
+    :undoc-members:
+    :show-inheritance:

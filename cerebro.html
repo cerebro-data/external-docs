@@ -1,0 +1,699 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cerebro package &mdash; pycerebro  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pycerebro  documentation" href="index.html"/>
+        <link rel="next" title="cerebro" href="modules.html"/>
+        <link rel="prev" title="Welcome to pycerebro’s documentation!" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pycerebro
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">cerebro package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cerebro.cdas">cerebro.cdas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cerebro">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">cerebro</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cerebro package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cerebro.cdas">cerebro.cdas module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cerebro">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pycerebro</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>cerebro package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/cerebro.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cerebro-package">
+<h1>cerebro package<a class="headerlink" href="#cerebro-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-cerebro.cdas">
+<span id="cerebro-cdas-module"></span><h2>cerebro.cdas module<a class="headerlink" href="#module-cerebro.cdas" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cerebro.cdas.CerebroContext">
+<em class="property">class </em><code class="descclassname">cerebro.cdas.</code><code class="descname">CerebroContext</code><span class="sig-paren">(</span><em>application_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#CerebroContext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.CerebroContext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cerebro.cdas.CerebroContext.connect_planner">
+<code class="descname">connect_planner</code><span class="sig-paren">(</span><em>host='localhost'</em>, <em>port=12050</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#CerebroContext.connect_planner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.CerebroContext.connect_planner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a connection to a Cerebro planner.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>host</strong> (<em>str</em><em> or </em><em>list of hostnames</em>) – The hostname for the planner. If a list is specified, picks a planner at
+random.</li>
+<li><strong>port</strong> (<em>int</em><em>, </em><em>optional</em>) – The port number for the planner. The default is 12050.</li>
+<li><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – Connection timeout in seconds. Default is no timeout.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Handle to a planner connection. Users should call <cite>close()</cite> when done.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#cerebro.cdas.PlannerConnection" title="cerebro.cdas.PlannerConnection">PlannerConnection</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.CerebroContext.connect_worker">
+<code class="descname">connect_worker</code><span class="sig-paren">(</span><em>host='localhost'</em>, <em>port=13050</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#CerebroContext.connect_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.CerebroContext.connect_worker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a connection to Cerebro worker.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>host</strong> (<em>str</em><em> or </em><em>list of hostnames</em>) – The hostname for the worker. If a list is specified, picks a worker at
+random.</li>
+<li><strong>port</strong> (<em>int</em><em>, </em><em>optional</em>) – The port number for the worker. The default is 13050.</li>
+<li><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – Connection timeout in seconds. Default is no timeout.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Handle to a worker connection. Users should call <cite>close()</cite> when done.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#cerebro.cdas.WorkerConnection" title="cerebro.cdas.WorkerConnection">WorkerConnection</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.CerebroContext.disable_auth">
+<code class="descname">disable_auth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#CerebroContext.disable_auth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.CerebroContext.disable_auth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disables authentication.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.CerebroContext.enable_kerberos">
+<code class="descname">enable_kerberos</code><span class="sig-paren">(</span><em>service_name</em>, <em>host_override=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#CerebroContext.enable_kerberos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.CerebroContext.enable_kerberos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable kerberos based authentication.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>service_name</strong> (<em>str</em>) – Authenticate to a particular <cite>cerebro</cite> service principal. Uses
+‘cerebro’ by default.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.CerebroContext.enable_token_auth">
+<code class="descname">enable_token_auth</code><span class="sig-paren">(</span><em>token_str=None</em>, <em>token_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#CerebroContext.enable_token_auth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.CerebroContext.enable_token_auth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enables token based authentication.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>token_str</strong> (<em>str</em><em>, </em><em>optional</em>) – Authentication token to use.</li>
+<li><strong>token_file</strong> (<em>str</em><em>, </em><em>optional</em>) – File containing token to use.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.CerebroContext.get_auth">
+<code class="descname">get_auth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#CerebroContext.get_auth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.CerebroContext.get_auth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the configured auth mechanism. None if no auth is enabled.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.CerebroContext.get_name">
+<code class="descname">get_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#CerebroContext.get_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.CerebroContext.get_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns name of this application. This is recorded for diagnostics on
+the server.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.CerebroContext.get_token">
+<code class="descname">get_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#CerebroContext.get_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.CerebroContext.get_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the token string. Note that logging this should be done with care.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cerebro.cdas.PlannerConnection">
+<em class="property">class </em><code class="descclassname">cerebro.cdas.</code><code class="descname">PlannerConnection</code><span class="sig-paren">(</span><em>thrift_service</em>, <em>ctx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#PlannerConnection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.PlannerConnection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A connection to a CDAS planner.</p>
+<dl class="method">
+<dt id="cerebro.cdas.PlannerConnection.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#PlannerConnection.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.PlannerConnection.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the session and server connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.PlannerConnection.execute_ddl">
+<code class="descname">execute_ddl</code><span class="sig-paren">(</span><em>sql</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#PlannerConnection.execute_ddl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.PlannerConnection.execute_ddl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute a DDL statement against the server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sql</strong> (<em>str</em>) – DDL statement to run</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Returns the result as a table.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(list(str))</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cerebro</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">cerebro</span><span class="o">.</span><span class="n">create_context</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect_planner</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">12050</span><span class="p">)</span> <span class="k">as</span> <span class="n">planner</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span><span class="s1">&#39;describe cerebro_sample.users&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">result</span>
+<span class="go">[[&#39;uid&#39;, &#39;string&#39;, &#39;&#39;], [&#39;dob&#39;, &#39;string&#39;, &#39;&#39;], [&#39;gender&#39;, &#39;string&#39;, &#39;&#39;], [&#39;ccn&#39;, &#39;string&#39;, &#39;&#39;]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.PlannerConnection.get_protocol_version">
+<code class="descname">get_protocol_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#PlannerConnection.get_protocol_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.PlannerConnection.get_protocol_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the RPC API version of the server.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.PlannerConnection.list_databases">
+<code class="descname">list_databases</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#PlannerConnection.list_databases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.PlannerConnection.list_databases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lists all the databases in the catalog</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of database names.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(str)</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cerebro</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">cerebro</span><span class="o">.</span><span class="n">create_context</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect_planner</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">12050</span><span class="p">)</span> <span class="k">as</span> <span class="n">planner</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">dbs</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">list_databases</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="s1">&#39;cerebro_sample&#39;</span> <span class="ow">in</span> <span class="n">dbs</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.PlannerConnection.list_dataset_names">
+<code class="descname">list_dataset_names</code><span class="sig-paren">(</span><em>db</em>, <em>filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#PlannerConnection.list_dataset_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.PlannerConnection.list_dataset_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the names of the datasets in this db</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>db</strong> (<em>str</em>) – Name of database to return datasets in.</li>
+<li><strong>filter</strong> (<em>str</em><em>, </em><em>optional</em>) – Substring filter on names to of datasets to return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of dataset names.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list(str)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cerebro</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">cerebro</span><span class="o">.</span><span class="n">create_context</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect_planner</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">12050</span><span class="p">)</span> <span class="k">as</span> <span class="n">planner</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">datasets</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">list_dataset_names</span><span class="p">(</span><span class="s1">&#39;cerebro_sample&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">datasets</span>
+<span class="go">[&#39;cerebro_sample.sample&#39;, &#39;cerebro_sample.users&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.PlannerConnection.list_datasets">
+<code class="descname">list_datasets</code><span class="sig-paren">(</span><em>db</em>, <em>filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#PlannerConnection.list_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.PlannerConnection.list_datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the datasets in this db</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>db</strong> (<em>str</em>) – Name of database to return datasets in.</li>
+<li><strong>filter</strong> (<em>str</em><em>, </em><em>optional</em>) – Substring filter on names to of datasets to return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Thrift dataset objects.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list(obj)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This API is subject to change and the returned object may not be backwards
+compatible.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.PlannerConnection.plan">
+<code class="descname">plan</code><span class="sig-paren">(</span><em>dataset=None</em>, <em>sql=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#PlannerConnection.plan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.PlannerConnection.plan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plans the request to read from CDAS
+:param dataset: Name of dataset to plan scan for. Plans to scan entire dataset.
+:type dataset: str, optional
+:param sql: SQL string to generate plan for.
+:type sql: str, optional</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Thrift serialized plan object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">object</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This API is subject to change and the returned object may not be backwards
+compatible.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.PlannerConnection.set_application">
+<code class="descname">set_application</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#PlannerConnection.set_application"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.PlannerConnection.set_application" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the name of this session. Used for logging purposes on the server.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cerebro.cdas.WorkerConnection">
+<em class="property">class </em><code class="descclassname">cerebro.cdas.</code><code class="descname">WorkerConnection</code><span class="sig-paren">(</span><em>thrift_service</em>, <em>ctx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#WorkerConnection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.WorkerConnection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A connection to a CDAS worker.</p>
+<dl class="method">
+<dt id="cerebro.cdas.WorkerConnection.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#WorkerConnection.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.WorkerConnection.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the session and server connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.WorkerConnection.close_task">
+<code class="descname">close_task</code><span class="sig-paren">(</span><em>handle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#WorkerConnection.close_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.WorkerConnection.close_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes the task.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.WorkerConnection.exec_task">
+<code class="descname">exec_task</code><span class="sig-paren">(</span><em>task</em>, <em>max_records=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#WorkerConnection.exec_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.WorkerConnection.exec_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes a task to begin scanning records.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>task</strong> (<em>obj</em>) – Description of task. This is the result from the planner’s plan() call.</li>
+<li><strong>max_records</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of records to return for this task. Default is unlimited.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><em>object</em> – Handle for this task. Used in subsequent API calls.</li>
+<li><em>object</em> – Schema for records returned from this task.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.WorkerConnection.fetch">
+<code class="descname">fetch</code><span class="sig-paren">(</span><em>handle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#WorkerConnection.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.WorkerConnection.fetch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the next batch of records for this task.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.WorkerConnection.get_protocol_version">
+<code class="descname">get_protocol_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#WorkerConnection.get_protocol_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.WorkerConnection.get_protocol_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the RPC API version of the server.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cerebro.cdas.WorkerConnection.set_application">
+<code class="descname">set_application</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#WorkerConnection.set_application"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.WorkerConnection.set_application" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the name of this session. Used for logging purposes on the server.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cerebro.cdas.create_context">
+<code class="descclassname">cerebro.cdas.</code><code class="descname">create_context</code><span class="sig-paren">(</span><em>application_name='pycerebro'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#create_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.create_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the top level context object to use pycerebro.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>application_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of this application. Used for logging and diagnostics.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Context object.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#cerebro.cdas.CerebroContext" title="cerebro.cdas.CerebroContext">CerebroContext</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cerebro</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">cerebro</span><span class="o">.</span><span class="n">create_context</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span>                                         
+<span class="go">&lt;cerebro.cdas.CerebroContext object at 0x...&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="cerebro.cdas.scan_as_json">
+<code class="descclassname">cerebro.cdas.</code><code class="descname">scan_as_json</code><span class="sig-paren">(</span><em>planner</em>, <em>dataset=None</em>, <em>sql=None</em>, <em>max_records=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#scan_as_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.scan_as_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scans data, returning the result in json format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>planner</strong> (<a class="reference internal" href="#cerebro.cdas.PlannerConnection" title="cerebro.cdas.PlannerConnection"><em>PlannerConnection</em></a>) – Planner connection handle.</li>
+<li><strong>dataset</strong> (<em>string</em><em>, </em><em>optional</em>) – Name of dataset to scan. <cite>dataset</cite> or <cite>sql</cite> must be specified.</li>
+<li><strong>sql</strong> (<em>string</em><em>, </em><em>optional</em>) – SQL statement for query. <cite>dataset</cite> or <cite>sql</cite> must be specified.</li>
+<li><strong>max_records</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of records to return. Default is unlimited.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Data returned as a list of JSON objects</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list(obj)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cerebro</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">cerebro</span><span class="o">.</span><span class="n">create_context</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect_planner</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">12050</span><span class="p">)</span> <span class="k">as</span> <span class="n">planner</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">data</span> <span class="o">=</span> <span class="n">cerebro</span><span class="o">.</span><span class="n">scan_as_json</span><span class="p">(</span><span class="n">planner</span><span class="p">,</span> <span class="n">dataset</span> <span class="o">=</span> <span class="s1">&#39;cerebro_sample.sample&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">data</span>
+<span class="go">[{&#39;record&#39;: b&#39;This is a sample test file.&#39;}, {&#39;record&#39;: b&#39;It should consist of two lines.&#39;}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="cerebro.cdas.scan_as_pandas">
+<code class="descclassname">cerebro.cdas.</code><code class="descname">scan_as_pandas</code><span class="sig-paren">(</span><em>planner</em>, <em>dataset=None</em>, <em>sql=None</em>, <em>max_records=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#scan_as_pandas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.scan_as_pandas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scans data, returning the result for pandas.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>planner</strong> (<a class="reference internal" href="#cerebro.cdas.PlannerConnection" title="cerebro.cdas.PlannerConnection"><em>PlannerConnection</em></a>) – Planner connection handle.</li>
+<li><strong>dataset</strong> (<em>string</em><em>, </em><em>optional</em>) – Name of dataset to scan. <cite>dataset</cite> or <cite>sql</cite> must be specified.</li>
+<li><strong>sql</strong> (<em>string</em><em>, </em><em>optional</em>) – SQL statement for query. <cite>dataset</cite> or <cite>sql</cite> must be specified.</li>
+<li><strong>max_records</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of records to return. Default is unlimited.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Data returned as a pandas DataFrame object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cerebro</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">cerebro</span><span class="o">.</span><span class="n">create_context</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect_planner</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">12050</span><span class="p">)</span> <span class="k">as</span> <span class="n">planner</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">pd</span> <span class="o">=</span> <span class="n">cerebro</span><span class="o">.</span><span class="n">scan_as_pandas</span><span class="p">(</span><span class="n">planner</span><span class="p">,</span> <span class="n">dataset</span> <span class="o">=</span> <span class="s1">&#39;cerebro_sample.sample&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="p">)</span>
+<span class="go">                               record</span>
+<span class="go">0      b&#39;This is a sample test file.&#39;</span>
+<span class="go">1  b&#39;It should consist of two lines.&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="cerebro.cdas.version">
+<code class="descclassname">cerebro.cdas.</code><code class="descname">version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cerebro/cdas.html#version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cerebro.cdas.version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns version string of this library.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cerebro">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cerebro" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="modules.html" class="btn btn-neutral float-right" title="cerebro" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to pycerebro’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Cerebro Development Team.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
