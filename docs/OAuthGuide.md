@@ -109,16 +109,12 @@ your `/etc/cerebro/env.sh` file, set the following environment variables:
  - **CEREBRO_OAUTH_SCOPES** (optional). Space-separated list of scopes required to
  obtain the `sub`. This is typically OK to leave unset, in which case the default is
  `"openid profile email"`.
- - **CEREBRO_OAUTH_SUB_ENDPOINT** (optional). URI of the endpoint where the JSON
- response with the `sub` is. This endpoint must also accept the OAuth token obtained
- from the token exchange. e.g. `https://user-data-endpoint:9999/api/openid.profile`
 
 As an example, the OAuth part of your `env.sh` might look like this:
 
 ```shell
 export CEREBRO_OAUTH_SECRETS="/etc/cerebro/client_secrets.json"
 export CEREBRO_OAUTH_SCOPES="openid profile"
-export CEREBRO_SUB_ENDPOINT="https://user-data-endpoint:9999/api/openid.profile"
 ```
 
 ### Verify OAuth

@@ -30,6 +30,7 @@ Table of Contents:
 
 * [Auditing][auditing] - Describes the audit logging performed by the Cerebro services.
 * [Cluster Administration][clusteradmin] - Explains how to administrate a running Cerebro cluster.
+* [Cluster Sizing][sizing] - Explains sizing considerations when deploying Cerebro.
 * [Cluster Launch API][clusterlaunchpluginapi] - For custom cluster launch functionality.
 * [Database CLI][dbcli] - This command line tool enables interaction with the Cerebro database.
 * [Kubernetes Dashboard Quickstart][kubernetesdashboardquickstart] - Introduction to the Kubernetes dashboard.
@@ -40,6 +41,7 @@ Table of Contents:
 * [Cloudera CDH Integration][cdhintegration] - How to integrate Cerebro with CDH.
 * [Client Integration][clientintegration] - How to integrate Cerebro with Hadoop clients.
 * [EMR Integration][emrintegration] - How to integrate Cerebro with AWS EMR.
+* [Native Python Integration][pycerebro] - How to use Cerebro's python integration
 * [Tableau Integration][tableauwdc] - How to integrate Cerebro with Tableau.
 
 ## Developers
@@ -74,9 +76,10 @@ Describes S3 permission inheritance.
 [kubernetesdashboardquickstart]: docs/KubernetesDashboardQuickStart.md
 [ldapauthn]: docs/LdapAuthentication.md
 [oauthguide]: docs/OAuthGuide.md
+[pycerebro]: docs/PyCerebro.md
 [relnotes]: docs/ReleaseNotes.md
 [security]: docs/Security.md
+[sizing]: docs/ClusterSizing.md
 [supportedsql]: docs/SupportedSQL.md
 [tableauwdc]: docs/TableauWDC.md
 [webui]: docs/WebUI.md
-

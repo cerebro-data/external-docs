@@ -95,3 +95,54 @@ Available in: 0.4.0+.
 
 Note that this feature is supported going forward. Upgrading from version 0.3.0 to 0.4.0
 is not supported.
+
+
+## Cluster status
+
+To query the status of all of the clusters that a deployment manager controls, run
+```shell
+cerebro_cli clusters list
+```
+
+The output will look something like this:
+```shell
+cerebro_cli clusters list
+description      id  name       numNodes  numRunningServices    owner    statusCode    statusMessage                                                                           type
+-------------  ----  -------  ----------  --------------------  -------  ------------  --------------------------------------------------------------------------------------  ------------------
+                137  cluster1          1  7/7                   admin    READY         All services running.                                                                   STANDALONE_CLUSTER
+```
+
+The value under "numRunningServices" is an indicator of which services are currently
+passing their health checks. The services are always enumerated in a fixed order, enabling
+an administrator to understand which services are up healthy at any given time.
+The specific set of services running on a given cluster depends on the cluster's
+configuration. Refer to the [Cluster Types](ClusterTypes.md) document for the
+listing that applies to your given setup.
+
+As an example, let's consider the situation where a standalone cluster
+had an issue with the planner configuration such that the planner could not start up.
+In that scenario, the number of running services would be listed as 3/7 as the first
+three services (canary, zookeeper and catalog) would all be health checking successfully
+while the fourth service (planner) would not. The state of services 5, 6 & 7 are not
+known in that situation. Generally speaking, services with higher numbers depend
+on a subset of the services with lower numbers, so a lower-numbered service having
+issues likely precludes a higher numbered service from correctly providing its
+full range of functionality. 
+
+A given service successfully passing its health check does not
+preclude it from returning an error on a given request. Rather, it indicates that
+the service was able to startup successfully, including passing all of our initial
+validations of said service's configurations. and that the service is responded
+to the most recent deployment manager request to its health check endpoint.
+
+
+## Synchronizing Roles and Permissions between Catalog/Sentry and Planner nodes
+
+The Planner refreshes its roles from the Catalog every 60 seconds, and for this reason,
+any changes made directly to the Sentry database in the Catalog, might take up to a minute to
+reflect in the Planner nodes.
+
+Planner nodes cache the role and permissions information from the Catalog. In cases where multiple
+Planner nodes are present in a CDAS cluster, we follow a policy of eventual consistency for
+maintaining cache coherence. This may be fine tuned in the future if needed.
+

@@ -1,3 +1,143 @@
+# 0.8.0 (Feb 2018)
+
+0.8.0 is a major release. It includes all fixes from the prior releases.
+
+## New Features
+
+**Datasets with errors in Web UI**
+
+The datasets list page now shows datasets that have errors
+associated with them, possibly due to misconfiguration or incorrect definition.
+
+**New layout for datasets list page in Web UI**
+
+The datasets list page in the Web UI has been updated to allow for faster
+browsing of datasets, with an in-page view of the dataset's details.
+
+**Native python client (beta)**
+
+Add a beta release of a native python client, the pycerebro library. The goal is to
+provide a native python experience with the performance and functionality similar to
+what is possible through the java client.
+
+In this initial release, we primarily want to ensure the library is easy to install,
+supported the required authentication mechanisms in a variety of environments. It has
+support for executing DDL and scan statements against the CDAS servers. In the next
+release, we will optimize the scan APIs further.
+
+For more details, see the [docs](PyCerebro.md).
+
+**Improved support for partitioned tables when using them from EMR**
+
+In previous releases, Cerebro would return the tables as unpartitioned tables to hive.
+While this allowed the tables to be scanned and partition pruning worked correctly (via
+the more general predicate pushdown mechanism), it meant that commands such as
+`show partitions` did not work. In this release, we more faithfully return the
+partitioning information to Hive, and the Cerebro partitioned tables behave much more
+similar to standard hive partitioned tables.
+
+**Remove cases where CDAS may need write permissions to underlying storage system**
+
+In typical usage patterns, CDAS only needs read access to the underlying storage system.
+For example, it should not be necessary to give CDAS write access to the S3 buckets where
+the data is stored, just read access. While CDAS has never written or modified data files
+it manages, there were specific cases where CDAS would try to create the directory
+structure. For example, creating a table over a non-existent path could result in CDAS
+trying to create that path. This could result in some DDL commands failing if CDAS
+only had read access. In this release, removed those cases and these DDL commands
+should complete successfully.
+
+**Support for CREATE TABLE AS SELECT (CTAS) when run from Hive in EMR**
+
+This is supported if the Hive warehouse has been configured to use S3, instead of the
+EMR-local HDFS cluster.
+
+**Support for ALTER TABLE RECOVER PARTITIONS**
+
+This command behaves identical to the HiveQL command to reconstruct partitions
+automatically from the file system structure. This must be run from a Cerebro native
+API, such as the REST API or via `dbcli`. It is not possible to run this from hive emr.
+
+**Support for user defined functions (UDFs) registered in CDAS to be available to EMR**
+
+UDFs that have been registered in CDAS are now accessible to Hive. Previously these
+UDFs would have to be registered once in CDAS and then once again for each EMR cluster.
+For more details, see [this](ExtendingCDAS.md#using-it-from-hive-emr).
+
+**Support for specifying an existing Hive Metastore RDBMS database**
+
+Users with an existing Hive Metastore can not configure the CDAS catalog to just use
+the same underlying (i.e. RDS) database. This is useful to migrate to the CDAS catalog or
+to bootstrap the CDAS catalog.See the advanced install
+[docs](AdvancedInstall.md#sharing-existing-hive-metastore-rdbms) for more details.
+
+**Spark predicate pushdown improvements**
+
+Predicate pushdown has been enhanced to include the following:
+- is null
+- is not null
+- LIKE predicates (e.g. `name like '%ber%'`)
+
+**Java 9 is now supported**
+
+**Planner APIs now support SELECT without FROM clause**
+
+This supports for example, `select UDF('test-value')`. These type of queries are typically
+just to verify connectivity or the behavior of builtins and UDFs.
+
+**Performance improvements DDL statements on highly partitioned table**
+
+Significant performance for `alter table recover partitions` and `show partitions` on
+a highly partitioned table.
+
+## Bug Fixes
+
+* Fixed an issue where DbCli, the REST server, and the Web UI were reporting
+field values as `0` when they were in fact `null`.
+
+* Fixed an issue where in some cases users were unable to see databases if the user
+only had partial (i.e. a subset of columns) to all objects in the database. Databases
+are now visible to user if they have any access to any objects in it.
+
+* Fixed an issue in the Web UI where if the user logged in via OAuth, the
+UI showed a Cerebro Token instead of an SSO Token.
+
+## Incompatible and Breaking Changes
+
+* The REST server, DbCLI and the WebUI now correctly report `null` field values
+which were previously incorrectly reported as `0`. This may cause incompatibilities
+for users reading directly from the REST API that depended on the previous behavior.
+
+* CEREBRO_DB_NAME has been deprecated and replaced by CEREBRO_DM_DB_NAME. The
+Deployment Manager will fail to start if both env variables are set with conflicting
+values. While we maintain compability of this flag in this release, the old
+setting ('CEREBRO_DB_NAME') will be removed in a future release. Custom scripts
+referencing CEREBRO_DB_NAME will need to be updated eventually.
+
+* In 0.8.0 and beyond the Cerebro web UI no longer supports IE 11.
+
+* Deployments using unix-based group resolution now treat group names as case sensitive.
+For example, granting roles to `GROUP` is no longer the same as granting to `group`. Note
+that this is specific to deployments configured to get user group information from the
+host unix VM.
+
+* `CEREBRO_OAUTH_SUB_ENDPOINT` is no longer required nor supported. It can
+be safely removed from any configuration locations.
+
+* For EMR clusters, Hive and Presto now expect a user's token to exist in two
+locations, both in that user's home directory and in the given service's home directory.
+The CDAS boostrap script now installs a script that will copy a given token into
+all of the expected locations for the specified user. See the EMR documentation
+for details.
+
+## Known issues
+
+* Tableau WDC connector does not support custom signed SSL certificates. If SSL is
+enabled and the certificate is self signed, the Tableau connector will fail with an
+SSL handshake error. The issue is that Tableau is unable to find the self signed
+certificate in all cases. Potential workarounds are to use a certificate signed by a
+CA or to connect to CDAS through a JDBC enabled framework, such as presto.
+
 # 0.7.2 (Jan 2018)
 
 0.7.2 includes stability fixes. We recommend all 0.7.0/0.7.1 users upgrade.
@@ -36,6 +176,9 @@ catalog objects to be skipped.
 distinguished names. Now it is possible to login with a domain name, for example
 `USERS\user`. It is also possible to configure a default domain and just login with
 `user`.
+
+* Updated packaged docker version from 1.12.2 to 1.12.6, which includes multiple
+stability fixes.
 
 # 0.7.1 (Dec 2017)
 

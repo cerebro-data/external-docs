@@ -11,12 +11,12 @@ compatible with HiveQL.
 * [Data Definition Statements](#data-definition-language-ddl-statements)
 * [Data Manipulation Statements](#data-manipulation-language-dml-statements)
 
-## Data Definition Language (DDL) statements
+## Data Definition Language (DDL) Statements
 
 CDAS generally supports the HiveQL DDL statements and tries to be compatible. In some
 cases, CDAS is not compatible and in others, the supported SQL has been extended for
 CDAS specific capabilities. These include all statements that modify the catalog
-and do not read any data (e.g. create, drop, alter).
+and do not read any data (e.g. `CREATE`, `DROP`, `ALTER`).
 
 ### MSCK Repair
 
@@ -31,7 +31,7 @@ storage directory structure.
 
 There are use cases where it is valid to retain or drop permissions when the
 corresponding catalog object (db, table, or view) is dropped. CDAS extends the
-DROP DATABASE and DROP TABLE/VIEW statements to optionally specify whether the
+`DROP DATABASE` and `DROP TABLE/VIEW` statements to optionally specify whether the
 associated permissions should be dropped as well.
 
 ```sql
@@ -40,10 +40,10 @@ DROP TABLE [IF EXISTS] [db.]tbl [(INCLUDING | EXCLUDING) PERMISSIONS];
 DROP VIEW [IF EXISTS] [db.]v [(INCLUDING | EXCLUDING) PERMISSIONS];
 ```
 
-If `INCLUDING PERMISSIONS`, the corresponding permissions will also be dropped;
-otherwise they will *not* be dropped and will be applied to future catalog objects with
-that name. If `CASCADE` is specified, then all permissions on the tables and views in the
-database will be dropped as well.
+If `INCLUDING PERMISSIONS` is specified, the corresponding permissions will also be
+dropped; otherwise they will *not* be dropped and will be applied to future catalog
+objects with that name. If `CASCADE` is specified, then all permissions on the tables
+and views in the database will be dropped as well.
 
 We recommend that users default to the `INCLUDING PERMISSIONS` behavior and update
 existing workflows to not rely on permissions being retained longer than the object
@@ -54,53 +54,89 @@ object. For example, to be able to drop a database and its permissions, the user
 be able to issue grant/revoke statements on the database. The user needs to be a catalog
 admin or been granted grant permissions.
 
-**Registering Hive Serialization/Deserialization (SerDe) libraries**
+**Registering Hive Serialization/Deserialization (SerDe) Libraries**
 
-See this [document](ExtendingCDAS.md) for the DDL grammar and other SerDe considerations.
+See [Extending CDAS](ExtendingCDAS.md) for the DDL grammar and other SerDe
+considerations.
 
-**Creating User Defined Functions (UDFS)**
+**Creating User Defined Functions (UDFs)**
 
-See this [document](ExtendingCDAS.md) for the DDL grammar and other UDF considerations.
+See [Extending CDAS](ExtendingCDAS.md) for the DDL grammar and other UDF considerations.
 
-**Creating external views**
+**Internal vs. External Views**
 
-By default, views created in the Cerebro catalog are evaluated in CDAS. This means that
-clients reading the view, get the data only after the view transformations are applied.
-This property is critical for views that enforce security. For example, a view that
-filters out users that are inactive:
+Cerebro views can be defined as either internal or external. This distinction will define
+how Cerebro evaluates your data at runtime and will have a profound effect when evaluating
+joins between tables and views.
 
-```sql
-CREATE VIEW active_users_only AS SELECT * FROM all_users WHERE active = true
-```
+In both internal and external cases, data will reside in their source systems. Cerebro managed
+data will continue to be managed in Cerebro while external views will continue to be managed
+by their non-Cerebro source. The primary difference between internal and external views is
+that external data will not be evaluated during a CDAS query. External data will not have
+fine-grained access control, UDFs, and other features that Cerebro can provide to managed
+datasets.
 
-Must be evaluated in CDAS, even if the tool reading from CDAS is able to understand and
-evaluate that predicate.
+It is because of this property that joins are handled different in internal views vs.
+external views.
 
-However, there are other use cases where the views just store non-security related data
-transformations. In this case, it can be useful to return the view definition to the
-compute application. This allows views to be created that implement SQL functionality
-not supported in CDAS as well as potentially deeper integration with the compute
-engine's query optimization.
+***Internally Defined Joined Views***
 
-To create views that do not need to be evaluated in CDAS, an external view can be
-created. For example:
+Cerebro will manage the join of internal views created of two tables or views, internal or
+external, at the query level. Cerebro will evaluate at the join prior to being sent to
+the analytics/compute engine for further processing. This allows for fine-grained access control
+and UDF functionality to be applied to the entire view, regardless of where the source data
+resides.
+
+Note that CDAS is not a compute engine, so full SQL functionality is not available through the
+CDAS SQL interface. The use of a compute engine for full analytics functionality will be required.
+For a list of known SQL incompatibilities, refer to the
+[Known Incompabilities](#known-incompatibilities) section in this document.
+
+***Externally Defined Joined Views***
+
+External views created of two tables or views, internal or external, are evaluated in a slightly
+different way. Data managed by CDAS will continue to be evaluated within the CDAS cluster, but
+the join between the two tables or views will occur in the analytics/compute engine. The advantage
+of this approach is that CDAS will continue to provide fine-grained access control and UDFs on
+CDAS managed data, while allowing the sometimes heavy compute of a join to be done outside the
+CDAS system.
+
+This approach will require an external analytics/compute engine such as Hive or Spark to complete
+the join prior to execution.
+
+**Creating External Views**
+
+This section provides a number of examples of common `EXTERNAL` view uses:
+
+To create views that do not need to be evaluated in CDAS, an external view can be used:
 
 ```sql
 CREATE EXTERNAL VIEW random_user_subset AS SELECT * FROM all_users WHERE rand() % 10 = 0
 ```
 
+Note that views on aggregate functions need to be created as `EXTERNAL` views, since the
+aggregates are computed in compute applications like Hive or Spark.
+
+```sql
+CREATE EXTERNAL VIEW maxRevenue, minRevenue AS SELECT min(revenue), max(revenue)
+FROM cal_sales WHERE region = 'california'
+```
+
+Since compute applications do not accept the "`EXTERNAL` view" syntax, this may be executed
+using dbcli or Cerebro Web UI.
+
 By default, views without `EXTERNAL` are evaluated in Cerebro, maintaining backwards
 compatibility.
 
-### Known incompatibilities
+### Known Incompatibilities
 
-**Stricter type promotion**
+**Stricter Type Promotion**
 
 Hive/HiveQL is very permissive in type promotions allowing implicit conversions
 between most types. In CDAS, only lossless type promotion is implicit (e.g. INT -> BIGINT).
 Explicit casts may need to be added for existing SQL statements.
 
-**Disallowing explicit partitioning clause when creating views**
+**Disallowing Explicit Partitioning Clause When Creating Views**
 
 Hive/HiveQL allows for creating views with an explicit partitioning clause, for example
 
@@ -114,33 +150,34 @@ inferred based on the view statement and base table. This typically means that t
 partitioning on the base table is preserved for the view.
 
 This is disallowed as it is unclear what the semantics are if the partitioning specified
-in the view is different than the base table and the performance implications.
+in the view is different from the base table and what the resulting performance
+implications are.
 
-## Data Manipulation Language (DML) statements
+## Data Manipulation Language (DML) Statements
 
-CDAS is not a distributed SQL engine and only support a subset of SQL statements. It does
-not support the other DML statements (e.g. INSERT, DELETE, UPDATE, etc). For SELECT
-statements, only a subset of the SQL standard is supported. A typical configuration is
-to run a SQL engine (e.g Spark or Presto) on top of CDAS.
+CDAS is not a distributed SQL engine and only supports a subset of SQL statements. It
+does not support the other DML statements (e.g. `INSERT`, `DELETE`, `UPDATE`, etc). For
+`SELECT` statements, only a subset of the SQL standard is supported. A typical
+configuration is to run a SQL engine (e.g Spark or Presto) on top of CDAS.
 
-SELECT statements with projection and filters are fully supported.
+`SELECT` statements with projection and filters are fully supported.
 
-The only AGGREGATION that is supported is `count(*)` with no grouping. In this case
+The only *aggregation* that is supported is `COUNT(*)` with no grouping. In this case
 multiple records will be returned for this query, each containing a partial count.
 Summing up all the counts returns the complete result.
 
 ### JOINs
 
-CDAS supports a limited set of joins for the purpose of restricting access to specific
-rows for particular users. A canonical use case would be having a fact dataset for user
-transactions, which contains a column for the user id. Another, much smaller dataset,
-contains the set of user ids which allow analytics to be done on their activity. CDAS
-would support filtering the transactions dataset by creating a view that is a join over
-the two.
+Using `VIEW`s, CDAS supports a limited set of joins for the purpose of restricting access
+to specific rows for particular users. A canonical use case would be having a fact
+dataset for user transactions, which contains a column for the user id. Another, much
+smaller dataset, contains the set of user ids which allow analytics to be done on their
+activity. CDAS would support filtering the transactions dataset by creating a view that
+is a join over the two.
 
 The specific limitations are:
 
-- Only INNER and LEFT (out, semi, anti) joins are allowed.
+- Only `INNER` and `LEFT` (optionally with `OUTER`, `SEMI`, `ANTI`) joins are allowed.
 - The smaller tables must be under a maximum configured size. If the smaller tables
 exceed this size, the request will fail at runtime.
 
@@ -163,3 +200,6 @@ cerebro_cli clusters create --plannerConfigs "enable_joins=false" ...
 ```shell
 cerebro_cli clusters create --workerConfigs "join_max_mem=<value in bytes>" ...
 ```
+
+See the [Cluster Sizing](ClusterSizing.md) document for more information on how
+much memory joins will need and how that is affecting cluster node requirements.

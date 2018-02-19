@@ -32,7 +32,7 @@ To use UDFs, the steps are:
 
 - Register the UDF in the CDAS catalog. Only the catalog admins can do this.
 - Create views (or issue queries) that use the UDF with typical SQL statements. Any user
-can use the UDF.
+can use the UDF (assuming they have access to the database the UDF is in).
 - Read data from the view. The UDF will be evaluated by CDAS before the data is returned.
 
 As an example for this document, we will use a UDF that accepts strings and masks all
@@ -143,7 +143,31 @@ SELECT * from cerebro_sample.secure_sample
 In this case the UDF is completely hidden from the compute tool talking to CDAS. The tool
 does not know (and therefore have access to the UDF binary in anyway).
 
-### Errors
+## Using it from Hive EMR
+
+Since the UDFs are Hive compatible, they are automatically usable from a CDAS integrated
+Hive EMR cluster. Hive UDF (i.e. function) commands should work transparently. For
+example, if the UDF `cerebro_sample.mask` is registered in CDAS, it can be used
+from Hive with no additional changes or configs. For example from the hive CLI:
+
+```shell
+show functions like "cerebro_sample.*";
+OK
+cerebro_sample.mask
+
+hive> select cerebro_sample.mask('abcd');
+Added [/mnt/tmp/53ad548e-5f83-44dd-985b-3c9c267fe736_resources/mask-udf.jar] to class path
+Added resources: [s3://cerebrodata-dev/udfs/mask-udf.jar]
+OK
+xxxx
+```
+
+This is available starting in the 0.8 release. Note that it is not possible to register
+a CDAS UDF from hive; the UDF must be registered in CDAS and then will also be visible
+through hive. It is possible to register UDFs in hive that are local to the EMR cluster
+by creating the UDF (through hive) in a local db.
+
+## Common Errors
 
 **User is not admin**
 

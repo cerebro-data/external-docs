@@ -40,11 +40,23 @@ This has a **default value of 389** if not set.
 **Please note:** Cerebro accepts the base DN in a particular notation as described here.
 If your base DN is of the format `dc=example,dc=com`, the value to be passed in should
 be `example.com`
+- **CEREBRO_LDAP_USE_SSL**
+By default, Cerebro assumes the LDAP server has SSL enabled. We recommend this for
+all production configurations in which case this config does not need to be specified. For
+test deployments, this can be set to `false` if the LDAP server does not have SSL enabled.
+- **CEREBRO_LDAP_DOMAIN**
+This is the default domain for users. For example, if set to `ALL USERS` and a user
+tries to log in with their username, `userid`,  Cerebro will authenticate (i.e. bind)
+with the LDAP server using `ALL USERS\\userid`. If a domain is explicitly specified when
+logging in, Cerebro will ignore this value. For example, in the same identical
+configuration, if the user explicitly logged in as `TEST DOMAIN\\userid`, then we will
+authenticate with LDAP using exactly that login. By default, this is not set and there
+is no default domain.
 
 For clarity, in your `/etc/cerebro/env.sh` file, the following variables need to be
 uncommented and set:
 
-```
+```shell
 # Set to enable ldap basic auth
 # export CEREBRO_LDAP_HOST=YOUR_AD_HOSTNAME
 # export CEREBRO_LDAP_PORT=YOUR_AD_PORT
@@ -54,7 +66,7 @@ uncommented and set:
 For example, for an LDAP Host at `example.com:324`, and Base DN of `dc=example,dc=com`,
 the LDAP related variables will look like:
 
-```
+```shell
 # Set to enable ldap basic auth
 export CEREBRO_LDAP_HOST=example.com
 export CEREBRO_LDAP_PORT=324

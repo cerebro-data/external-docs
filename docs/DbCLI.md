@@ -9,10 +9,10 @@ For a fresh setup, you can install with:
 
 ```shell
 # Linux
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.7.1/cli/linux/dbcli && chmod 755 ./dbcli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.0/cli/linux/dbcli && chmod 755 ./dbcli
 
 # OSX
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.7.1/cli/darwin/dbcli && chmod 755 ./dbcli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.0/cli/darwin/dbcli && chmod 755 ./dbcli
 
 # Verify the download executes
 ./dbcli --help

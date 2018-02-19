@@ -198,5 +198,5 @@ available at
 ```shell
 s3://cerebrodata-release-useast/<version>/client
 # For example:
-s3://cerebrodata-release-useast/0.7.1/client
+s3://cerebrodata-release-useast/0.8.0/client
 ```

@@ -82,7 +82,7 @@ system in both Cerebro and HS2.
 In the next step, we will create an external dataset for data in S3.
 
 ```
-beeline> create external table sample (s STRING) LOCATION 's3n://cerebrodata/sample'
+beeline> create external table sample (s STRING) LOCATION 's3://cerebrodata/sample'
 beeline> show tables;
 beeline> select * from sample;
 ```
@@ -95,8 +95,9 @@ Other users accessing this dataset should see the request fail.
 This, for example, involves IAM roles or AWS access keys to be set up if the data is in
 S3.
 
-**Note:** Creating non-external table is currently considered undefined behavior and
-should not be done.
+You may create a local cached dataset using "create table as select" statement. This
+data set (materialized view) is stored in the EMR local/shared hdfs. Note that this
+may need to be refreshed whenever the base dataset changes.
 
 ##### Creating a view and granting access to another role
 

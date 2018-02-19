@@ -6,10 +6,10 @@ Data Access Service (CDAS) cluster.
 
 The various sections included are:
 
-* [Prerequisites](prerequisites)
-* [Installing the Deployment Manager](installing-the-deploymentmanager)
-* [Starting up a CDAS Cluster](starting-up-a-cdas-cluster)
-* [Cerebro Upgrades](cerebro-upgrade)
+* [Prerequisites](#prerequisites)
+* [Installing the Deployment Manager](#installing-the-deploymentmanager)
+* [Starting up a CDAS Cluster](#starting-up-a-cdas-cluster)
+* [Cerebro Upgrades](#cerebro-upgrade)
 
 ## Prerequisites
 
@@ -42,7 +42,6 @@ DeploymentManager machine:
 
 * Needs to run Linux
 * Have Java 7+ installed (OpenJDK or Sun JVM).
-  * Java 9 is not currently supported due to a known issue
   * Java 8 is recommended as Sun has ceased providing security updates for Java 7
 * Machine needs to have `IAM_MANAGER` credentials.
 * Minimum instance type should be `t2.small`
@@ -75,7 +74,6 @@ Browser requirements, for Web UI:
 - Firefox (latest)
 - Safari (latest)
 - Microsoft Edge (latest)
-- Internet Explorer 11 (Compatibility Mode is not supported)
 
 ### Installing the AWS Commandline Tool
 
@@ -104,19 +102,19 @@ sudo mkdir -p /opt/cerebro && cd /opt/cerebro
 echo `whoami` | xargs -I '{}' sudo chown -R '{}' /opt/cerebro
 
 # Get the tarball from S3.
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.7.1/deployment-manager-0.7.1.tar.gz
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.0/deployment-manager-0.8.0.tar.gz
 
 # Extract the bits.
-tar xzf deployment-manager-0.7.1.tar.gz && rm deployment-manager-0.7.1.tar.gz && ln -s deployment-manager-0.7.1 deployment-manager
+tar xzf deployment-manager-0.8.0.tar.gz && rm deployment-manager-0.8.0.tar.gz && ln -sfn deployment-manager-0.8.0 deployment-manager
 ```
 
 Download the shell binary. This depends on the OS running the CLI.
 
 ```shell
 # Linux
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.7.1/cli/linux/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.0/cli/linux/cerebro_cli && chmod +x cerebro_cli
 # OS X
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.7.1/cli/darwin/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.0/cli/darwin/cerebro_cli && chmod +x cerebro_cli
 ```
 
 ### DeploymentManager Logging and Install Directory
@@ -153,7 +151,18 @@ cp /opt/cerebro/deployment-manager/conf/env-template.sh /etc/cerebro/env.sh
 The config script from `/etc/cerebro/env.sh` will automatically be loaded when starting
 the DeploymentManager. If this is the path used, it is not necessary to source the script.
 
-NOTE:
+#### Note: about `DEPLOYMENT_MANAGER_INSTALL_DIR`
+
+The value of `DEPLOYMENT_MANAGER_INSTALL_DIR` has no effect on where DeploymentManager
+loads the `/etc/cerebro/env.sh` file. DeploymentManager will always attempt to read
+config values from `/etc/cerebro/env.sh`, if it exists. If `env.sh` does not exist
+in `/etc/cerebro`, DeploymentManager will fall back to config values from
+environment variables. `DEPLOYMENT_MANAGER_INSTALL_DIR`, set either in environment
+variables or in `/etc/cerebro/env.sh`, will be used after DeploymentManager is
+successfully configured and running to write other files.
+
+#### Note: about changing configuration values
+
 The environment variables set in the env.sh script are stored by the deployment manager
 when it starts up. When a deployment manager creates a Cerebro cluster, the current values
 of those environment variables are applied to the new cluster and the cluster will retain
@@ -171,6 +180,10 @@ An existing Cerebro cluster that is restarted via a deployment manager will not 
 any changes in the deployment manager's configuration. Rather, the Cerebro cluster
 will retain the configuration values that were used during that cluster's creation.
 
+### Configuration options
+Below are the available configuration options for Cerebro. These can be set as
+environment variables or in `/etc/cerebro/env.sh`, as explained above,
+and are loaded when DeploymentManager starts up.
 
 **CEREBRO_S3_STAGING_DIR**
 This is the `CEREBRO_S3_STAGING_DIR` for logs and install files. It can be anywhere in
@@ -192,6 +205,9 @@ export CEREBRO_DB_URL=cerebro.xyzzzz.rds.amazonaws.com:3306
 ```
 
 **CEREBRO_DB_NAME**
+This is deprecated. See CEREBRO_DM_DB_NAME.
+
+**CEREBRO_DM_DB_NAME**
 This is the DB name inside the `CEREBRO_DB_URL` that the DeploymentManager will use. If
 this RDS instance is only backing a single DeploymentManager install, this does not need
 to be set. Otherwise, each install can have a different database. This does not need to
@@ -199,7 +215,16 @@ be pre-created.
 
 ```shell
 # Example:
-export CEREBRO_DB_NAME=cerebro
+export CEREBRO_DM_DB_NAME=cerebro
+```
+
+The `CEREBRO_DM_DB_NAME` value has format restrictions.  It must begin with an alphabetic
+character and subsequent characters are restricted to alphanumerics and the underscore
+character ('_').
+
+```shell
+# Run the following command to validate the CEREBRO_DM_DB_NAME value
+[[ "$CEREBRO_DM_DB_NAME" =~ ^[A-Za-z][A-Za-z0-9_]*$ ]] && echo "Is valid." || echo "Is not valid."
 ```
 
 **CEREBRO_CATALOG_ADMINS**
@@ -364,6 +389,21 @@ less /var/log/cerebro/deployment-manager.log
 
 If there are configuration issues, they should be available at the end of the log.
 
+### DeploymentManager config validator
+
+It is possible to just run the DeploymentManager config validation without (re)starting
+the DeploymentManager process. This is convenient to test new configs or to more quickly
+diagnose when the configs are problematic. To do this, just run the deployment-manager
+script with the `verify-configs-only` argument. For example:
+
+```shell
+$ /opt/cerebro/deployment-manager/bin/deployment-manager verify-configs-only
+...
+*************************************************************
+  Config validation successful.
+*************************************************************
+```
+
 ### Configuring the CLI
 
 With the DeploymentManager running, we can configure the CLI to connect with it. Run
@@ -399,9 +439,9 @@ software you already use, configure the machine to custom package repo locations
 
 We have provided a template launch script in
 `/opt/cerebro/deployment-manager/bin/start-ec2-machine-example.sh`. It is recommended you
-copy this and adapt it to your organization's requirements. The user-configurable values are
-at the top of the file, marked with "USER" in a comment. At a minimum, a subnet ID and security
-group ID must be added to the script.
+copy this and adapt it to your organization's requirements. The user-configurable values
+are at the top of the file, marked with "USER" in a comment. At a minimum, a subnet ID
+and security group ID must be added to the script.
 
 ```shell
 cp  /opt/cerebro/deployment-manager/bin/start-ec2-machine-example.sh /etc/cerebro/launch-ec2.sh

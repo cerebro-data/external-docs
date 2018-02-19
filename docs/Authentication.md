@@ -27,12 +27,13 @@ authentication, CDAS will also require that a system token be generated for it t
 to authenticate internal services. This would, for example, be a token with
 `cerebro` as the subject.
 
-Cerebro supports the standard JWT claims include:
+Cerebro supports the standard JWT claims including:
 
 * sub
 * exp
 * nbf
 
+Cerebro requires that JWTs have a "sub" claim.
 For specifying groups that the token subject is a member of, Cerebro suggests using the
 claim "groups" and storing the associated value as a list of strings.
 
@@ -192,6 +193,26 @@ If you have the need to support both approaches, simply configure the environmen
 variables for both and they will each be instantiated. The external endpoint will
 be used first and if the JWT is not validated by that service, it will then be
 passed to the public key authenticator for validation.
+
+
+## User to Group resolution
+
+A Cerebro cluster will use one of two approaches to map a user to the groups that it
+is a member of:
+1. **Using the user to group mappings on the local host**  
+e.g. The output of
+```shell
+id <username>
+```
+**When using approach 1, the group names are case sensitive and will retain the same
+case as the group name on the host machine.**
+
+2. **Pulling the group names out of the supplied JWT**  
+
+Approach 2 is used if only JWT support is configured (e.g. a system token is specified).
+In all other situations, including if both JWT and Kerberos are configured, approach 1
+will be used for all users, including those that authenticate via a JWT.  
+**When using approach 2, the group names are treated as case insensitive.**
 
 
 ## Using a JWT with curl

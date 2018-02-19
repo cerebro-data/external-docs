@@ -34,9 +34,9 @@ cdas-emr-bootstrap.sh <cdas version> [options] <list of components>
 # --token <TOKEN> the token that identifies the user
 ```
 
-For example, to bootstrap a spark-2.x cluster from the 0.7.1 client release, provide
-the arguments `0.7.1 spark-2.x`. If running EMR with spark-2 and hive, provide
-`0.7.1 spark-2.x hive`.
+For example, to bootstrap a spark-2.x cluster from the 0.8.0 client release, provide
+the arguments `0.8.0 spark-2.x`. If running EMR with spark-2 and hive, provide
+`0.8.0 spark-2.x hive`.
 
 The complete list of supported components are:
 
@@ -60,12 +60,13 @@ at 10.1.10.104:12050.
 
 - Select "Go to advanced options" at the top of the "Create Cluster" screen
   ![EMR Config](https://s3.amazonaws.com/cerebrodata-docs/images/CreateCluster.png)
-- Pick Spark, Hive, and Presto from the list of EMR components and set the Spark and
-Hive specific configs (more details below). Optionally pick Hue and Zeppelin as
+- In Step 1, Pick Spark, Hive, and Presto from the list of EMR components and set the 
+Spark and Hive specific configs (more details below). Optionally pick Hue and Zeppelin as
 components that do not require CDAS related steps:
 ![EMR Config](https://s3.amazonaws.com/cerebrodata-docs/images/EMRConfig3.png)
 
-  Configuration example:
+  Configuration example (you can copy/paste this and replace the IP addresses with the IP
+  of your planner):
 
   ```json
   [
@@ -93,8 +94,10 @@ components that do not require CDAS related steps:
   ```
 
   Additional configuration examples can be found in the program-specific sections below.
-
-- Use our bootstrap script and do the following:
+- In Step 2, use your preferred EMR hardware setup
+- In Step 3, it's a good idea to name your cluster something other than the default. Then,
+configure the EMR cluster to use our bootstrap script. Do the following:
+  - Add a 'Custom action' under bootstrap actions
   - The script is currently located at ```s3://cerebrodata-release-useast/utils/emr/cdas-emr-bootstrap.sh```
   - Specify the `--planner-hostports` option. Since this is multi-tenant, we will not be
   providing an access token to the bootstrap script. All options need to be specified
@@ -103,7 +106,7 @@ components that do not require CDAS related steps:
   with Hive, Presto and Spark, specify `hive`, `presto`, and `spark-2.x`:
   ![EMR Bootstrap](https://s3.amazonaws.com/cerebrodata-docs/images/EMRBootstrap2.png)
 
-- When setting up the security options, you will likely need to specify additional
+- In Step 4, when setting up the security options, you will likely need to specify additional
 security groups in order for your EMR cluster to be able to communicate with your CDAS
 cluster. Add whatever security group(s) you specified for your CDAS hosts to both the
 Master as well as Core & Task rows.
@@ -160,6 +163,10 @@ groups those services are now part of.
   $ sudo start hive-server2
   $ sudo start hadoop-yarn-timelineserver
   $ sudo start hadoop-mapreduce-historyserver
+  ```
+A script that executes these steps can be found at:
+  ```shell
+  /usr/lib/cerebro/restart_emr.sh
   ```
 
 - Store the access token in the user's home directory at the path `~/.cerebro/token`.
@@ -251,7 +258,7 @@ the user using the token only.
 In the section below, we will detail the configurations required to configure each
 supported EMR component.
 
-With all components, we requires specifying the planner hostport and can optionally
+With all components, we require specifying the planner hostport and can optionally
 take the access token. For single-tenant clusters, specifying the token removes the
 need to specify it after the cluster is up. It should not be used in a multi-tenant
 cluster.
@@ -397,6 +404,27 @@ to data or metadata in these databases do not use Cerebro in any way.
 Spark, by default, uses the `global_temp` exactly this way. If Spark is included in the
 EMR cluster, this database will automatically be setup to be cluster local.
 
+Local dbs are also useful in creating materialized views (caches of datasets from queries)
+for faster access. An example would be to create a table in localdb using data from Cerebro
+datasets (using create table as select statement). For example:
+
+```sql
+CREATE TABLE localdb.european_users AS SELECT * FROM users WHERE region = 'europe'
+```
+
+The location for these tables can be changed to S3 bucket. This can be set in
+hive-site.xml. Example:
+
+```xml
+property>
+  <name>hive.metastore.warehouse.dir</name>
+  <value>s3://cerebrodata/warehouse</value>
+  <description>location of default database for the warehouse</description>
+</property>
+```
+
+External storage location is supported for S3 buckets only.
+
 In the case where the local database has the same name as a Cerebro database, the local
 database takes precedence and the user will not be able see the contents in that Cerebro
 database from Hive.
@@ -424,6 +452,35 @@ The equivalent as a bootstrap action is:
 }
 ```
 
+Note that any local database, and the datasets in it, are not accessible by CDAS.
+The local database is ephemeral and will go away when the EMR is shutdown.
+If the storage is externalized to S3 or shared hdfs, then a new external table definition,
+with location set to the s3 folder, may be used to access the dataset.
+
+#### Known Incompatibilies
+
+With CDAS installation, Hive uses externalized metadata managed by CDAS.
+
+As a result, it is not possible to alter the location of a table or partition to a Cerebro
+dataset via Hive. This instead, needs to be done via a native Cerebro client, for example,
+the dbcli.
+
+Hive treats external table created using hive against CDAS, as external, non-native type.
+"Alter table" is not supported on external non-native tables.
+
+Dbcli example to alter the table location:
+
+```sql
+dbcli dataset hive-ddl "alter table cerebro.users set location 's3a://cerebrodata/correctedlocation'"
+```
+
+#### Limitations
+
+Note that CDAS authorization is not currently supported from hive cli.
+For example, `show roles` will not list the CDAS roles.
+
+SQL data manipulation (DML), like insert statement, is not supported in hive.
+
 ### Presto
 
 #### Setting up Presto
@@ -438,7 +495,7 @@ Multi-tenant:
 --planner-hostports <PLANNER ENDPOINT>
 # For example, if the planner is running on "10.1.10.104:12050", then, the bootstrap
 # arguments would be:
-cdas-emr-bootstrap.sh 0.7.1 --planner-hostports 10.1.10.104:12050 presto
+cdas-emr-bootstrap.sh 0.8.0 --planner-hostports 10.1.10.104:12050 presto
 ```
 
 Single-tenant:
@@ -447,7 +504,7 @@ Single-tenant:
 --planner-hostports <PLANNER ENDPOINT> --token <TOKEN>
 # For example, if the planner is running on "10.1.10.104:12050", then, the bootstrap
 # arguments would be:
-cdas-emr-bootstrap.sh 0.7.1 --planner-hostports 10.1.10.104:12050 --token <TOKEN> presto
+cdas-emr-bootstrap.sh 0.8.0 --planner-hostports 10.1.10.104:12050 --token <TOKEN> presto
 ```
 
 #### Using Presto
@@ -471,6 +528,20 @@ On the EMR machines, the bootstrapping logs will be located in
 `/var/log/bootstrap-actions/`. This can be helpful if the cluster is not starting up and
 could indicate a misconfiguration of the bootstrap action.
 
+### Presto
+
+EMR precludes us from fully configuring logging for Presto. To complete
+the configuration, edit the filed located at
+/etc/presto/conf.dist/jvm.config and add this line to the end of it
+```shell
+-Dlog4j.configuration=file:/etc/presto/conf/log4j.properties
+```
+
+Then restart the Presto service. This will need to be done on all of the
+nodes in the cluster in order for the Cerebro Presto plugin to log
+correctly.
+
+
 ## Configs
 
 Configs are generally written to `/etc/[component]`. These should replicate the
@@ -490,7 +561,7 @@ ssh to **each** EC2 node in the EMR.
 
 ```shell
 cd /usr/lib/cerebro
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/<VERSION>/recordservice-presto.jar
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/<VERSION>/client/recordservice-presto.jar
 ```
 
 Restart the presto server on **all** the EC2 nodes
@@ -506,12 +577,20 @@ ssh to **each** of the EC2 nodes in the EMR
 
 ```shell
 cd /usr/lib/cerebro/
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/<VERSION>/recordservice-hive.jar
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/<VERSION>/client/recordservice-hive.jar
 ```
 
-On the **master** EC2 node, restart the hive-server
+On the **master** EC2 node, download the hive metastore jar and then restart both the
+hive-server and the hive metastore.
 
 ```shell
+cd /usr/lib/cerebro/
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/<VERSION>/client/cerebro-hive-metastore.jar
+```
+
+```shell
+stop hive-hcatalog-server
 stop hive-server2
+start hive-hcatalog-server
 start hive-server2
 ```
