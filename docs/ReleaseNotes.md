@@ -21,7 +21,7 @@ provide a native python experience with the performance and functionality simila
 what is possible through the java client.
 
 In this initial release, we primarily want to ensure the library is easy to install,
-supported the required authentication mechanisms in a variety of environments. It has
+and supports the required authentication mechanisms in a variety of environments. It has
 support for executing DDL and scan statements against the CDAS servers. In the next
 release, we will optimize the scan APIs further.
 
@@ -137,6 +137,27 @@ enabled and the certificate is self signed, the Tableau connector will fail with
 SSL handshake error. The issue is that Tableau is unable to find the self signed
 certificate in all cases. Potential workarounds are to use a certificate signed by a
 CA or to connect to CDAS through a JDBC enabled framework, such as presto.
+
+# 0.7.3 (Feb 2018)
+
+0.7.3 is a patch release. It contains a critical presto client issue and we recommend
+all presto users upgrade. Note that it is perfectly fine to run a 0.7.3 client (e.g. EMR)
+against a 0.7.2 CDAS cluster.
+
+## Bug Fixes
+
+* Fixed session leak in presto client. In some cases, sessions started by the presto
+client may not get properly closed. This can cause issues as those connections will not
+close for a very long time, which can starve out other clients.
+
+* Fixed server crash trying to load unsupported schemas in some cases. In prior versions,
+trying to load avro schemas when the avro schema file is deleted from storage after
+creating the table, the server can crash. This has been fixed.
+
+* Fixed some issues related to HTTP proxy settings. We now properly handle proxy
+settings that block access to S3. Previously, the DeploymentManager agent running on
+all the CDAS cluster VMs would not use the proxy settings in all cases. This issue
+manifests if access to the storage system needs to happen through an HTTP proxy.
 
 # 0.7.2 (Jan 2018)
 

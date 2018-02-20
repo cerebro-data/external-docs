@@ -40,6 +40,9 @@ another user.
 
 **client_network_address** (string): The client host and port.
 
+**client_application** (string): The client application that originated the request.
+Examples: execute-ddl, presto
+
 **statement_type** (string): The type of the request.
 
 **statement** (string): Log of the request. Depending on the statement type, this will
