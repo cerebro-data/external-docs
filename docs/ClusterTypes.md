@@ -31,21 +31,22 @@ description      id  name               numNodes  numRunningServices    owner   
 
 The following lists the services started for each available cluster type, starting with
 the most common type, the *standalone* cluster. It contains everything needed to run a
-fully functional CDAS cluster.
+fully functional CDAS cluster. The *Accessible* column states if a particular service is
+accessible from outside of the CDAS cluster (also referred to as *exposed*).
 
 ## Standalone Cluster
 
 Type: `STANDALONE_CLUSTER`
 
-| No.   | Service     |
-| :---: | :---------- |
-| 1     | Canary      |
-| 2     | ZooKeeper   |
-| 3     | Catalog     |
-| 4     | Planner     |
-| 5     | Worker      |
-| 6     | REST Server |
-| 7     | Web UI      |
+| No.   | Service     | Accessible
+| :---: | :---------- | :--------:
+| 1     | Canary      | Yes
+| 2     | ZooKeeper   | No
+| 3     | Catalog     | Yes
+| 4     | Planner     | Yes
+| 5     | Worker      | Yes
+| 6     | REST Server | Yes
+| 7     | Web UI      | Yes
 
 > **Note:** The number of services for a standalone cluster changed in 0.7.0. Before
 that version a cluster had eight (8) services. With 0.7.x there are only seven (7)
@@ -61,23 +62,23 @@ needed when, for example, a single CDAS Catalog should be shared by multiple
 
 Type: `CATALOG_CLUSTER`
 
-| No.   | Service     |
-| :---: | :---------- |
-| 1     | Canary      |
-| 2     | ZooKeeper   |
-| 3     | Catalog     |
-| 4     | Planner     |
-| 5     | REST Server |
-| 6     | Web UI      |
+| No.   | Service     | Accessible
+| :---: | :---------- | :--------:
+| 1     | Canary      | Yes
+| 2     | ZooKeeper   | No
+| 3     | Catalog     | Yes
+| 4     | Planner     | No
+| 5     | REST Server | Yes
+| 6     | Web UI      | Yes
 
 ## Data-Access-Only Cluster
 
 Type: `DATA_ACCESS_CLUSTER`
 
-| No.   | Service     |
-| :---: | :---------- |
-| 1     | Canary      |
-| 2     | ZooKeeper   |
-| 3     | Planner     |
-| 4     | Worker      |
+| No.   | Service     | Accessible
+| :---: | :---------- | :--------:
+| 1     | Canary      | Yes
+| 2     | ZooKeeper   | No
+| 3     | Planner     | Yes
+| 4     | Worker      | Yes
 

@@ -54,6 +54,12 @@ object. For example, to be able to drop a database and its permissions, the user
 be able to issue grant/revoke statements on the database. The user needs to be a catalog
 admin or been granted grant permissions.
 
+**CREATE TABLE AS SELECT**
+
+CDAS supports tables created via this method as long as they are both: created from
+Hive in EMR, and the Hive warehouse has been configured to use S3 (as opposed to using the
+EMR-local HDFS cluster). This functionality is not supported from dbcli.
+
 **Registering Hive Serialization/Deserialization (SerDe) Libraries**
 
 See [Extending CDAS](ExtendingCDAS.md) for the DDL grammar and other SerDe

@@ -1,4 +1,4 @@
-# Advanced installations
+# Advanced Installations
 
 This document describes advanced Cerebro installs. This document assumes the user is
 familiar with the base install and will describe changes relative to that process.
@@ -52,7 +52,6 @@ And when creating the cluster:
 ```shell
 ./cerebro_cli clusters create --hmsDbName=hive_db --name=fintech_prod --numNodes=1 --type=STANDALONE_CLUSTER --environmentid=1
 ```
-
 
 ## Advanced Networking
 
