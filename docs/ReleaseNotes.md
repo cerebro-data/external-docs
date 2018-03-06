@@ -50,7 +50,9 @@ should complete successfully.
 **Support for CREATE TABLE AS SELECT (CTAS) when run from Hive in EMR**
 
 This is supported if the Hive warehouse has been configured to use S3, instead of the
-EMR-local HDFS cluster.
+EMR-local HDFS cluster. See the
+[cluster-local DBs](https://github.com/cerebro-data/external-docs/blob/master/docs/EMRIntegration.md#cluster-local-dbs)
+section of the EMR docs for more details.
 
 **Support for ALTER TABLE RECOVER PARTITIONS**
 
@@ -141,8 +143,9 @@ CA or to connect to CDAS through a JDBC enabled framework, such as presto.
 # 0.7.3 (Feb 2018)
 
 0.7.3 is a patch release. It contains a critical presto client issue and we recommend
-all presto users upgrade. Note that it is perfectly fine to run a 0.7.3 client (e.g. EMR)
-against a 0.7.2 CDAS cluster.
+all presto users upgrade. Versions prior to 0.7.3 are no longer supported for EMR Presto.
+Note that it is perfectly fine to run a 0.7.3 client (e.g. EMR) against a 0.7.2 CDAS cluster.
+
 
 ## Bug Fixes
 

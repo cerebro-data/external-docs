@@ -18,7 +18,7 @@ scripts.
 
 ## Bootstrap action
 
-The bootstrap action will always place the client jars in the the `/usr/lib/cerebro`
+The bootstrap action will always place the client jars in the `/usr/lib/cerebro`
 directory, and linked into component-specific library path.
 
 To bootstrap the cluster, run our script specifying the version and components you have
@@ -51,6 +51,8 @@ These include:
 - Ganglia
 - ZooKeeper
 - Hue
+
+Note that cdas client version must be 0.7.3 or later, when EMR Presto is used.
 
 ## End to End example
 
