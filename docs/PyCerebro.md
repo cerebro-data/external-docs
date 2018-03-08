@@ -48,7 +48,7 @@ the version.
 ```python
 import cerebro.cdas
 cerebro.cdas.version()
-# Should output the version string, for example 0.8.0
+# Should output the version string, for example 0.8.1
 ```
 
 Note that the pandas install may fail due to its system dependencies. For more information
@@ -62,7 +62,7 @@ from Cerebro's release location in S3. After installing the dependencies, downlo
 library and install it with `easy_install`.
 
 ```shell
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.0/client/pycerebro.egg
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.1/client/pycerebro.egg
 easy_install --user pycerebro.egg
 # Or, to install it system wide
 [sudo] easy_install pycerebro.egg
@@ -83,7 +83,7 @@ sudo yum install -y gcc-c++ python34.x86_64 python34-devel
 curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
 sudo python3 get-pip.py
 sudo pip3 install six bit_array thriftpy
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.0/client/pycerebro.egg
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.1/client/pycerebro.egg
 sudo easy_install pycerebro.egg
 
 # Optional packages (installing pandas can take a while)
@@ -99,7 +99,7 @@ supported for python3.
 curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
 sudo python3 get-pip.py
 sudo /usr/local/bin/pip3 install six bit_array thriftpy
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.0/client/pycerebro.egg
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.1/client/pycerebro.egg
 sudo easy_install-3.4 pycerebro.egg
 
 # Optional packages (installing pandas can take a while)
