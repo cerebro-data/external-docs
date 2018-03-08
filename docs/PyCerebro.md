@@ -10,6 +10,9 @@ be sufficient but we recommend the native library for reading larger volumes of 
 Note: this library is currently in preview phase. The APIs are subject to change and
 the performance characteristics are not in its final state.
 
+PyCerebro requires 0.8.1+ of the server to be fully functional. If running against an
+older server, scans will fail with a message to upgrade the server.
+
 ## Dependencies
 
 Required:
@@ -106,10 +109,9 @@ sudo /usr/local/bin/pip3 install numpy pandas
 ## Overview
 
 In a typical application, the user will first create a context object. The context object
-represents state that is shared across planner or worker connections (and therefore also
-requests), such as user credentials. From the context object, the user can create
-connections to planner and workers. DDL and other metadata related commands are accessible
-via the planner connection, and data reading is from the worker.
+represents state that is shared CDAS connections (and therefore also requests), such as
+user credentials. From the context object, the user can create connection objects which
+can then be used to execute DDL and scan requests against CDAS.
 
 On top of these objects, the library provides utilities to read an entire dataset into
 pandas, for further data manipulation.
@@ -118,11 +120,11 @@ As a simple end to end example that reads the first dataset from the `cerebro_sa
 database:
 
 ```python
-from cerebro import create_context, scan_as_pandas
-ctx = create_context()
-with ctx.connect_planner(host='localhost', port=12050) as planner:
-    dataset = planner.list_dataset_names('cerebro_sample')[0]
-    pd = scan_as_pandas(planner, dataset)
+from cerebro import context
+ctx = context()
+with ctx.connect(host='localhost', port=12050) as conn:
+    dataset = conn.list_dataset_names('cerebro_sample')[0]
+    pd = conn.scan_as_pandas(dataset)
     print(pd)
 ```
 
@@ -145,8 +147,8 @@ based authentication or no authentication. If a token for the current user is av
 (typically in `~/.cerebro/token`), then token auth will be configured. To check,
 
 ```python
-from cerebro import create_context
-ctx = create_context()
+from cerebro import context
+ctx = context()
 ctx.get_auth() # Will be None or 'TOKEN'
 
 # To disable authentication:
@@ -160,8 +162,8 @@ or `token_file` argument. `token_str` should be the token text. `token_file` is 
 path to a file which contains the token.
 
 ```python
-from cerebro import create_context
-ctx = create_context()
+from cerebro import context
+ctx = context()
 ctx.enable_token_auth(token_str='super-secret-token-string')
 # OR
 ctx.enable_token_auth(token_file='/path/to/super/secret')
@@ -176,23 +178,21 @@ service name (i.e. first part of principal) and can optionally specify the hostn
 For example, to connect to a server with principal `cerebro/service@CEREBRO.COM`:
 
 ```python
-from cerebro import create_context
-ctx = create_context()
+from cerebro import context
+ctx = context()
 ctx.enable_kerberos('cerebro', host_override='service')
 ```
 
-## Planner APIs
+## Metadata APIs
 
-The planner provides these APIs to manipulate the catalog:
+**connect()**
 
-**connect_planner()**
-
-Creates a connection to the planner. Callers should call `close()` when done or use
-the `with` scoped cleanup. To create a planner, call `connect_planner()` on the context
+Creates a connection to CDAS. Callers should call `close()` when done or use
+the `with` scoped cleanup. To create a connection, call `connect()` on the context
 object. It takes as arguments
 
-* host: host name
-* port: port running the planner
+* host: host name (of the planner)
+* port: port (of the planner)
 
 **get_databases()**
 
@@ -206,13 +206,13 @@ must be specified.
 As an example to collect the names of all the datasets in the catalog:
 
 ```python
-from cerebro import create_context
-ctx = create_context()
+from cerebro import context
+ctx = context()
 # Configure auth if necessary
-with ctx.connect_planner(host='localhost', port=12050) as planner:
+with ctx.connect(host='localhost', port=12050) as conn:
     all_datasets = []
-    for db in planner.list_databases():
-        all_datasets.append(planner.list_dataset_names(db))
+    for db in conn.list_databases():
+        all_datasets.append(conn.list_dataset_names(db))
     print(all_datasets)
 ```
 
@@ -220,26 +220,25 @@ with ctx.connect_planner(host='localhost', port=12050) as planner:
 
 This is a low level API to plan a scan request. This function takes:
 
-* dataset, str: fully qualified dataset name. Plans scanning all columns in dataset.
-* sql, str: a DML SQL statement. Note that this is subject to the same SQL restrictions
-that CDAS supports.
+* request, str: Fully qualified dataset name or SQL statement to scan. Note that if SQL
+is specified, it is subject to the same SQL restrictions that CDAS supports.
 
 The result of this API is typically sent to the worker and contains an internally
 serialized binary payload. The result does contain some low level information that
 may be useful:
 
 ```python
-from cerebro import create_context
-ctx = create_context()
-with ctx.connect_planner(host='localhost', port=12050) as planner:
-    result = planner.plan('cerebro_sample.users')
+from cerebro import context
+ctx = context()
+with ctx.connect(host='localhost', port=12050) as conn:
+    result = conn.plan('cerebro_sample.users')
     print(result.warnings)          # Warnings that were generated while planning
     print(len(result.tasks))        # Total number of worker tasks that will need to run
     print(len(result.schema.cols))  # Number of columns in result schema
 
 # it's also possible to pass a supported SQL request
-with ctx.connect_planner(host='localhost', port=12050) as planner:
-    result = planner.plan(sql='select mask_ccn(ccn) from cerebro_sample.users')
+with ctx.connect(host='localhost', port=12050) as conn:
+    result = conn.plan('select mask_ccn(ccn) from cerebro_sample.users')
     assert len(result.schema.cols) == 1
 ```
 
@@ -253,11 +252,11 @@ As an example to list the roles and format the output using prettytable
 (`pip3 install prettytable`):
 
 ```python
-from cerebro import create_context
+from cerebro import context
 from prettytable import PrettyTable
-ctx = create_context()
-with ctx.connect_planner(host='localhost', port=12050) as planner:
-    result = planner.execute_ddl('show roles')
+ctx = context()
+with ctx.connect(host='localhost', port=12050) as conn:
+    result = conn.execute_ddl('show roles')
     t = PrettyTable()
     for row in result:
         t.add_row(row)
@@ -270,29 +269,30 @@ PyCerebro supports two scan apis, `scan_as_pandas()` and `scan_as_json()`. They 
 identically except in the result structure. `scan_as_pandas()` returns the result as
 a pandas DataFrame. `scan_as_json()` returns the result as a list of json objects.
 
+We recommend users that need to do further processing to use the `scan_as_pandas()`
+API as it can be much faster.
+
 Both APIs take as arguments:
 
-* dataset, str: fully qualified dataset name to scan. Scans the entire dataset.
-* sql, str: a DML SQL statement. Either dataset or sql must be specified.
+* request, str: Fully qualified dataset name or SQL statement to scan.
 * max_records, int, optional: Maximum number of records to return. Default is unlimited.
 
 For example, to scan the `cerebro_sample.sample` dataset as json:
 
 ```python
-from cerebro import create_context, scan_as_json
-ctx = create_context()
-with ctx.connect_planner(host='localhost', port=12050) as planner:
-    results = scan_as_json(planner, dataset='cerebro_sample.sample')
+from cerebro import context
+ctx = context()
+with ctx.connect(host='localhost', port=12050) as conn:
+    results = conn.scan_as_json('cerebro_sample.sample')
     print(results)
 ```
 
 To return the first 10000 records as a pandas DataFrame from the user's ccn number:
 
 ```python
-from cerebro import create_context, scan_as_pandas
-ctx = create_context()
-with ctx.connect_planner(host='localhost', port=12050) as planner:
-    sql = 'SELECT ccn from cerebro_sample.users'
-    df = scan_as_pandas(planner, sql=sql, max_records=10000)
+from cerebro import context
+ctx = context()
+with ctx.connect(host='localhost', port=12050) as conn:
+    df = conn.scan_as_pandas('SELECT ccn from cerebro_sample.users', max_records=10000)
     df.describe()
 ```

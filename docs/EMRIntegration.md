@@ -543,6 +543,9 @@ Then restart the Presto service. This will need to be done on all of the
 nodes in the cluster in order for the Cerebro Presto plugin to log
 correctly.
 
+#### Known Limitations
+
+ddl and dml commands are not supported in Presto
 
 ## Configs
 

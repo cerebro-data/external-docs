@@ -1,3 +1,44 @@
+# 0.8.1 (March 2018)
+
+0.8.1 is a minor release which addresses a few specific issues in 0.8.0 as well as
+updates to the pycerebro python client library.
+
+## PyCerebro
+
+The initial release in 0.8.0 was an opportunity to get feedback on the client API.
+(Thanks everyone that did!). We've updated the API in response. The APIs in this
+version are expected to be compatible going forward. Note that this does require
+the server to also be updated to 0.8.1. Significant changes:
+
+* Removed or renamed mentions to 'planner' and made them 'connection'. We expect typical
+end users to not need to know internal services.
+* Moved some APIs into the connection object instead of module-wide APIs
+* Removed explicit need to differentiate dataset vs sql arguments in the scan APIs.
+* Fixed issues with null handling in some cases.
+* Renamed `create_context()` to `context()`
+
+For more details, see the [docs](PyCerebro.md).
+
+Users can upgrade to this by upgrading to the latest package with pip.
+
+## Bug Fixes
+
+* Fix bug in configuring LDAP domain and LDAP base DN. Configuring both lead to
+the base DN config always being used instead of the domain configuration. Starting
+in this release, users wanting to set a default domain should *not* set LDAP_BASE_DN.
+
+* Fix server crash when executing some unsupported DDL. This only affected these DDL
+statements: `CREATE TABLE AS SELECT` and `COMPUTE STATS`. These now fail with not
+supported.
+
+* Allow revoking permissions to s3 bucket URI without a trailing slash. In general
+we do not treat bucket URIs without a trailing slash as valid URI. For example,
+`s3://bucket` is invalid and should be `s3://bucket/`. Note that this is specific for
+how buckets behave; subdirectories do not need to end in a slash. This has always
+been the behavior in CDAS but other tools or existing metadata may have allowed invalid
+URIs to be persisted. In this release we allow revoking both kinds of URIs so that
+the invalid entries can be corrected.
+
 # 0.8.0 (Feb 2018)
 
 0.8.0 is a major release. It includes all fixes from the prior releases.
@@ -87,6 +128,13 @@ Predicate pushdown has been enhanced to include the following:
 This supports for example, `select UDF('test-value')`. These type of queries are typically
 just to verify connectivity or the behavior of builtins and UDFs.
 
+**Support for token auto-renewal**
+
+The Hive and Spark CDAS client libraries have been updated to call a user-defined token
+acquisition script to refresh an expired token.
+Configuration details and script requirements can be found in the
+[EMR documentation](./EMRIntegration.md).
+
 **Performance improvements DDL statements on highly partitioned table**
 
 Significant performance for `alter table recover partitions` and `show partitions` on
@@ -126,11 +174,11 @@ host unix VM.
 * `CEREBRO_OAUTH_SUB_ENDPOINT` is no longer required nor supported. It can
 be safely removed from any configuration locations.
 
-* For EMR clusters, Hive and Presto now expect a user's token to exist in two
-locations, both in that user's home directory and in the given service's home directory.
-The CDAS boostrap script now installs a script that will copy a given token into
-all of the expected locations for the specified user. See the EMR documentation
-for details.
+* For EMR clusters, we have made internal changes to how tokens are managed.
+This requires that a given user's home directory has the appropriate permissions set
+prior to a token being written to it. To support this, we have added another bootstrap
+script that should be run after the existing bootstrap script. See the
+[EMR docs](EMRIntegration.md) documentation for details.
 
 ## Known issues
 

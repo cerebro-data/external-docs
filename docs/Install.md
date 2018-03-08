@@ -197,7 +197,7 @@ export CEREBRO_S3_STAGING_DIR=s3://<your cerebro dir>
 
 **CEREBRO_DB_URL/CEREBRO_DB_USERNAME/CEREBRO_DB_PASSWORD**
 This is the end point and database credentials for `CEREBRO_DB_URL`. `DB_URL` should be
-the host/port (typically 3306) of the running mysql instance.
+the host:port (typically 3306) of the running mysql instance.
 
 ```shell
 # Example:

@@ -51,7 +51,7 @@ with the LDAP server using `ALL USERS\\userid`. If a domain is explicitly specif
 logging in, Cerebro will ignore this value. For example, in the same identical
 configuration, if the user explicitly logged in as `TEST DOMAIN\\userid`, then we will
 authenticate with LDAP using exactly that login. By default, this is not set and there
-is no default domain.
+is no default domain. If this is set, CEREBRO_LDAP_BASE_DN should not be set.
 
 For clarity, in your `/etc/cerebro/env.sh` file, the following variables need to be
 uncommented and set:

@@ -7,6 +7,7 @@ describes the subset that is supported.
 
 CDAS in general supports the identical data model as Apache Hive and is generally
 compatible with HiveQL.
+Supported functionality may differ depending on the client.
 
 * [Data Definition Statements](#data-definition-language-ddl-statements)
 * [Data Manipulation Statements](#data-manipulation-language-dml-statements)
