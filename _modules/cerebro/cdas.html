@@ -160,20 +160,18 @@
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">socket</span>
-<span class="kn">import</span> <span class="nn">struct</span>
-<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
 <span class="kn">from</span> <span class="nn">decimal</span> <span class="k">import</span> <span class="n">Decimal</span>
 <span class="kn">from</span> <span class="nn">cerebro._util</span> <span class="k">import</span> <span class="n">get_logger_and_init_null</span>
 <span class="kn">from</span> <span class="nn">cerebro._thrift_api</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">get_socket</span><span class="p">,</span> <span class="n">get_transport</span><span class="p">,</span> <span class="n">TTransportException</span><span class="p">,</span> <span class="n">TBinaryProtocol</span><span class="p">,</span>
     <span class="n">TGetDatabasesParams</span><span class="p">,</span> <span class="n">TGetTablesParams</span><span class="p">,</span> <span class="n">TNetworkAddress</span><span class="p">,</span>
     <span class="n">TPlanRequestParams</span><span class="p">,</span> <span class="n">TRequestType</span><span class="p">,</span>
     <span class="n">TExecDDLParams</span><span class="p">,</span> <span class="n">TExecTaskParams</span><span class="p">,</span> <span class="n">TFetchParams</span><span class="p">,</span> <span class="n">TRecordFormat</span><span class="p">,</span> <span class="n">TTypeId</span><span class="p">,</span>
-    <span class="n">CerebroRecordServicePlanner</span><span class="p">,</span> <span class="n">PlannerClient</span><span class="p">,</span> <span class="n">RecordServiceWorker</span><span class="p">,</span> <span class="n">WorkerClient</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">cerebro._cerebro_thrift_sasl</span> <span class="k">import</span> <span class="p">(</span><span class="n">KERBEROS_NOT_ENABLED_MSG</span><span class="p">,</span> <span class="n">SOCKET_READ_ZERO</span><span class="p">)</span>
+    <span class="n">CerebroRecordServicePlanner</span><span class="p">,</span> <span class="n">RecordServiceWorker</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cerebro._thrift_util</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">create_socket</span><span class="p">,</span> <span class="n">get_transport</span><span class="p">,</span> <span class="n">TTransportException</span><span class="p">,</span> <span class="n">TBinaryProtocol</span><span class="p">,</span>
+    <span class="n">PlannerClient</span><span class="p">,</span> <span class="n">WorkerClient</span><span class="p">,</span> <span class="n">KERBEROS_NOT_ENABLED_MSG</span><span class="p">,</span> <span class="n">SOCKET_READ_ZERO</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">cerebro</span> <span class="k">import</span> <span class="n">__version__</span>
 
 <span class="n">_log</span> <span class="o">=</span> <span class="n">get_logger_and_init_null</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -197,14 +195,20 @@
 <span class="sd">        service_name : str</span>
 <span class="sd">            Authenticate to a particular `cerebro` service principal. Uses</span>
 <span class="sd">            &#39;cerebro&#39; by default.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        CerebroContext</span>
+<span class="sd">            Returns this object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">service_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Service name must be specified.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__auth</span> <span class="o">=</span> <span class="s1">&#39;GSSAPI&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__service_name</span> <span class="o">=</span> <span class="n">service_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__host_override</span> <span class="o">=</span> <span class="n">host_override</span></div>
-        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Enabled kerberos&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__host_override</span> <span class="o">=</span> <span class="n">host_override</span>
+        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Enabled kerberos&#39;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span>
 
 <div class="viewcode-block" id="CerebroContext.enable_token_auth"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.CerebroContext.enable_token_auth">[docs]</a>    <span class="k">def</span> <span class="nf">enable_token_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">token_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Enables token based authentication.</span>
@@ -215,6 +219,11 @@
 <span class="sd">            Authentication token to use.</span>
 <span class="sd">        token_file : str, optional</span>
 <span class="sd">            File containing token to use.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        CerebroContext</span>
+<span class="sd">            Returns this object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">token_str</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">token_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -229,16 +238,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__auth</span> <span class="o">=</span> <span class="s1">&#39;TOKEN&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__token</span> <span class="o">=</span> <span class="n">token_str</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__service_name</span> <span class="o">=</span> <span class="s1">&#39;cerebro&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__host_override</span> <span class="o">=</span> <span class="kc">None</span></div>
-        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Enabled token auth&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__host_override</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Enabled token auth&#39;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span>
 
 <div class="viewcode-block" id="CerebroContext.disable_auth"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.CerebroContext.disable_auth">[docs]</a>    <span class="k">def</span> <span class="nf">disable_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Disables authentication.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Disables authentication.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        CerebroContext</span>
+<span class="sd">            Returns this object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__auth</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__token</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__service_name</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__host_override</span> <span class="o">=</span> <span class="kc">None</span></div>
-        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Disabled auth&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__host_override</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Disabled auth&#39;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span>
 
 <div class="viewcode-block" id="CerebroContext.get_auth"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.CerebroContext.get_auth">[docs]</a>    <span class="k">def</span> <span class="nf">get_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the configured auth mechanism. None if no auth is enabled.&quot;&quot;&quot;</span></div>
@@ -254,8 +271,8 @@
 <span class="sd">        &quot;&quot;&quot;</span></div>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__name</span>
 
-<div class="viewcode-block" id="CerebroContext.connect_planner"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.CerebroContext.connect_planner">[docs]</a>    <span class="k">def</span> <span class="nf">connect_planner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">12050</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get a connection to a Cerebro planner.</span>
+<div class="viewcode-block" id="CerebroContext.connect"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.CerebroContext.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">12050</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a connection to a CDAS cluster. This connects to the planner service.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -270,7 +287,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        PlannerConnection</span>
-<span class="sd">            Handle to a planner connection. Users should call `close()` when done.</span>
+<span class="sd">            Handle to a connection. Users should call `close()` when done.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__random_host</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
@@ -280,7 +297,7 @@
 
         <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Connecting to planner </span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1"> with </span><span class="si">%s</span><span class="s1"> authentication &#39;</span>
                    <span class="s1">&#39;mechanism&#39;</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">auth_mechanism</span><span class="p">)</span>
-        <span class="n">sock</span> <span class="o">=</span> <span class="n">_create_socket</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">sock</span> <span class="o">=</span> <span class="n">create_socket</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">transport</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">transport</span> <span class="o">=</span> <span class="n">get_transport</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">auth_mechanism</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__service_name</span><span class="p">,</span>
@@ -293,16 +310,20 @@
             <span class="k">return</span> <span class="n">planner</span>
         <span class="k">except</span> <span class="p">(</span><span class="n">TTransportException</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">transport</span><span class="p">:</span> <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">transport</span><span class="p">:</span>
+                <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__handle_transport_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">e</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">transport</span><span class="p">:</span> <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+            <span class="k">if</span> <span class="n">transport</span><span class="p">:</span>
+                <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
             <span class="k">raise</span>
 
 <div class="viewcode-block" id="CerebroContext.connect_worker"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.CerebroContext.connect_worker">[docs]</a>    <span class="k">def</span> <span class="nf">connect_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">13050</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get a connection to Cerebro worker.</span>
+
+<span class="sd">        Most users should not need to call this API directly.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -324,7 +345,7 @@
         <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Connecting to worker </span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1"> with </span><span class="si">%s</span><span class="s1"> authentication &#39;</span>
                    <span class="s1">&#39;mechanism&#39;</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">auth_mechanism</span><span class="p">)</span>
 
-        <span class="n">sock</span> <span class="o">=</span> <span class="n">_create_socket</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">sock</span> <span class="o">=</span> <span class="n">create_socket</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">transport</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">transport</span> <span class="o">=</span> <span class="n">get_transport</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">auth_mechanism</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__service_name</span><span class="p">,</span>
@@ -337,12 +358,14 @@
             <span class="k">return</span> <span class="n">worker</span>
         <span class="k">except</span> <span class="p">(</span><span class="n">TTransportException</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">transport</span><span class="p">:</span> <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">transport</span><span class="p">:</span>
+                <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__handle_transport_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">e</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">transport</span><span class="p">:</span> <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+            <span class="k">if</span> <span class="n">transport</span><span class="p">:</span>
+                <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
             <span class="k">raise</span>
 
     <span class="k">def</span> <span class="nf">__random_host</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
@@ -414,8 +437,8 @@
             <span class="n">auth_mechanism</span> <span class="o">=</span> <span class="s1">&#39;DIGEST-MD5&#39;</span></div>
         <span class="k">return</span> <span class="n">auth_mechanism</span>
 
-<span class="sd">&quot;&quot;&quot; Wrapper around a thrift service client object &quot;&quot;&quot;</span>
 <span class="k">class</span> <span class="nc">_ThriftService</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Wrapper around a thrift service client object &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thrift_client</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">thrift_client</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">retries</span> <span class="o">=</span> <span class="n">retries</span>
@@ -476,9 +499,9 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; import cerebro</span>
-<span class="sd">        &gt;&gt;&gt; ctx = cerebro.create_context()</span>
-<span class="sd">        &gt;&gt;&gt; with ctx.connect_planner(host = &#39;localhost&#39;, port = 12050) as planner:</span>
-<span class="sd">        ...     dbs = planner.list_databases()</span>
+<span class="sd">        &gt;&gt;&gt; ctx = cerebro.context()</span>
+<span class="sd">        &gt;&gt;&gt; with ctx.connect(host = &#39;localhost&#39;, port = 12050) as conn:</span>
+<span class="sd">        ...     dbs = conn.list_databases()</span>
 <span class="sd">        ...     &#39;cerebro_sample&#39; in dbs</span>
 <span class="sd">        True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -487,7 +510,7 @@
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">GetDatabases</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
         <span class="n">dbs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">db</span>  <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">databases</span><span class="p">:</span>
-          <span class="n">dbs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+            <span class="n">dbs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
         <span class="k">return</span> <span class="n">dbs</span>
 
 <div class="viewcode-block" id="PlannerConnection.list_dataset_names"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.PlannerConnection.list_dataset_names">[docs]</a>    <span class="k">def</span> <span class="nf">list_dataset_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -508,9 +531,9 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; import cerebro</span>
-<span class="sd">        &gt;&gt;&gt; ctx = cerebro.create_context()</span>
-<span class="sd">        &gt;&gt;&gt; with ctx.connect_planner(host = &#39;localhost&#39;, port = 12050) as planner:</span>
-<span class="sd">        ...     datasets = planner.list_dataset_names(&#39;cerebro_sample&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; ctx = cerebro.context()</span>
+<span class="sd">        &gt;&gt;&gt; with ctx.connect(host = &#39;localhost&#39;, port = 12050) as conn:</span>
+<span class="sd">        ...     datasets = conn.list_dataset_names(&#39;cerebro_sample&#39;)</span>
 <span class="sd">        ...     datasets</span>
 <span class="sd">        [&#39;cerebro_sample.sample&#39;, &#39;cerebro_sample.users&#39;]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -549,14 +572,12 @@
         <span class="n">tables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">GetTables</span><span class="p">(</span><span class="n">request</span><span class="p">)</span></div>
         <span class="k">return</span> <span class="n">tables</span>
 
-<div class="viewcode-block" id="PlannerConnection.plan"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.PlannerConnection.plan">[docs]</a>    <span class="k">def</span> <span class="nf">plan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sql</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PlannerConnection.plan"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.PlannerConnection.plan">[docs]</a>    <span class="k">def</span> <span class="nf">plan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Plans the request to read from CDAS</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        dataset : str, optional</span>
-<span class="sd">            Name of dataset to plan scan for. Plans to scan entire dataset.</span>
-<span class="sd">        sql : str, optional</span>
-<span class="sd">            SQL string to generate plan for.</span>
+<span class="sd">        request : str, required</span>
+<span class="sd">            Name of dataset or SQL statement to plan scan for.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -569,20 +590,18 @@
 <span class="sd">        compatible.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">sql</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dataset or sql must be specified.&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">dataset</span> <span class="ow">and</span> <span class="n">sql</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot specify dataset and sql.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;request must be specified.&quot;</span><span class="p">)</span>
 
-        <span class="n">request</span> <span class="o">=</span> <span class="n">TPlanRequestParams</span><span class="p">()</span>
-        <span class="n">request</span><span class="o">.</span><span class="n">request_type</span> <span class="o">=</span> <span class="n">TRequestType</span><span class="o">.</span><span class="n">Sql</span>
-        <span class="k">if</span> <span class="n">dataset</span><span class="p">:</span>
-            <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Planning request to read dataset: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
-            <span class="n">request</span><span class="o">.</span><span class="n">sql_stmt</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM &quot;</span> <span class="o">+</span> <span class="n">dataset</span>
-        <span class="k">elif</span> <span class="n">sql</span><span class="p">:</span>
-            <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Planning request for query: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">sql</span><span class="p">)</span>
-            <span class="n">request</span><span class="o">.</span><span class="n">sql_stmt</span> <span class="o">=</span> <span class="n">sql</span>
-        <span class="n">plan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">PlanRequest</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">TPlanRequestParams</span><span class="p">()</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">request_type</span> <span class="o">=</span> <span class="n">TRequestType</span><span class="o">.</span><span class="n">Sql</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;select &#39;</span><span class="p">):</span>
+            <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Planning request for query: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">sql_stmt</span> <span class="o">=</span> <span class="n">request</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Planning request to read dataset: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">sql_stmt</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM &quot;</span> <span class="o">+</span> <span class="n">request</span>
+        <span class="n">plan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">PlanRequest</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Plan complete. Number of tasks: </span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">tasks</span><span class="p">))</span></div>
         <span class="k">return</span> <span class="n">plan</span>
 
@@ -602,9 +621,9 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; import cerebro</span>
-<span class="sd">        &gt;&gt;&gt; ctx = cerebro.create_context()</span>
-<span class="sd">        &gt;&gt;&gt; with ctx.connect_planner(host = &#39;localhost&#39;, port = 12050) as planner:</span>
-<span class="sd">        ...     result = planner.execute_ddl(&#39;describe cerebro_sample.users&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; ctx = cerebro.context()</span>
+<span class="sd">        &gt;&gt;&gt; with ctx.connect(host = &#39;localhost&#39;, port = 12050) as conn:</span>
+<span class="sd">        ...     result = conn.execute_ddl(&#39;describe cerebro_sample.users&#39;)</span>
 <span class="sd">        ...     result</span>
 <span class="sd">        [[&#39;uid&#39;, &#39;string&#39;, &#39;&#39;], [&#39;dob&#39;, &#39;string&#39;, &#39;&#39;], [&#39;gender&#39;, &#39;string&#39;, &#39;&#39;], [&#39;ccn&#39;, &#39;string&#39;, &#39;&#39;]]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -616,8 +635,116 @@
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ExecuteDDL</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">))</span></div></div>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">))</span></div>
         <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="PlannerConnection.scan_as_pandas"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.PlannerConnection.scan_as_pandas">[docs]</a>    <span class="k">def</span> <span class="nf">scan_as_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">max_records</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Scans data, returning the result for pandas.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        request : string, required</span>
+<span class="sd">            Name of dataset or SQL statement to scan.</span>
+<span class="sd">        max_records : int, optional</span>
+<span class="sd">            Maximum number of records to return. Default is unlimited.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas DataFrame</span>
+<span class="sd">            Data returned as a pandas DataFrame object</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import cerebro</span>
+<span class="sd">        &gt;&gt;&gt; ctx = cerebro.context()</span>
+<span class="sd">        &gt;&gt;&gt; with ctx.connect(host = &#39;localhost&#39;, port = 12050) as conn:</span>
+<span class="sd">        ...     pd = conn.scan_as_pandas(&#39;select * from cerebro_sample.sample&#39;)</span>
+<span class="sd">        ...     print(pd)</span>
+<span class="sd">                                       record</span>
+<span class="sd">        0      b&#39;This is a sample test file.&#39;</span>
+<span class="sd">        1  b&#39;It should consist of two lines.&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">pandas</span>
+
+        <span class="n">plan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="n">data_frames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scan</span><span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="n">max_records</span><span class="p">,</span> <span class="n">_deserialize_to_pandas</span><span class="p">,</span> <span class="n">data_frames</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data_frames</span><span class="p">:</span>
+            <span class="c1"># Return empty DataFrame with schema</span>
+            <span class="n">col_names</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span>
+                <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">col_names</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data_frames</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PlannerConnection.scan_as_json"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.PlannerConnection.scan_as_json">[docs]</a>    <span class="k">def</span> <span class="nf">scan_as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">max_records</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Scans data, returning the result in json format.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        request : string, required</span>
+<span class="sd">            Name of dataset or SQL statement to scan.</span>
+<span class="sd">        max_records : int, optional</span>
+<span class="sd">            Maximum number of records to return. Default is unlimited.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list(obj)</span>
+<span class="sd">            Data returned as a list of JSON objects</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import cerebro</span>
+<span class="sd">        &gt;&gt;&gt; ctx = cerebro.context()</span>
+<span class="sd">        &gt;&gt;&gt; with ctx.connect(host = &#39;localhost&#39;, port = 12050) as conn:</span>
+<span class="sd">        ...     data = conn.scan_as_json(&#39;cerebro_sample.sample&#39;)</span>
+<span class="sd">        ...     data</span>
+<span class="sd">        [{&#39;record&#39;: b&#39;This is a sample test file.&#39;}, {&#39;record&#39;: b&#39;It should consist of two lines.&#39;}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">plan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scan</span><span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="n">max_records</span><span class="p">,</span> <span class="n">_deserialize_to_json</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_ensure_serialization_support</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plan</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">supported_result_formats</span> <span class="ow">or</span> \
+                <span class="n">TRecordFormat</span><span class="o">.</span><span class="n">ColumnarNumPy</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">supported_result_formats</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;PyCerebro requires the server to support the &quot;</span> <span class="o">+</span>
+                          <span class="s2">&quot;`ColumnarNumPy` serialization format. Please upgrade the &quot;</span> <span class="o">+</span>
+                          <span class="s2">&quot;server to at least 0.8.1.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_scan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plan</span><span class="p">,</span> <span class="n">max_records</span><span class="p">,</span> <span class="n">serialize_fn</span><span class="p">,</span> <span class="o">*</span><span class="n">serialize_fn_args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Scans the tasks in plan, using serialize_fn and serialize_fn_args to</span>
+<span class="sd">            convert the results. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_serialization_support</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span>
+
+        <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">tasks</span><span class="p">:</span>
+            <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Executing task </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">task_id</span><span class="p">))</span>
+            <span class="n">max_this_task</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">max_records</span> <span class="o">==</span> <span class="n">total</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">max_records</span><span class="p">:</span>
+                <span class="n">max_this_task</span> <span class="o">=</span> <span class="n">max_records</span> <span class="o">-</span> <span class="n">total</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">connect_worker</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">hosts</span><span class="p">)</span> <span class="k">as</span> <span class="n">worker</span><span class="p">:</span>
+                <span class="n">handle</span><span class="p">,</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">worker</span><span class="o">.</span><span class="n">exec_task</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">max_this_task</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                        <span class="n">fetch_result</span> <span class="o">=</span> <span class="n">worker</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+                        <span class="k">assert</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">record_format</span> <span class="o">==</span> <span class="n">TRecordFormat</span><span class="o">.</span><span class="n">ColumnarNumPy</span>
+                        <span class="n">serialize_fn</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span>
+                                     <span class="n">fetch_result</span><span class="o">.</span><span class="n">columnar_records</span><span class="p">,</span>
+                                     <span class="n">fetch_result</span><span class="o">.</span><span class="n">num_records</span><span class="p">,</span>
+                                     <span class="o">*</span><span class="n">serialize_fn_args</span><span class="p">)</span>
+                        <span class="n">total</span> <span class="o">+=</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">num_records</span>
+
+                        <span class="k">if</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">done</span><span class="p">:</span>
+                            <span class="k">break</span>
+                <span class="k">finally</span><span class="p">:</span></div>
+                    <span class="n">worker</span><span class="o">.</span><span class="n">close_task</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
 
 <div class="viewcode-block" id="WorkerConnection"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.WorkerConnection">[docs]</a><span class="k">class</span> <span class="nc">WorkerConnection</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;A connection to a CDAS worker. &quot;&quot;&quot;</span>
@@ -670,7 +797,7 @@
         <span class="n">request</span><span class="o">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">task</span>
         <span class="n">request</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">max_records</span>
         <span class="n">request</span><span class="o">.</span><span class="n">fetch_size</span> <span class="o">=</span> <span class="mi">20000</span>
-        <span class="n">request</span><span class="o">.</span><span class="n">record_format</span> <span class="o">=</span> <span class="n">TRecordFormat</span><span class="o">.</span><span class="n">Columnar</span>
+        <span class="n">request</span><span class="o">.</span><span class="n">record_format</span> <span class="o">=</span> <span class="n">TRecordFormat</span><span class="o">.</span><span class="n">ColumnarNumPy</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ExecTask</span><span class="p">(</span><span class="n">request</span><span class="p">)</span></div>
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">schema</span>
 
@@ -687,245 +814,132 @@
 <span class="k">def</span> <span class="nf">_columnar_batch_to_python</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">columnar_records</span><span class="p">,</span> <span class="n">num_records</span><span class="p">):</span>
     <span class="kn">import</span> <span class="nn">numpy</span>
     <span class="n">cols</span> <span class="o">=</span> <span class="n">columnar_records</span><span class="o">.</span><span class="n">cols</span>
-    <span class="n">col_names</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="c1"># Go over each column and convert the binary data to python objects</span>
+    <span class="c1"># Things we will return.</span>
+    <span class="n">col_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Checks if any of the values in this batch are null. Handling NULL can be</span>
+    <span class="c1"># noticeably slower, so skip it in bulk if possible.</span>
+    <span class="n">any_nulls</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">is_nulls</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+
+    <span class="c1"># Go over each column and convert the binary data to python objects. This is very</span>
+    <span class="c1"># perf sensitive.</span>
     <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)):</span>
-        <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">schema</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="n">buf</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">buf</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
 
+        <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">schema</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">is_null</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">is_null</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="n">any_nulls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">is_null</span><span class="p">))</span>
+        <span class="n">is_nulls</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_null</span>
+
         <span class="n">t</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">type_id</span>
         <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">STRING</span> <span class="ow">or</span> <span class="n">t</span> <span class="o">==</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">VARCHAR</span><span class="p">:</span>
-            <span class="n">off</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">column</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num_records</span><span class="p">:</span>
-                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="p">(</span><span class="n">length</span><span class="p">,)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="n">buf</span><span class="p">[</span><span class="n">off</span><span class="p">:</span><span class="n">off</span> <span class="o">+</span> <span class="mi">4</span><span class="p">])</span>
-                <span class="n">off</span> <span class="o">+=</span> <span class="mi">4</span>
-                <span class="n">column</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">buf</span><span class="p">[</span><span class="n">off</span><span class="p">:</span><span class="n">off</span> <span class="o">+</span> <span class="n">length</span><span class="p">])</span>
-                <span class="n">off</span> <span class="o">+=</span> <span class="n">length</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+            <span class="n">off</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">num_records</span>
+            <span class="n">column</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_records</span>
+            <span class="n">lens</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span> <span class="n">off</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">any_nulls</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_records</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_null</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">length</span> <span class="o">=</span> <span class="n">lens</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="n">column</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">off</span><span class="p">:</span><span class="n">off</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
+                        <span class="n">off</span> <span class="o">+=</span> <span class="n">length</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_records</span><span class="p">):</span>
+                    <span class="n">length</span> <span class="o">=</span> <span class="n">lens</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">column</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">off</span><span class="p">:</span><span class="n">off</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
+                    <span class="n">off</span> <span class="o">+=</span> <span class="n">length</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">CHAR</span><span class="p">:</span>
             <span class="n">off</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">column</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">column</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_records</span>
             <span class="n">length</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">len</span>
-            <span class="k">while</span> <span class="n">off</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">buf</span><span class="p">):</span>
-                <span class="n">column</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">buf</span><span class="p">[</span><span class="n">off</span><span class="p">:</span><span class="n">off</span> <span class="o">+</span> <span class="n">length</span><span class="p">])</span>
-                <span class="n">off</span> <span class="o">+=</span> <span class="n">length</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">any_nulls</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_records</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_null</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">column</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">off</span><span class="p">:</span><span class="n">off</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
+                        <span class="n">off</span> <span class="o">+=</span> <span class="n">length</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_records</span><span class="p">):</span>
+                    <span class="n">column</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">off</span><span class="p">:</span><span class="n">off</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
+                    <span class="n">off</span> <span class="o">+=</span> <span class="n">length</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">BOOLEAN</span><span class="p">:</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">bool</span><span class="p">))</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">TINYINT</span><span class="p">:</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int8</span><span class="p">))</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">SMALLINT</span><span class="p">:</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int16</span><span class="p">))</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">INT</span><span class="p">:</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">))</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">BIGINT</span><span class="p">:</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">))</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">:</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">:</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">TIMESTAMP_NANOS</span><span class="p">:</span>
             <span class="n">dt</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="s1">&#39;millis&#39;</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;nanos&#39;</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)])</span>
             <span class="n">values</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span>
             <span class="n">millis</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s1">&#39;millis&#39;</span><span class="p">]</span>
-            <span class="n">column</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">milli</span> <span class="ow">in</span> <span class="n">millis</span><span class="p">:</span>
-                <span class="c1"># TODO: use nanos?</span>
-                <span class="n">column</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">milli</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">))</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+            <span class="n">column</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_records</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_records</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_null</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="c1"># TODO: use nanos?</span>
+                    <span class="n">column</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">millis</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">column</span>
         <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">DECIMAL</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">precision</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
-                <span class="n">vaules</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">schema</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">precision</span> <span class="o">&lt;=</span> <span class="mi">18</span><span class="p">:</span>
-                <span class="n">vaules</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">longs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
-                <span class="n">num_values</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">longs</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
-                <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_values</span><span class="p">):</span>
-                    <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">longs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">longs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">64</span><span class="p">))</span>
-            <span class="n">column</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_records</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_records</span><span class="p">):</span>
+                    <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">longs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">longs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">64</span><span class="p">)</span>
+            <span class="n">column</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_records</span>
             <span class="n">scale</span> <span class="o">=</span> <span class="o">-</span><span class="n">schema</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">scale</span>
-            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
-                <span class="n">column</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Decimal</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">.</span><span class="n">scaleb</span><span class="p">(</span><span class="n">scale</span><span class="p">))</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_records</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_null</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">column</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Decimal</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span><span class="o">.</span><span class="n">scaleb</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">column</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unsupported type: &quot;</span> <span class="o">+</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">_VALUES_TO_NAMES</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
-    <span class="k">return</span> <span class="n">col_names</span><span class="p">,</span> <span class="n">data</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unsupported type: &quot;</span> <span class="o">+</span> <span class="n">TTypeId</span><span class="o">.</span><span class="n">_VALUES_TO_NAMES</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">col_names</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">any_nulls</span><span class="p">,</span> <span class="n">is_nulls</span>
 
 
-<span class="k">def</span> <span class="nf">_deserialize_to_json</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">columnar_records</span><span class="p">,</span> <span class="n">num_records</span><span class="p">):</span>
-    <span class="n">col_names</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">_columnar_batch_to_python</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">columnar_records</span><span class="p">,</span> <span class="n">num_records</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_deserialize_to_json</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">columnar_records</span><span class="p">,</span> <span class="n">num_records</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+    <span class="n">col_names</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">is_nulls</span> <span class="o">=</span> <span class="n">_columnar_batch_to_python</span><span class="p">(</span>
+        <span class="n">schema</span><span class="p">,</span> <span class="n">columnar_records</span><span class="p">,</span> <span class="n">num_records</span><span class="p">)</span>
+    <span class="n">num_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_names</span><span class="p">)</span>
     <span class="c1"># Go over each row and construct a python array as a row</span>
-    <span class="n">idx</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_names</span><span class="p">)):</span>
-        <span class="n">idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_records</span><span class="p">):</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_names</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">columnar_records</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">is_null</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="n">idx</span><span class="p">[</span><span class="n">c</span><span class="p">]])</span>
-                <span class="n">idx</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_records</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_cols</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_cols</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_nulls</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="n">r</span><span class="p">]:</span>
+                <span class="n">row</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="n">r</span><span class="p">]</span>
         <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">col_names</span><span class="p">,</span> <span class="n">row</span><span class="p">)))</span>
 
-<span class="k">def</span> <span class="nf">_deserialize_to_pandas</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">columnar_records</span><span class="p">,</span> <span class="n">num_records</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_deserialize_to_pandas</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">columnar_records</span><span class="p">,</span> <span class="n">num_records</span><span class="p">,</span> <span class="n">data_frames</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">numpy</span>
     <span class="kn">import</span> <span class="nn">pandas</span>
-    <span class="n">col_names</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">_columnar_batch_to_python</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">columnar_records</span><span class="p">,</span> <span class="n">num_records</span><span class="p">)</span>
-    <span class="n">columns</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">col_names</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">any_nulls</span><span class="p">,</span> <span class="n">is_nulls</span> <span class="o">=</span> <span class="n">_columnar_batch_to_python</span><span class="p">(</span>
+        <span class="n">schema</span><span class="p">,</span> <span class="n">columnar_records</span><span class="p">,</span> <span class="n">num_records</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">col_names</span><span class="p">,</span> <span class="n">data</span><span class="p">)))</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_names</span><span class="p">)):</span>
-        <span class="n">columns</span><span class="p">[</span><span class="n">col_names</span><span class="p">[</span><span class="n">c</span><span class="p">]]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">any_nulls</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">or</span> <span class="n">df</span><span class="p">[</span><span class="n">col_names</span><span class="p">[</span><span class="n">c</span><span class="p">]]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;object&#39;</span><span class="p">:</span>
+            <span class="c1"># Either no nulls, or objects are already handled.</span>
+            <span class="k">continue</span>
+        <span class="c1"># Fix up nulls, replace with nan</span>
+        <span class="c1"># TODO: this is not the cheapest</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">col_names</span><span class="p">[</span><span class="n">c</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col_names</span><span class="p">[</span><span class="n">c</span><span class="p">]]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">is_nulls</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">other</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="n">data_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 
-<div class="viewcode-block" id="scan_as_json"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.scan_as_json">[docs]</a><span class="k">def</span> <span class="nf">scan_as_json</span><span class="p">(</span><span class="n">planner</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sql</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_records</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Scans data, returning the result in json format.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    planner : PlannerConnection</span>
-<span class="sd">        Planner connection handle.</span>
-<span class="sd">    dataset : string, optional</span>
-<span class="sd">        Name of dataset to scan. `dataset` or `sql` must be specified.</span>
-<span class="sd">    sql : string, optional</span>
-<span class="sd">        SQL statement for query. `dataset` or `sql` must be specified.</span>
-<span class="sd">    max_records : int, optional</span>
-<span class="sd">        Maximum number of records to return. Default is unlimited.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    list(obj)</span>
-<span class="sd">        Data returned as a list of JSON objects</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import cerebro</span>
-<span class="sd">    &gt;&gt;&gt; ctx = cerebro.create_context()</span>
-<span class="sd">    &gt;&gt;&gt; with ctx.connect_planner(host = &#39;localhost&#39;, port = 12050) as planner:</span>
-<span class="sd">    ...     data = cerebro.scan_as_json(planner, dataset = &#39;cerebro_sample.sample&#39;)</span>
-<span class="sd">    ...     data</span>
-<span class="sd">    [{&#39;record&#39;: b&#39;This is a sample test file.&#39;}, {&#39;record&#39;: b&#39;It should consist of two lines.&#39;}]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">planner</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;planner must be specified.&quot;</span><span class="p">)</span>
-
-    <span class="n">plan</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">plan</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">sql</span><span class="o">=</span><span class="n">sql</span><span class="p">)</span>
-
-    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">tasks</span><span class="p">:</span>
-        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Executing task </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">task_id</span><span class="p">))</span>
-        <span class="n">max_this_task</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">max_records</span><span class="p">:</span>
-            <span class="n">max_this_task</span> <span class="o">=</span> <span class="n">max_records</span> <span class="o">-</span> <span class="n">total</span>
-        <span class="k">with</span> <span class="n">planner</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">connect_worker</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">hosts</span><span class="p">)</span> <span class="k">as</span> <span class="n">worker</span><span class="p">:</span>
-            <span class="n">handle</span><span class="p">,</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">worker</span><span class="o">.</span><span class="n">exec_task</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">max_this_task</span><span class="p">)</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                    <span class="n">fetch_result</span> <span class="o">=</span> <span class="n">worker</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
-                    <span class="n">total</span> <span class="o">+=</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">num_records</span>
-
-                    <span class="k">if</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">record_format</span> <span class="o">!=</span> <span class="n">TRecordFormat</span><span class="o">.</span><span class="n">Columnar</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unexpected record format: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="n">fetch_result</span><span class="o">.</span><span class="n">record_format</span><span class="p">)</span>
-
-                    <span class="n">_deserialize_to_json</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">columnar_records</span><span class="p">,</span>
-                        <span class="n">fetch_result</span><span class="o">.</span><span class="n">num_records</span><span class="p">)</span>
-
-                    <span class="k">if</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">done</span><span class="p">:</span>
-                        <span class="k">break</span>
-            <span class="k">finally</span><span class="p">:</span>
-                <span class="n">worker</span><span class="o">.</span><span class="n">close_task</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
-</div>
-    <span class="k">return</span> <span class="n">result</span>
-
-<div class="viewcode-block" id="scan_as_pandas"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.scan_as_pandas">[docs]</a><span class="k">def</span> <span class="nf">scan_as_pandas</span><span class="p">(</span><span class="n">planner</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sql</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_records</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Scans data, returning the result for pandas.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    planner : PlannerConnection</span>
-<span class="sd">        Planner connection handle.</span>
-<span class="sd">    dataset : string, optional</span>
-<span class="sd">        Name of dataset to scan. `dataset` or `sql` must be specified.</span>
-<span class="sd">    sql : string, optional</span>
-<span class="sd">        SQL statement for query. `dataset` or `sql` must be specified.</span>
-<span class="sd">    max_records : int, optional</span>
-<span class="sd">        Maximum number of records to return. Default is unlimited.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    pandas DataFrame</span>
-<span class="sd">        Data returned as a pandas DataFrame object</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import cerebro</span>
-<span class="sd">    &gt;&gt;&gt; ctx = cerebro.create_context()</span>
-<span class="sd">    &gt;&gt;&gt; with ctx.connect_planner(host = &#39;localhost&#39;, port = 12050) as planner:</span>
-<span class="sd">    ...     pd = cerebro.scan_as_pandas(planner, dataset = &#39;cerebro_sample.sample&#39;)</span>
-<span class="sd">    ...     print(pd)</span>
-<span class="sd">                                   record</span>
-<span class="sd">    0      b&#39;This is a sample test file.&#39;</span>
-<span class="sd">    1  b&#39;It should consist of two lines.&#39;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">pandas</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">planner</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;planner must be specified.&quot;</span><span class="p">)</span>
-
-    <span class="n">plan</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">plan</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">sql</span><span class="o">=</span><span class="n">sql</span><span class="p">)</span>
-
-    <span class="n">data_frames</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">tasks</span><span class="p">:</span>
-        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Executing task </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">task_id</span><span class="p">))</span>
-        <span class="n">max_this_task</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">max_records</span><span class="p">:</span>
-            <span class="n">max_this_task</span> <span class="o">=</span> <span class="n">max_records</span> <span class="o">-</span> <span class="n">total</span>
-        <span class="k">with</span> <span class="n">planner</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">connect_worker</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">hosts</span><span class="p">)</span> <span class="k">as</span> <span class="n">worker</span><span class="p">:</span>
-            <span class="n">handle</span><span class="p">,</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">worker</span><span class="o">.</span><span class="n">exec_task</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">max_this_task</span><span class="p">)</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                    <span class="n">fetch_result</span> <span class="o">=</span> <span class="n">worker</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
-                    <span class="n">total</span> <span class="o">+=</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">num_records</span>
-
-                    <span class="k">if</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">record_format</span> <span class="o">!=</span> <span class="n">TRecordFormat</span><span class="o">.</span><span class="n">Columnar</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unexpected record format: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="n">fetch_result</span><span class="o">.</span><span class="n">record_format</span><span class="p">)</span>
-
-                    <span class="n">df</span> <span class="o">=</span> <span class="n">_deserialize_to_pandas</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">columnar_records</span><span class="p">,</span>
-                        <span class="n">fetch_result</span><span class="o">.</span><span class="n">num_records</span><span class="p">)</span>
-                    <span class="n">data_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-
-                    <span class="k">if</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">done</span><span class="p">:</span>
-                        <span class="k">break</span>
-            <span class="k">finally</span><span class="p">:</span>
-                <span class="n">worker</span><span class="o">.</span><span class="n">close_task</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span></div>
-    <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data_frames</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">_create_socket</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">use_ssl</span><span class="p">,</span> <span class="n">ca_cert</span><span class="p">):</span>
-    <span class="n">sock</span> <span class="o">=</span> <span class="n">get_socket</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">use_ssl</span><span class="p">,</span> <span class="n">ca_cert</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span> <span class="o">*</span> <span class="mf">1000.</span>  <span class="c1"># TSocket expects millis</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># thriftpy has a release where set_timeout is missing</span>
-        <span class="n">sock</span><span class="o">.</span><span class="n">set_timeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-        <span class="n">sock</span><span class="o">.</span><span class="n">socket_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
-        <span class="n">sock</span><span class="o">.</span><span class="n">connect_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
-    <span class="k">return</span> <span class="n">sock</span>
-
-<div class="viewcode-block" id="create_context"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.create_context">[docs]</a><span class="k">def</span> <span class="nf">create_context</span><span class="p">(</span><span class="n">application_name</span> <span class="o">=</span> <span class="s1">&#39;pycerebro&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Creates the top level context object to use pycerebro.</span>
+<div class="viewcode-block" id="context"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.context">[docs]</a><span class="k">def</span> <span class="nf">context</span><span class="p">(</span><span class="n">application_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Gets the top level context object to use pycerebro.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -940,10 +954,12 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; import cerebro</span>
-<span class="sd">    &gt;&gt;&gt; ctx = cerebro.create_context()</span>
+<span class="sd">    &gt;&gt;&gt; ctx = cerebro.context()</span>
 <span class="sd">    &gt;&gt;&gt; ctx                                         # doctest: +ELLIPSIS</span>
 <span class="sd">    &lt;cerebro.cdas.CerebroContext object at 0x...&gt;</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">application_name</span><span class="p">:</span>
+        <span class="n">application_name</span> <span class="o">=</span> <span class="s1">&#39;pycerebro (</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">version</span><span class="p">()</span></div>
     <span class="k">return</span> <span class="n">CerebroContext</span><span class="p">(</span><span class="n">application_name</span><span class="p">)</span>
 
 <div class="viewcode-block" id="version"><a class="viewcode-back" href="../../cerebro.html#cerebro.cdas.version">[docs]</a><span class="k">def</span> <span class="nf">version</span><span class="p">():</span>
