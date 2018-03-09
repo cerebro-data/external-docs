@@ -205,8 +205,8 @@ s3://cerebrodata-release-useast/0.8.1/client
 1. Install Java JDK.
 2. Install hadoop and hive.
 3. Download MSQL connector and copy it to the hive lib directory.
-4. Execute the Cerebro bootstrap script for hive. Substitute the values for the cluster for the <variables>.
-```sh -x ./bootstrap_hive.sh <version> --planner-hostports <planner_host>:12050 --token <oken> hive
+4. Execute the Cerebro bootstrap script for hive. Substitute the values for the cluster for the \<variables\>.
+```sh -x ./bootstrap_hive.sh \<version\> --planner-hostports \<planner_host\>:12050 --token \<oken\> hive
 ```
 5. Copy the following directories and their contents from a working server:
 ```/etc/cerebro
