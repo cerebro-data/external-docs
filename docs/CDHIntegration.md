@@ -200,3 +200,29 @@ s3://cerebrodata-release-useast/<version>/client
 # For example:
 s3://cerebrodata-release-useast/0.8.1/client
 ```
+
+## Using a standalone hive client with CDAS
+1. Install Java JDK.
+2. Install hadoop and hive.
+3. Download MSQL connector and copy it to the hive lib directory.
+4. Execute the Cerebro bootstrap script for hive. Substitute the values for the cluster for the <variables>.
+```sh -x ./bootstrap_hive.sh <version> --planner-hostports <planner_host>:12050 --token <oken> hive
+```
+5. Copy the following directories and their contents from a working server:
+```/etc/cerebro
+/etc/hadoop
+/etc/hadoop-httpfs
+/etc/hadoop-kms
+/etc/hive-hcatalog
+/etc/hive
+```
+6. Add the following to the .bash_profile for each user (replacing the endpoints with the correct locations):
+```export HIVE_HOME=/usr/local/apache-hive-2.3.2-bin
+export HIVE_CONF_DIR=/etc/hive/conf.dist
+export TEZ_CONF_DIR=/etc/tez/conf
+export HADOOP_HOME=/usr/local/hadoop-2.7.5
+export JAVA_HOME=/usr/java/latest
+export PATH=$HADOOP_HOME/bin:$HIVE_HOME/bin:$PATH
+export PATH
+```
+  7. Launch the hive client.
