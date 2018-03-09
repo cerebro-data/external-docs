@@ -1,12 +1,58 @@
 # Cerebro Data Access Service Authentication
 
-All Cerebro services are authenticated. We provide two mechanisms for authentication:
+All Cerebro services are authenticated and users must provide credentials when using CDAS.
+Whenever Cerebro authenticates a user, it:
 
-1. Kerberos & Cerebro Tokens
-2. JSON Web Tokens (JWT)
+1. Authenticates the username.
+2. Looks up the set of groups the user belongs to.
+3. Using the groups and our permissions database (i.e. roles and grants), authorizes
+the request. A user has the union of permissions of all the groups he or she is in.
 
-Users can configure either or both options. If both are configured, clients can
-authenticate using either method.
+This sequence of steps happens regardless of configuration.
+
+Cerebro does not manage users or groups directly, instead we provide integration
+mechanisms for the user to provide that information, typically with the source of truth
+being the enterprise wide Active Directory (AD). There is no way nor need to ever
+add a user in Cerebro, this user would, for example, be added in AD and Cerebro would
+pick it up.
+
+There are multiple ways to configure how Cerebro authenticates a username and how
+to lookup the groups of a user. These are typically orthogonal but some specific
+combinations are not supported. The second half of this document details those
+configurations.
+
+## User authentication
+
+Cerebro can authenticate a user via:
+
+1. Kerberos
+2. AD username and password
+3. Tokens, either Cerebro managed or single sign on JSON Web Tokens (JWT), with multiple
+ways to authenticate the token.
+4. OAUTH
+
+We expect in a typical configuration multiple of these will be enabled at the same time.
+For example, batch applications may prefer tokens or kerberos but end users may
+prefer AD or OAUTH. This is supported.
+
+## Group resolution
+
+Currently Cerebro can look up the groups a user belong to in two ways:
+
+1. By asking the host machine (i.e. ec2 machine) the unix users for this group.
+e.g. The output of `id <username>`. In this case, group names are case-sensitive as
+they are in unix.
+
+2. By having the users group as part of the JWT token. In this case group names are
+case insensitive.
+
+Only one of these two configurations can be used at any time.Approach 2 is used if only
+JWT support is configured (e.g. a system token is specified). In all other situations,
+including if both JWT and Kerberos are configured, approach 1 will be used for all users,
+including those that authenticate via a JWT.
+
+Note: on our short term roadmap is to support group resolution directly integrating
+with AD to get the group information.
 
 ## Cerebro Tokens
 
@@ -193,26 +239,6 @@ If you have the need to support both approaches, simply configure the environmen
 variables for both and they will each be instantiated. The external endpoint will
 be used first and if the JWT is not validated by that service, it will then be
 passed to the public key authenticator for validation.
-
-
-## User to Group resolution
-
-A Cerebro cluster will use one of two approaches to map a user to the groups that it
-is a member of:
-1. **Using the user to group mappings on the local host**  
-e.g. The output of
-```shell
-id <username>
-```
-**When using approach 1, the group names are case sensitive and will retain the same
-case as the group name on the host machine.**
-
-2. **Pulling the group names out of the supplied JWT**  
-
-Approach 2 is used if only JWT support is configured (e.g. a system token is specified).
-In all other situations, including if both JWT and Kerberos are configured, approach 1
-will be used for all users, including those that authenticate via a JWT.  
-**When using approach 2, the group names are treated as case insensitive.**
 
 
 ## Using a JWT with curl
