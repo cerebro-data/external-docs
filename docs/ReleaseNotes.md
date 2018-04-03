@@ -1,9 +1,49 @@
-# 0.8.1 (March 2018)
+# Release Notes
+
+## 0.9.0 (Apri 2018)
+
+0.9.0 contains two major features but is otherwise identical to 0.8.1.
+
+### New features
+
+**Support for struct types**
+
+CDAS and the client libraries now support struct as a data type. This allows the engine
+to handle nested data. For details, see the [docs](ComplexTypes.md).
+
+**Support for scanning last partition of a table**
+
+CDAS's query language has been extended to easily support just reading the last partition
+of a partitioned table. This is a common pattern in multiple use cases.
+See [supported sql](SupportedSQL.md#last-partition) for more details.
+
+### Incompatible changes
+
+The REST API now by default does not format the JSON result (does't intent it and put
+new lines). Clients often consume this via a tool and the formatting is an unnecessary
+cost. Users can pass the `?format` option to enable server side formatting.
+
+For example:
+```shell
+> curl localhost:11050/scan/cerebro_sample.sample
+[{"record":"This is a sample test file."},{"record":"It should consist of two lines."}]
+> curl localhost:11050/scan/cerebro_sample.sample?format
+[
+    {
+        "record": "This is a sample test file."
+    },
+    {
+        "record": "It should consist of two lines."
+    }
+]
+```
+
+## 0.8.1 (march 2018)
 
 0.8.1 is a minor release which addresses a few specific issues in 0.8.0 as well as
 updates to the pycerebro python client library.
 
-## PyCerebro
+### PyCerebro
 
 The initial release in 0.8.0 was an opportunity to get feedback on the client API.
 (Thanks everyone that did!). We've updated the API in response. The APIs in this
@@ -21,7 +61,7 @@ For more details, see the [docs](PyCerebro.md).
 
 Users can upgrade to this by upgrading to the latest package with pip.
 
-## Bug Fixes
+### Bug Fixes
 
 * Fix bug in configuring LDAP domain and LDAP base DN. Configuring both lead to
 the base DN config always being used instead of the domain configuration. Starting
@@ -39,11 +79,11 @@ been the behavior in CDAS but other tools or existing metadata may have allowed 
 URIs to be persisted. In this release we allow revoking both kinds of URIs so that
 the invalid entries can be corrected.
 
-# 0.8.0 (Feb 2018)
+## 0.8.0 (Feb 2018)
 
 0.8.0 is a major release. It includes all fixes from the prior releases.
 
-## New Features
+### New Features
 
 **Datasets with errors in Web UI**
 
@@ -140,7 +180,7 @@ Configuration details and script requirements can be found in the
 Significant performance for `alter table recover partitions` and `show partitions` on
 a highly partitioned table.
 
-## Bug Fixes
+### Bug Fixes
 
 * Fixed an issue where DbCli, the REST server, and the Web UI were reporting
 field values as `0` when they were in fact `null`.
@@ -152,7 +192,7 @@ are now visible to user if they have any access to any objects in it.
 * Fixed an issue in the Web UI where if the user logged in via OAuth, the
 UI showed a Cerebro Token instead of an SSO Token.
 
-## Incompatible and Breaking Changes
+### Incompatible and Breaking Changes
 
 * The REST server, DbCLI and the WebUI now correctly report `null` field values
 which were previously incorrectly reported as `0`. This may cause incompatibilities
@@ -180,7 +220,7 @@ prior to a token being written to it. To support this, we have added another boo
 script that should be run after the existing bootstrap script. See the
 [EMR docs](EMRIntegration.md) documentation for details.
 
-## Known issues
+### Known issues
 
 * Tableau WDC connector does not support custom signed SSL certificates. If SSL is
 enabled and the certificate is self signed, the Tableau connector will fail with an
@@ -188,14 +228,15 @@ SSL handshake error. The issue is that Tableau is unable to find the self signed
 certificate in all cases. Potential workarounds are to use a certificate signed by a
 CA or to connect to CDAS through a JDBC enabled framework, such as presto.
 
-# 0.7.3 (Feb 2018)
+
+## 0.7.3 (feb 2018)
 
 0.7.3 is a patch release. It contains a critical presto client issue and we recommend
 all presto users upgrade. Versions prior to 0.7.3 are no longer supported for EMR Presto.
 Note that it is perfectly fine to run a 0.7.3 client (e.g. EMR) against a 0.7.2 CDAS cluster.
 
 
-## Bug Fixes
+### Bug Fixes
 
 * Fixed session leak in presto client. In some cases, sessions started by the presto
 client may not get properly closed. This can cause issues as those connections will not
@@ -210,11 +251,12 @@ settings that block access to S3. Previously, the DeploymentManager agent runnin
 all the CDAS cluster VMs would not use the proxy settings in all cases. This issue
 manifests if access to the storage system needs to happen through an HTTP proxy.
 
-# 0.7.2 (Jan 2018)
+
+## 0.7.2 (jan 2018)
 
 0.7.2 includes stability fixes. We recommend all 0.7.0/0.7.1 users upgrade.
 
-## Bug Fixes
+### Bug Fixes
 
 * Improved REST server scalability in the presence of long running scan requests.
 Previously, long running scans could block out other requests, including the service
@@ -252,16 +294,17 @@ distinguished names. Now it is possible to login with a domain name, for example
 * Updated packaged docker version from 1.12.2 to 1.12.6, which includes multiple
 stability fixes.
 
-# 0.7.1 (Dec 2017)
 
-## New Features
+## 0.7.1 (dec 2017)
+
+### New Features
 
 * Support for Json Web Token (JWT) authentication using public key and external server.
 In previous releases, CDAS could only be configured to use one or the other. It is not
 possible to configure both at the same time. For more information see
 [here](Authentication.md).
 
-## Bug Fixes
+### Bug Fixes
 
 * Support for non-reneweable keytabs
 0.6.2 contains a single fix for kerberized clusters. All CDAS services have been updated
@@ -273,19 +316,22 @@ In 0.7.0 and previous releases, the UI would show no datasets in the Datasets pa
 list, even if only one failed to load. In 0.7.1, the UI will show all datasets
 that were loaded without error.
 
-# Bug Fixes
 
-# 0.6.2 (Dec 2017)
+## bug fixes
+
+
+## 0.6.2 (dec 2017)
 
 0.6.2 contains a single fix for kerberized clusters. All CDAS services have been updated
 to be more robust to non-renewable keytabs. Previously, services may become unstable
 when the kerberos tickets expired when using these kind of keytabs.
 
-# 0.7.0 (Nov 2017)
+
+## 0.7.0 (nov 2017)
 
 0.7.0 is a major release.
 
-## New Features
+### New Features
 
 **JSON structured audit logs**
 
@@ -347,7 +393,7 @@ for datasets by name and/or database name, as well as filter by any set of datab
 Dataset stewards (or anyone with all access to a dataset) can inspect which groups or set
 of groups has access to their datasets as well as which fields in those datasets.
 
-## Bug Fixes
+### Bug Fixes
 
 * Fixed an issue where the 30-second timeout for session\_ids issued
 by the /api/scanpage endpoint was starting from the beginning of a query,
@@ -378,7 +424,7 @@ server-side errors (they were being overwritten with generic error messages).
 EMR 5.8.0 upgraded Hive from 2.1.1 to 2.3.0 which introduced a backward compatibility
 breaking api change, which has been addressed.
 
-### Incompatible and Breaking Changes
+#### Incompatible and Breaking Changes
 
 * The records parameter for the /api/scanpage REST endpoint now indicates
 the total number of records that the query should return. This had
@@ -404,7 +450,7 @@ towards the top of the script in the new template, so porting older launch files
 be fairly quick. Launch scripts based on the 0.7.0 template are backwards compatible with
 older CDAS releases.
 
-## Known issues
+### Known issues
 
 **After installing a new version of DM, upgrading a component in existing cluster does not work
 
@@ -416,7 +462,8 @@ DM is installed and restarted.
 There is an issue with the new module changes in Java 9 that will be addressed in future
 versions of CDAS.
 
-# 0.5.3  (November 2017)
+
+## 0.5.3  (november 2017)
 
 0.5.3 is a minor release consisting of backports of select fixes from the
 0.6.1 release. Those patches are:
@@ -425,11 +472,12 @@ versions of CDAS.
 * add_date function does not work with view creation
 * REST server scaling issues
 
-# 0.6.1 (Oct 2017)
+
+## 0.6.1 (oct 2017)
 
 0.6.1 is a minor release and we recommend all 0.6.0 users upgrade.
 
-## New Features
+### New Features
 
 **OAUTH integration**
 
@@ -453,19 +501,20 @@ export CEREBRO_SSL_FQDN=cluster1.cloud.com
 Note that due to our traffic routing, this can be the DNS name of any machine in the
 cluster, for example, the CNAME for the cluster.
 
-## Bug Fixes
+### Bug Fixes
 
 **Support for EMR up to 5.9**
 Hive in EMR 5.8, introduced a non backwards compatible change which caused issues for
 older versions (0.6 and before) of Cerebro EMR clients. This has been fixed in 0.6.1
 and now supports all versions from 5.3 to 5.9.
 
-# 0.6.0 (Sep 2017)
+
+## 0.6.0 (sep 2017)
 
 0.6.0 is a major release. It includes major new features and numerous improvements
 across the Cerebro services.
 
-## New Features
+### New Features
 
 **New Web UI**
 
@@ -497,7 +546,7 @@ across the engines, improved multi-tenant user experience, work scheduling, etc.
 This release adds SSL support to the REST server and WebUI. If configured, users should
 switch to https, whenever interacting with either of these services.
 
-## Minor Features
+### Minor Features
 
 - Added cli commands to specify the number of planners. See
 [docs](ClusterAdmin.md) for more details.
@@ -507,7 +556,7 @@ workers, particularly in the case when there are a smaller number of total tasks
 - Significantly reduced memory usage when executing joins.
 - Improved install times. Cerebro binary sizes have been significantly reduced.
 
-## Incompatible and breaking changes
+### Incompatible and breaking changes
 
 **Deprecating specifying user token as part of URL for REST server**
 
@@ -534,7 +583,7 @@ insensitive. This means that commands such as `CREATE ROLE admin_role` and
 The output is no space separated and not commas to make it easier to interop with
 ecosystem tools. If this was consumed from scripts, they may need to be updated.
 
-## Known issues
+### Known issues
 
 **Dataset preview in Web UI or Catalog REST API shows 0s instead of NULLs**
 
@@ -570,7 +619,8 @@ does not support GRANT/REVOKE statement and ALTER TABLE statements.
 
 Workaround: use the DbCli or connect through a kerberized Hive installation.
 
-# 0.4.3 and 0.5.1 Release Notes (August 2017)
+
+## 0.4.3 and 0.5.1 release notes (august 2017)
 
 0.4.3 and 0.5.1 are minor patch release that contain significant performance fixes
 as well as critical fixes for the Hive EMR integration.
@@ -582,7 +632,7 @@ In particular:
 - Significant speedups handling tables with larger number of partitions
 - Improved column pruning and predicate pushdown when using Hive in EMR.
 
-## New Features
+### New Features
 
 The EMR integration has been updated on the configs that are required for better
 Spark and Hive integration. In particular, we recommend specifying the Cerebro
@@ -592,12 +642,13 @@ updated in the EMR. [docs](SupportedSQL.md)
 We've also updated the client versions to 0.5.1 and EMR clusters should be
 bootstrapped with this version (from 0.5.0).
 
-# 0.5.0 Release Notes (July 2017)
+
+## 0.5.0 release notes (july 2017)
 
 0.5.0 is a  major release. It contains all the bug fixes from 0.4.1 and 0.4.2 and
 numerous other bug fixes.
 
-## New Features
+### New Features
 
 **JSON Web Token and SSO support**
 
@@ -633,7 +684,7 @@ any config files to S3 manually as part of the install.
 This release corresponds to the beta-6 release of the Hadoop client libraries. While
 previous clients are API compatible, we advise upgrading to this version.
 
-## Incompatible and breaking changes
+### Incompatible and breaking changes
 **Planner_worker service port renamed**
 
 The cerebro_planner_worker service ports have been split into cerebro_planner and
@@ -664,7 +715,7 @@ For example, in spark, applications should remove specifying:
 The environment variable CEREBRO_JWT_SERVICE_TOKEN_FILE has been replaced with
 CEREBRO_SYSTEM_TOKEN. Users upgrading from 0.4.5 will need to update this config.
 
-## Known issues
+### Known issues
 
 **Unable to see databases if user has only been granted columns to objects in database**
 
@@ -684,7 +735,8 @@ does not support GRANT/REVOKE statement and ALTER TABLE statements.
 
 Workaround: use the DbCli or connect through a kerberized Hive installation.
 
-# 0.4.2 Release Notes (July 2017)
+
+## 0.4.2 release notes (july 2017)
 
 0.4.2 contains a critical bug fix for users running a newer kernel with the Stack Guard.
 protection. This will result in the CDAS services (planner and worker) crashing on start.
@@ -694,15 +746,16 @@ We recommend all 0.4.x users upgrade.
 
 For more information, see [this](https://access.redhat.com/solutions/3091371)
 
-# 0.4.5 Release Notes
 
-## June-2017
+## 0.4.5 release notes
+
+### June-2017
 
 0.4.5 contains support support for JSON Web Tokens (JWT) for authentication. Users not
 using JWTs do not need to upgrade to this version. For details on how to configure JWT
 support, see the install docs.
 
-### Incompatible and breaking changes
+#### Incompatible and breaking changes
 **Planner_worker service port renamed**
 
 The cerebro_planner_worker service ports have been split into cerebro_planner and
@@ -713,31 +766,37 @@ cerebro_worker. Specifically:
 This will need to be updated in the CEREBRO_PORT_CONFIGURATION value as well as the
 output of 'cerebro_cli clusters list.'
 
-# 0.4.1 Release Notes
 
-## June-2017
+## 0.4.1 release notes
+
+### June-2017
 
 0.4.1 contains bug fixes for 0.4.0 and it is recommended to upgrade all 0.4.0 clusters.
 
-## Upgrading
+### Upgrading
 First, upgrade the DeploymentManager. While the upgrade is happening, existing CDAS
 clusters will continue to be operational.
 
 ```
 cd /opt/cerebro # Or where your existing install directory is.
 
-# Get the tarball from S3.
+
+## get the tarball from s3.
 curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.4.1/deployment-manager-0.4.1.tar.gz
 
-# Extract the bits.
+
+## extract the bits.
 rm -f deployment-manager
 tar xzf deployment-manager-0.4.1.tar.gz && rm deployment-manager-0.4.1.tar.gz && ln -s deployment-manager-0.4.1 deployment-manager
 
-# Restart the DeploymentManager
+
+## restart the deploymentmanager
 /opt/cerebro/deployment-manager/bin/deployment-manager
 
-# Upon restarting, the new DeploymentManager will take a few seconds to health check
-# the existing services.
+
+## upon restarting, the new deploymentmanager will take a few seconds to health check
+
+## the existing services.
 ```
 
 When all the existing clusters report READY, upgrade those clusters one by one. For
@@ -750,12 +809,12 @@ This will take a few minutes to download the updated binaries and restart the cl
 afterwards. The existing services will be operational while the download is occurring.
 See the cluster admin docs for more details.
 
-## Bug Fixes
+### Bug Fixes
   - Fixes to the Tableau WDC connector to be tolerant to catalog errors.
   - Fixes for users specifying a custom 'core-site.xml' or 'hive-site.xml' config. In
     0.4.0, we were not picking up these configs files correctly.
 
-## New Features
+### New Features
 In addition, we've added a new feature to allow the user to configure CNAMEs for
 service endpoints. This is useful for example, if end users should only access the
 cdas_rest_server API endpoint behind a CNAME.
@@ -776,11 +835,12 @@ Once set, restart your DeploymentManager.
 **NOTE:** If you upgrade your DeploymentManager to 0.4.1, make sure you upgrade CDAS to
 0.4.1 as well.
 
-# 0.4.0 Release Notes
 
-## May-2017
+## 0.4.0 release notes
 
-### New Features
+### May-2017
+
+#### New Features
 
 **Cluster Administration**
 
@@ -814,7 +874,7 @@ username and password.
 
 See the [LDAP Basic Auth Document](LdapAuthentication.md) for details.
 
-### Changes
+#### Changes
 **cerebro_cli utility**
 
 The following subcommands were added:
@@ -858,7 +918,7 @@ Configured service port uniqueness is now enforced during Deployment Manager sta
 Writes to S3 buckets now set the server-side encryption flag on the S3 write or copy
 request if the S3_STAGING_ENCRYPTION configuration is set to true.
 
-### Incompatible and Breaking Changes
+#### Incompatible and Breaking Changes
 **Change to CEREBRO_KERBEROS_KEYTAB_FILE config**
 
 Previously, this config used to be the basename of the keytab file and the user was
@@ -872,7 +932,8 @@ start up. Users coming from a previous release will need to update their configs
 For example, by changing:
 ```
 export CEREBRO_KERBEROS_KEYTAB_FILE=cerebro.keytab
-# to
+
+## to
 export CEREBRO_KERBEROS_KEYTAB_FILE=/path/on/deployment-manager/cerebro.keytab
 ```
 
@@ -886,7 +947,7 @@ All APIs were changed to consistently use the term 'db'  This impacts the follow
 
 For detail see: [Catalog REST API](CatalogApi.md).
 
-### Known issues
+#### Known issues
 **Errors during Deployment Manager configuration file writes prevent restart**
 
 If the configuration file for Deployment Manager is not correctly written to RDS (due to
@@ -901,12 +962,13 @@ and the delete will only go into effect after it is done launching. To get the c
 to delete immediately, manually terminating/shutting down the launching machines will
 work.
 
-# 0.3.0 Release Notes
 
-## February-2017
+## 0.3.0 release notes
+
+### February-2017
 This is the feature complete release candidate of CDAS.
 
-### New Features
+#### New Features
 **Tableau Cerebro Catalog Integration**
 
 You can access data stored in Cerebro using Tableau.
@@ -939,7 +1001,7 @@ using tokens.
 For information on setting up a Kerberized cluster, see:
 [Kerberized Cluster Setup](KerberosClusterSetup.md)
 
-### Changes
+#### Changes
 **Admin Dashboard**
 
 The Kubernetes admin dashboard has been upgraded to version 1.5.1 from version 1.4.2.
@@ -949,7 +1011,7 @@ See [Kubernetes Quickstart](KubernetesDashboardQuickStart.md) for details.
 
 Kubernetes has been upgraded to version 1.5.3 from version 1.4.2.
 
-### Incompatible and Breaking Changes
+#### Incompatible and Breaking Changes
 Renamed *cerebro\_catalog\_ui* to *cdas\_rest\_server*.  This is a port configuration
 change and will require users to update their env file. Note that this point will also
 need to be exposed.
@@ -960,17 +1022,18 @@ DeploymentManager machine) in /var/run/cerebro.
 If you have built scripts and automation following those steps, those should be adapted
 to use /etc/cerebro instead.
 
-### Known issues
+#### Known issues
 Catalog UI sometimes does not refresh databases correctly. Refresh from the browser as a
 workaround.
 
-# 0.2.0 Release Notes
 
-## 02-03-2017
+## 0.2.0 release notes
+
+### 02-03-2017
 0.2.0 Cerebro CDAS release makes significant improvements on usability, security and
 reliability.
 
-### New Features
+#### New Features
 **Installation**
 
 Install process has been further simplified with fewer steps and faster deployment.
@@ -1001,10 +1064,10 @@ cerebro_cli has new commands to interact with the DM REST API and the agents.
 See `CerebroCLI.md` for details. `Install.md` has a few examples.
 Run `cerebro_cli help` to see the much improved command line options.
 
-### Incompatible Changes
+#### Incompatible Changes
 No known incompatibilities exist.
 
-### Known issues
+#### Known issues
 **Cluster create fails occasionally**
 
 This manifests with an error message like:
@@ -1019,13 +1082,14 @@ will fail.
 
 The workaround is to ensure that there are no dups.
 
-# Release Notes
 
-## 12-6-2016
+## release notes
+
+### 12-6-2016
 Multiple updates were made on how to interact with the Cerebro catalog. Some of these
 changes are not backwards compatible.
 
-### New Features
+#### New Features
 **CLI interface for catalog**
 
 The REST API was intended for programmatic access. While it is possible to use it
@@ -1041,14 +1105,14 @@ questions such as:
   - What datasets (and pieces of them) does this particular user/group have?
   - What are all the users/groups that have access to this dataset?
 
-### Incompatible Changes
+#### Incompatible Changes
 **Policy API has changed**.
 
 The endpoints are different (/api/grant-policy, /api/revoke-policy). The arguments are
 largely the same. It is no longer necessary to delete policies and not possible to view
 them.
 
-### Known issues:
+#### Known issues:
 **Creating the dataset with 'storage_url' currently requires the dataset to be parquet.**
 
 The workaround is to specify the request using hiveql.

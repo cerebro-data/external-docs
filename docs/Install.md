@@ -102,19 +102,19 @@ sudo mkdir -p /opt/cerebro && cd /opt/cerebro
 echo `whoami` | xargs -I '{}' sudo chown -R '{}' /opt/cerebro
 
 # Get the tarball from S3.
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.1/deployment-manager-0.8.1.tar.gz
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.9.0/deployment-manager-0.9.0.tar.gz
 
 # Extract the bits.
-tar xzf deployment-manager-0.8.1.tar.gz && rm deployment-manager-0.8.1.tar.gz && ln -sfn deployment-manager-0.8.1 deployment-manager
+tar xzf deployment-manager-0.9.0.tar.gz && rm deployment-manager-0.9.0.tar.gz && ln -sfn deployment-manager-0.9.0 deployment-manager
 ```
 
 Download the shell binary. This depends on the OS running the CLI.
 
 ```shell
 # Linux
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.1/cli/linux/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.9.0/cli/linux/cerebro_cli && chmod +x cerebro_cli
 # OS X
-curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.8.1/cli/darwin/cerebro_cli && chmod +x cerebro_cli
+curl -O https://s3.amazonaws.com/cerebrodata-release-useast/0.9.0/cli/darwin/cerebro_cli && chmod +x cerebro_cli
 ```
 
 ### DeploymentManager Logging and Install Directory
