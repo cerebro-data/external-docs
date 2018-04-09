@@ -9,7 +9,7 @@ of:
 * unions
 
 CDAS currently only supports structs and will support lists and maps soon. There is no
-plan to support unions.
+plan to support unions (see exception for Avro below).
 
 ## File format support
 
@@ -100,10 +100,10 @@ Support for struct types behaves as expected in Spark, integrating with Spark's
 record type. For example, valid queries on this table include:
 
 ```scala
-  sc.sql( s"""
-               |CREATE TEMPORARY TABLE users
-               |USING com.cerebro.recordservice.spark.DefaultSource
-               |OPTIONS (RecordServiceTable 'users')
+  sc.sql(s"""
+           |CREATE TEMPORARY TABLE users
+           |USING com.cerebro.recordservice.spark.DefaultSource
+           |OPTIONS (RecordServiceTable 'users')
   """.stripMargin)
 
   // Just returns the count
@@ -130,6 +130,57 @@ record type. For example, valid queries on this table include:
   assert(row.get(3) == 25)
 ```
 
+### Scanning via Hive
+
+The struct type maps to hive's struct type. For example, to describe the schema:
+
+```sql
+hive> describe users
+OK
+uid                 	bigint
+user                	string
+address             	struct<city:string,state:string>
+age                 	int
+```
+
+Here are a few example of some scans:
+
+```shell
+hive> select * from users;
+OK
+{"city":"san francisco","state":"ca"}	25
+{"city":"seattle","state":"wa"}	25
+
+hive> select uid, `user` from users;
+OK
+100	alice
+101	bob
+
+hive> select uid, address from users;
+OK
+100	{"city":"san francisco","state":"ca"}
+101	{"city":"seattle","state":"wa"}
+
+hive> select uid, address.city from users;
+OK
+100	san francisco
+101	seattle
+
+hive> select * from users where uid = 100
+OK
+100	alice	{"city":"san francisco","state":"ca"}	25
+
+hive> select address.city, count(*) from users group by address.city
+OK
+seattle	1
+san francisco	1
+
+hive> select * from users where address.state = 'wa'
+OK
+101	bob	{"city":"seattle","state":"wa"}	25
+san francisco	1
+```
+
 ## Union (Avro)
 
 Avro uses unions to represent nullable types by expressing it as a union of the NULL
@@ -140,6 +191,6 @@ supported.
 ## Enums (Avro)
 
 Enum is a type specific to Avro which Avro considers as a complex type. We do not
-support enum as catalog type (i.e. it is not possible to create a table and specify
+support enum as a catalog type (i.e. it is not possible to create a table and specify
 a column as enum). Instead, create the table with the type `STRING` and the enum
 will be transparently converted. This is the identical behavior as Hive.
