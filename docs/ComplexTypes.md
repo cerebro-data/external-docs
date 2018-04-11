@@ -181,6 +181,68 @@ OK
 san francisco	1
 ```
 
+### Scanning via Presto
+
+Presto has support for struct types. The behavior should be a typical presto experience.
+
+```shell
+presto> describe recordservice.default.users;
+ Column  |               Type               | Extra | Comment
+---------+----------------------------------+-------+---------
+ uid     | bigint                           |       |
+ user    | varchar                          |       |
+ address | row(city varchar, state varchar) |       |
+ age     | integer                          |       |
+```
+
+Here are a few example of some scans:
+
+```shell
+presto> select * from recordservice.default.users;
+ uid | user  |            address             | age
+-----+-------+--------------------------------+-----
+ 100 | alice | {city=san francisco, state=ca} |  25
+ 101 | bob   | {city=seattle, state=wa}       |  25
+(2 rows)
+
+presto> select uid, user from recordservice.default.users;
+uid | user
+-----+-------
+ 100 | alice
+ 101 | bob
+(2 rows)
+
+presto> select uid, address from recordservice.default.users;
+ uid |            address
+-----+--------------------------------
+ 100 | {city=san francisco, state=ca}
+ 101 | {city=seattle, state=wa}
+(2 rows)
+
+presto> select uid, address.city from recordservice.default.users;
+ uid |     city
+-----+---------------
+ 100 | san francisco
+ 101 | seattle
+(2 rows)
+
+presto> select * from recordservice.default.users where uid = 100;
+uid | user  |            address             | age
+-----+-------+--------------------------------+-----
+ 100 | alice | {city=san francisco, state=ca} |  25
+
+presto> select address.city, count(*) from recordservice.default.users group by address.city
+     city      | _col1
+---------------+-------
+ san francisco |     1
+ seattle       |     1
+
+presto> select * from recordservice.default.users where address.state = 'wa';
+ uid | user |         address          | age
+-----+------+--------------------------+-----
+ 101 | bob  | {city=seattle, state=wa} |  25
+(1 row)
+
 ## Union (Avro)
 
 Avro uses unions to represent nullable types by expressing it as a union of the NULL
