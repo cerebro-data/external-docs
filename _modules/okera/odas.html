@@ -154,8 +154,8 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">pytz</span>
-<span class="kn">import</span> <span class="nn">time</span>
 
+<span class="c1"># TODO: we need to add this to the install dependencies</span>
 <span class="kn">import</span> <span class="nn">certifi</span>
 <span class="kn">import</span> <span class="nn">urllib3</span>
 <span class="kn">import</span> <span class="nn">xml.dom.minidom</span>
@@ -178,39 +178,10 @@
 
 <span class="n">_log</span> <span class="o">=</span> <span class="n">get_logger_and_init_null</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_rpc</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; Decorator for retries when making RPCs. &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">OkeraContext</span><span class="p">):</span>
-                <span class="n">retries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_retries</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">retries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">get_retries</span><span class="p">()</span>
-            <span class="n">attempt</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="k">except</span> <span class="p">(</span><span class="n">TTransportException</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">retries</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="n">e</span>
-                    <span class="n">attempt</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="n">retries</span><span class="p">:</span>
-                        <span class="n">_log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;All tries failed, raising exception.&quot;</span><span class="p">)</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All tries failed, raising exception.&quot;</span><span class="p">)</span>
-                        <span class="k">raise</span> <span class="n">e</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">_log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Attempt failed. Sleeping and then trying again.&quot;</span><span class="p">)</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Attempt failed. Sleeping and then trying again.&quot;</span><span class="p">)</span>
-                        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">OkeraContext</span><span class="p">):</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_reconnect</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">wrapper</span>
-    <span class="k">return</span> <span class="n">decorator</span>
-
 <span class="sd">&quot;&quot;&quot; Context for this user session.&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="OkeraContext"><a class="viewcode-back" href="../../okera.html#okera.odas.OkeraContext">[docs]</a><span class="k">class</span> <span class="nc">OkeraContext</span><span class="p">():</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">application_name</span><span class="p">,</span> <span class="n">tz</span><span class="o">=</span><span class="n">pytz</span><span class="o">.</span><span class="n">utc</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Creating Okera context&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">application_name</span><span class="p">,</span> <span class="n">tz</span><span class="o">=</span><span class="n">pytz</span><span class="o">.</span><span class="n">utc</span><span class="p">):</span>
+        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Creating okera context&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__auth</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__service_name</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__token</span> <span class="o">=</span> <span class="kc">None</span>
@@ -219,7 +190,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__name</span> <span class="o">=</span> <span class="n">application_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__configure</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__tz</span> <span class="o">=</span> <span class="n">tz</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__retries</span> <span class="o">=</span> <span class="n">retries</span>
 
 <div class="viewcode-block" id="OkeraContext.enable_kerberos"><a class="viewcode-back" href="../../okera.html#okera.odas.OkeraContext.enable_kerberos">[docs]</a>    <span class="k">def</span> <span class="nf">enable_kerberos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service_name</span><span class="p">,</span> <span class="n">host_override</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Enable kerberos based authentication.</span>
@@ -314,11 +284,7 @@
 <div class="viewcode-block" id="OkeraContext.get_timezone"><a class="viewcode-back" href="../../okera.html#okera.odas.OkeraContext.get_timezone">[docs]</a>    <span class="k">def</span> <span class="nf">get_timezone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tz</span></div>
 
-<div class="viewcode-block" id="OkeraContext.get_retries"><a class="viewcode-back" href="../../okera.html#okera.odas.OkeraContext.get_retries">[docs]</a>    <span class="k">def</span> <span class="nf">get_retries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__retries</span></div>
-
-<div class="viewcode-block" id="OkeraContext.connect"><a class="viewcode-back" href="../../okera.html#okera.odas.OkeraContext.connect">[docs]</a>    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">12050</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<div class="viewcode-block" id="OkeraContext.connect"><a class="viewcode-back" href="../../okera.html#okera.odas.OkeraContext.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">12050</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get a connection to an ODAS cluster. This connects to the planner service.</span>
 
 <span class="sd">        Parameters</span>
@@ -329,19 +295,14 @@
 <span class="sd">        port : int, optional</span>
 <span class="sd">            The port number for the planner. The default is 12050.</span>
 <span class="sd">        timeout : int, optional</span>
-<span class="sd">            Connection timeout in seconds. Default is 10 seconds.</span>
+<span class="sd">            Connection timeout in seconds. Default is no timeout.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        PlannerConnection</span>
 <span class="sd">            Handle to a connection. Users should call `close()` when done.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect_planner</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
-        <span class="n">planner</span> <span class="o">=</span> <span class="n">PlannerConnection</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
-        <span class="n">planner</span><span class="o">.</span><span class="n">set_application</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__name</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">planner</span></div>
 
-    <span class="k">def</span> <span class="nf">_connect_planner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">12050</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
         <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pick_host</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
 
         <span class="c1"># Convert from user names to underlying transport names</span>
@@ -357,7 +318,9 @@
             <span class="n">transport</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
             <span class="n">protocol</span> <span class="o">=</span> <span class="n">TBinaryProtocol</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
             <span class="n">service</span> <span class="o">=</span> <span class="n">_ThriftService</span><span class="p">(</span><span class="n">PlannerClient</span><span class="p">(</span><span class="n">OkeraRecordServicePlanner</span><span class="p">,</span> <span class="n">protocol</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">service</span>
+            <span class="n">planner</span> <span class="o">=</span> <span class="n">PlannerConnection</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">planner</span><span class="o">.</span><span class="n">set_application</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">planner</span>
         <span class="k">except</span> <span class="p">(</span><span class="n">TTransportException</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">transport</span><span class="p">:</span>
@@ -368,9 +331,9 @@
             <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">transport</span><span class="p">:</span>
                 <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">raise</span>
+            <span class="k">raise</span></div>
 
-<div class="viewcode-block" id="OkeraContext.connect_worker"><a class="viewcode-back" href="../../okera.html#okera.odas.OkeraContext.connect_worker">[docs]</a>    <span class="k">def</span> <span class="nf">connect_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">13050</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<div class="viewcode-block" id="OkeraContext.connect_worker"><a class="viewcode-back" href="../../okera.html#okera.odas.OkeraContext.connect_worker">[docs]</a>    <span class="k">def</span> <span class="nf">connect_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">13050</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get a connection to ODAS worker.</span>
 
 <span class="sd">        Most users should not need to call this API directly.</span>
@@ -383,7 +346,7 @@
 <span class="sd">        port : int, optional</span>
 <span class="sd">            The port number for the worker. The default is 13050.</span>
 <span class="sd">        timeout : int, optional</span>
-<span class="sd">            Connection timeout in seconds. Default is 10 seconds.</span>
+<span class="sd">            Connection timeout in seconds. Default is no timeout.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -392,8 +355,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect_worker</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span></div>
 
-    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">_connect_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_connect_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pick_host</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
 
         <span class="n">auth_mechanism</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_auth</span><span class="p">()</span>
@@ -538,12 +500,9 @@
 <div class="viewcode-block" id="PlannerConnection"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection">[docs]</a><span class="k">class</span> <span class="nc">PlannerConnection</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;A connection to an ODAS planner. &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thrift_service</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thrift_service</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">thrift_service</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">http_pool</span> <span class="o">=</span> <span class="n">urllib3</span><span class="o">.</span><span class="n">PoolManager</span><span class="p">(</span><span class="n">cert_reqs</span><span class="o">=</span><span class="s1">&#39;CERT_REQUIRED&#39;</span><span class="p">,</span>
                                              <span class="n">ca_certs</span><span class="o">=</span><span class="n">certifi</span><span class="o">.</span><span class="n">where</span><span class="p">())</span>
         <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;PlannerConnection(service=</span><span class="si">%s</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="p">)</span>
@@ -560,27 +519,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_reconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Reconnecting to planner...&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">_connect_planner</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
-        <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Reconnected to planner&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">reconnect</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_underlying_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the underlying thrift client. Exposed for internal use. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">client</span>
 
-<div class="viewcode-block" id="PlannerConnection.get_protocol_version"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.get_protocol_version">[docs]</a>    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">get_protocol_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PlannerConnection.get_protocol_version"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.get_protocol_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_protocol_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the RPC API version of the server.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">GetProtocolVersion</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="PlannerConnection.set_application"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.set_application">[docs]</a>    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">set_application</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="PlannerConnection.set_application"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.set_application">[docs]</a>    <span class="k">def</span> <span class="nf">set_application</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the name of this session. Used for logging purposes on the server.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">SetApplication</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PlannerConnection.ls"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.ls">[docs]</a>    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="PlannerConnection.ls"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.ls">[docs]</a>    <span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Lists the files in this directory</span>
 
 <span class="sd">        Parameters</span>
@@ -604,8 +557,7 @@
             <span class="n">params</span><span class="o">.</span><span class="n">requesting_user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">_get_user</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ListFiles</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">files</span></div>
 
-<div class="viewcode-block" id="PlannerConnection.open"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.open">[docs]</a>    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">preload_content</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PlannerConnection.open"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">preload_content</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the object at this path as a byte stream</span>
 
 <span class="sd">        Parameters</span>
@@ -650,8 +602,7 @@
             <span class="c1"># No object found, raise original exception</span>
             <span class="k">raise</span> <span class="n">ex</span></div>
 
-<div class="viewcode-block" id="PlannerConnection.cat"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.cat">[docs]</a>    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">cat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">as_utf8</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="PlannerConnection.cat"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.cat">[docs]</a>    <span class="k">def</span> <span class="nf">cat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">as_utf8</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the object at this path as a string</span>
 
 <span class="sd">        Parameters</span>
@@ -705,8 +656,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span></div>
 
-<div class="viewcode-block" id="PlannerConnection.get_catalog_objects_at"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.get_catalog_objects_at">[docs]</a>    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">get_catalog_objects_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_prefix</span><span class="p">,</span> <span class="n">include_views</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="PlannerConnection.get_catalog_objects_at"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.get_catalog_objects_at">[docs]</a>    <span class="k">def</span> <span class="nf">get_catalog_objects_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_prefix</span><span class="p">,</span> <span class="n">include_views</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the objects (databases or datasets) thats registered with this</span>
 <span class="sd">            prefix path.</span>
 
@@ -735,8 +685,7 @@
             <span class="n">params</span><span class="o">.</span><span class="n">requesting_user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">_get_user</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">GetRegisteredObjects</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">object_names</span></div>
 
-<div class="viewcode-block" id="PlannerConnection.list_databases"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.list_databases">[docs]</a>    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">list_databases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PlannerConnection.list_databases"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.list_databases">[docs]</a>    <span class="k">def</span> <span class="nf">list_databases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Lists all the databases in the catalog</span>
 
 <span class="sd">        Returns</span>
@@ -763,8 +712,7 @@
             <span class="n">dbs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">dbs</span></div>
 
-<div class="viewcode-block" id="PlannerConnection.list_dataset_names"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.list_dataset_names">[docs]</a>    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">list_dataset_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PlannerConnection.list_dataset_names"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.list_dataset_names">[docs]</a>    <span class="k">def</span> <span class="nf">list_dataset_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the names of the datasets in this db</span>
 
 <span class="sd">        Parameters</span>
@@ -799,8 +747,7 @@
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">db</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="PlannerConnection.list_datasets"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.list_datasets">[docs]</a>    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">list_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PlannerConnection.list_datasets"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.list_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">list_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the datasets in this db</span>
 
 <span class="sd">        Parameters</span>
@@ -828,8 +775,7 @@
         <span class="n">tables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">GetTables</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tables</span></div>
 
-<div class="viewcode-block" id="PlannerConnection.plan"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.plan">[docs]</a>    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">plan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">max_task_count</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">requesting_user</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PlannerConnection.plan"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.plan">[docs]</a>    <span class="k">def</span> <span class="nf">plan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">max_task_count</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">requesting_user</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Plans the request to read from CDAS</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -873,8 +819,7 @@
         <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Plan complete. Number of tasks: </span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">tasks</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">plan</span></div>
 
-<div class="viewcode-block" id="PlannerConnection.execute_ddl"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.execute_ddl">[docs]</a>    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">execute_ddl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql</span><span class="p">):</span>
+<div class="viewcode-block" id="PlannerConnection.execute_ddl"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.execute_ddl">[docs]</a>    <span class="k">def</span> <span class="nf">execute_ddl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql</span><span class="p">):</span>
         <span class="c1"># pylint: disable=line-too-long</span>
         <span class="sd">&quot;&quot;&quot; Execute a DDL statement against the server.</span>
 
@@ -908,8 +853,7 @@
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ExecuteDDL2</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">tabular_result</span></div>
 
-<div class="viewcode-block" id="PlannerConnection.execute_ddl_table_output"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.execute_ddl_table_output">[docs]</a>    <span class="nd">@_rpc</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">execute_ddl_table_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql</span><span class="p">):</span>
+<div class="viewcode-block" id="PlannerConnection.execute_ddl_table_output"><a class="viewcode-back" href="../../okera.html#okera.odas.PlannerConnection.execute_ddl_table_output">[docs]</a>    <span class="k">def</span> <span class="nf">execute_ddl_table_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Execute a DDL statement against the server.</span>
 
 <span class="sd">        Parameters</span>

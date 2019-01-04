@@ -266,16 +266,37 @@
 
 <dl class="class">
 <dt id="okera.odas.OkeraContext">
-<em class="property">class </em><code class="descclassname">okera.odas.</code><code class="descname">OkeraContext</code><span class="sig-paren">(</span><em>application_name</em>, <em>tz=&lt;UTC&gt;</em>, <em>retries=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#OkeraContext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.OkeraContext" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">okera.odas.</code><code class="descname">OkeraContext</code><span class="sig-paren">(</span><em>application_name</em>, <em>tz=&lt;UTC&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#OkeraContext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.OkeraContext" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="okera.odas.OkeraContext.connect">
-<code class="descname">connect</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#OkeraContext.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.OkeraContext.connect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">connect</code><span class="sig-paren">(</span><em>host='localhost'</em>, <em>port=12050</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#OkeraContext.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.OkeraContext.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a connection to an ODAS cluster. This connects to the planner service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>host</strong> (<em>str</em><em> or </em><em>list of hostnames</em>) – The hostname for the planner. If a list is specified, picks a planner at
+random.</li>
+<li><strong>port</strong> (<em>int</em><em>, </em><em>optional</em>) – The port number for the planner. The default is 12050.</li>
+<li><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – Connection timeout in seconds. Default is no timeout.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Handle to a connection. Users should call <cite>close()</cite> when done.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#okera.odas.PlannerConnection" title="okera.odas.PlannerConnection">PlannerConnection</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="okera.odas.OkeraContext.connect_worker">
-<code class="descname">connect_worker</code><span class="sig-paren">(</span><em>host='localhost'</em>, <em>port=13050</em>, <em>timeout=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#OkeraContext.connect_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.OkeraContext.connect_worker" title="Permalink to this definition">¶</a></dt>
+<code class="descname">connect_worker</code><span class="sig-paren">(</span><em>host='localhost'</em>, <em>port=13050</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#OkeraContext.connect_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.OkeraContext.connect_worker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a connection to ODAS worker.</p>
 <p>Most users should not need to call this API directly.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -286,7 +307,7 @@
 <li><strong>host</strong> (<em>str</em><em> or </em><em>list of hostnames</em>) – The hostname for the worker. If a list is specified, picks a worker at
 random.</li>
 <li><strong>port</strong> (<em>int</em><em>, </em><em>optional</em>) – The port number for the worker. The default is 13050.</li>
-<li><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – Connection timeout in seconds. Default is 10 seconds.</li>
+<li><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – Connection timeout in seconds. Default is no timeout.</li>
 </ul>
 </td>
 </tr>
@@ -380,11 +401,6 @@ the server.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="okera.odas.OkeraContext.get_retries">
-<code class="descname">get_retries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#OkeraContext.get_retries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.OkeraContext.get_retries" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="okera.odas.OkeraContext.get_timezone">
 <code class="descname">get_timezone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#OkeraContext.get_timezone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.OkeraContext.get_timezone" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -425,13 +441,32 @@ urllib stream object.</p>
 
 <dl class="class">
 <dt id="okera.odas.PlannerConnection">
-<em class="property">class </em><code class="descclassname">okera.odas.</code><code class="descname">PlannerConnection</code><span class="sig-paren">(</span><em>thrift_service</em>, <em>ctx</em>, <em>host</em>, <em>port</em>, <em>timeout</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">okera.odas.</code><code class="descname">PlannerConnection</code><span class="sig-paren">(</span><em>thrift_service</em>, <em>ctx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A connection to an ODAS planner.</p>
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.cat">
-<code class="descname">cat</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.cat" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">cat</code><span class="sig-paren">(</span><em>path</em>, <em>as_utf8=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the object at this path as a string</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<em>str</em>) – The path to the file to read.</li>
+<li><strong>as_utf8</strong> (<em>bool</em>) – If true, convert the returned data as a utf-8 string (instead of binary)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Returns the contents at the path as a string.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.close">
@@ -441,53 +476,247 @@ urllib stream object.</p>
 
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.execute_ddl">
-<code class="descname">execute_ddl</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.execute_ddl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.execute_ddl" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">execute_ddl</code><span class="sig-paren">(</span><em>sql</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.execute_ddl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.execute_ddl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute a DDL statement against the server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sql</strong> (<em>str</em>) – DDL statement to run</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Returns the result as a table.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(list(str))</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">okera</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">okera</span><span class="o">.</span><span class="n">context</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">12050</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span><span class="s1">&#39;describe okera_sample.users&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">result</span>
+<span class="go">[[&#39;uid&#39;, &#39;string&#39;, &#39;Unique user id&#39;], [&#39;dob&#39;, &#39;string&#39;, &#39;Formatted as DD-month-YY&#39;], [&#39;gender&#39;, &#39;string&#39;, &#39;&#39;], [&#39;ccn&#39;, &#39;string&#39;, &#39;Sensitive data, should not be accessible without masking.&#39;]]</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.execute_ddl_table_output">
-<code class="descname">execute_ddl_table_output</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.execute_ddl_table_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.execute_ddl_table_output" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">execute_ddl_table_output</code><span class="sig-paren">(</span><em>sql</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.execute_ddl_table_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.execute_ddl_table_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute a DDL statement against the server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sql</strong> (<em>str</em>) – DDL statement to run</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Returns the result as a table object.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">PrettyTable</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">okera</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">okera</span><span class="o">.</span><span class="n">context</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">12050</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute_ddl_table_output</span><span class="p">(</span><span class="s1">&#39;describe okera_sample.users&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="go">+--------+--------+-----------------------------------------------------------+</span>
+<span class="go">|  name  |  type  |                          comment                          |</span>
+<span class="go">+--------+--------+-----------------------------------------------------------+</span>
+<span class="go">|  uid   | string |                       Unique user id                      |</span>
+<span class="go">|  dob   | string |                  Formatted as DD-month-YY                 |</span>
+<span class="go">| gender | string |                                                           |</span>
+<span class="go">|  ccn   | string | Sensitive data, should not be accessible without masking. |</span>
+<span class="go">+--------+--------+-----------------------------------------------------------+</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.get_catalog_objects_at">
-<code class="descname">get_catalog_objects_at</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.get_catalog_objects_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.get_catalog_objects_at" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">get_catalog_objects_at</code><span class="sig-paren">(</span><em>path_prefix</em>, <em>include_views=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.get_catalog_objects_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.get_catalog_objects_at" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Returns the objects (databases or datasets) thats registered with this</dt>
+<dd>prefix path.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path_prefix</strong> (<em>str</em>) – The path prefix to look up objects defined with this prefix.</li>
+<li><strong>include_views</strong> (<em>bool</em>) – If true, also return views at this path.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">For each path with a catalog objects, the list of objects located at that
+path. Empty map if there are none.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">map(str, list(str))</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.get_protocol_version">
-<code class="descname">get_protocol_version</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.get_protocol_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.get_protocol_version" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">get_protocol_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.get_protocol_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.get_protocol_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the RPC API version of the server.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.list_databases">
-<code class="descname">list_databases</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.list_databases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.list_databases" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">list_databases</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.list_databases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.list_databases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lists all the databases in the catalog</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of database names.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(str)</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">okera</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">okera</span><span class="o">.</span><span class="n">context</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">12050</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">dbs</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">list_databases</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="s1">&#39;okera_sample&#39;</span> <span class="ow">in</span> <span class="n">dbs</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.list_dataset_names">
-<code class="descname">list_dataset_names</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.list_dataset_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.list_dataset_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">list_dataset_names</code><span class="sig-paren">(</span><em>db</em>, <em>filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.list_dataset_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.list_dataset_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the names of the datasets in this db</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>db</strong> (<em>str</em>) – Name of database to return datasets in.</li>
+<li><strong>filter</strong> (<em>str</em><em>, </em><em>optional</em>) – Substring filter on names to of datasets to return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of dataset names.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list(str)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">okera</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">okera</span><span class="o">.</span><span class="n">context</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">12050</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">datasets</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">list_dataset_names</span><span class="p">(</span><span class="s1">&#39;okera_sample&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">datasets</span>
+<span class="go">[&#39;okera_sample.sample&#39;, &#39;okera_sample.users&#39;, &#39;okera_sample.users_ccn_masked&#39;, &#39;okera_sample.whoami&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.list_datasets">
-<code class="descname">list_datasets</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.list_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.list_datasets" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">list_datasets</code><span class="sig-paren">(</span><em>db</em>, <em>filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.list_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.list_datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the datasets in this db</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>db</strong> (<em>str</em>) – Name of database to return datasets in.</li>
+<li><strong>filter</strong> (<em>str</em><em>, </em><em>optional</em>) – Substring filter on names to of datasets to return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Thrift dataset objects.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">obj</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This API is subject to change and the returned object may not be backwards
+compatible.</p>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.ls">
-<code class="descname">ls</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.ls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.ls" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">ls</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.ls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.ls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lists the files in this directory</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>str</em>) – The path to list.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of files located at this path.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(str)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.open">
-<code class="descname">open</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.open" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">open</code><span class="sig-paren">(</span><em>path</em>, <em>preload_content=True</em>, <em>version=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the object at this path as a byte stream</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>str</em>) – The path to the file to open.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Returns an object that behaves like an opened urllib3 stream.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.plan">
-<code class="descname">plan</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.plan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.plan" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">plan</code><span class="sig-paren">(</span><em>request</em>, <em>max_task_count=None</em>, <em>requesting_user=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.plan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.plan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plans the request to read from CDAS
+:param request: Name of dataset or SQL statement to plan scan for.
+:type request: str, required
+:param requesting_user: Name of user to request plan for, if different from</p>
+<blockquote>
+<div>the current user.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Thrift serialized plan object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">object</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This API is subject to change and the returned object may not be backwards
+compatible.</p>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.scan_as_json">
@@ -563,8 +792,9 @@ options are not guaranteed to be backwards compatible.</li>
 
 <dl class="method">
 <dt id="okera.odas.PlannerConnection.set_application">
-<code class="descname">set_application</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.set_application"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.set_application" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">set_application</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/odas.html#PlannerConnection.set_application"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.odas.PlannerConnection.set_application" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the name of this session. Used for logging purposes on the server.</p>
+</dd></dl>
 
 </dd></dl>
 
