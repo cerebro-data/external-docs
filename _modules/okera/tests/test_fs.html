@@ -1,0 +1,380 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>okera.tests.test_fs &mdash; pyokera  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pyokera
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../okera.html">okera package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">okera</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyokera</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../okera.html">okera</a> &raquo;</li>
+        
+      <li>okera.tests.test_fs</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for okera.tests.test_fs</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2017 Okera Inc. All Rights Reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Tests that should run on any configuration. The server auth can be specified</span>
+<span class="c1"># as an environment variables before running this test.</span>
+
+<span class="c1"># pylint: disable=no-member</span>
+<span class="c1"># pylint: disable=no-self-use</span>
+<span class="c1"># pylint: disable=protected-access</span>
+<span class="c1"># pylint: disable=too-many-public-methods</span>
+<span class="c1"># pylint: disable=bad-continuation</span>
+<span class="c1"># pylint: disable=bad-indentation</span>
+
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="kn">from</span> <span class="nn">okera</span> <span class="k">import</span> <span class="n">context</span><span class="p">,</span> <span class="n">_thrift_api</span>
+<span class="kn">from</span> <span class="nn">okera.tests</span> <span class="k">import</span> <span class="n">pycerebro_test_common</span> <span class="k">as</span> <span class="n">common</span>
+
+<div class="viewcode-block" id="FsTest"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_fs.FsTest">[docs]</a><span class="k">class</span> <span class="nc">FsTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="FsTest.test_ls"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_fs.FsTest.test_ls">[docs]</a>    <span class="k">def</span> <span class="nf">test_ls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/sample/&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">([</span><span class="s1">&#39;s3://cerebrodata-test/sample/sample.txt&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/sample&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">([</span><span class="s1">&#39;s3://cerebrodata-test/sample/sample.txt&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/sample/sample.txt&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">([</span><span class="s1">&#39;s3://cerebrodata-test/sample/sample.txt&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/sample/sample.txt2&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">([],</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="FsTest.test_cat"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_fs.FsTest.test_cat">[docs]</a>    <span class="k">def</span> <span class="nf">test_cat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/sample/sample.txt&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;This is a sample test file.</span><span class="se">\n</span><span class="s1">It should consist of two lines.&#39;</span><span class="p">,</span>
+                         <span class="n">result</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="FsTest.test_errors"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_fs.FsTest.test_errors">[docs]</a>    <span class="k">def</span> <span class="nf">test_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">planner</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/sample/not-a-file&#39;</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="FsTest.test_as_testuser"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_fs.FsTest.test_as_testuser">[docs]</a>    <span class="k">def</span> <span class="nf">test_as_testuser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">context</span><span class="p">()</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">enable_token_auth</span><span class="p">(</span><span class="n">token_str</span><span class="o">=</span><span class="s1">&#39;testuser&#39;</span><span class="p">)</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+        <span class="c1"># Test user has access to this directory by URI</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/sample/&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">([</span><span class="s1">&#39;s3://cerebrodata-test/sample/sample.txt&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/sample/sample.txt&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">([</span><span class="s1">&#39;s3://cerebrodata-test/sample/sample.txt&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/sample/sample.txt2&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">([],</span> <span class="n">result</span><span class="p">)</span>
+
+        <span class="c1"># Test user does not have access to this directory</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaisesRegex</span><span class="p">(</span><span class="n">_thrift_api</span><span class="o">.</span><span class="n">TRecordServiceException</span><span class="p">,</span>
+                                    <span class="s1">&#39;does not have access&#39;</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s1">&#39;s3://cerebro-datasets/nytaxi-data/&#39;</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="RegisteredTest"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_fs.RegisteredTest">[docs]</a><span class="k">class</span> <span class="nc">RegisteredTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="RegisteredTest.test_basic"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_fs.RegisteredTest.test_basic">[docs]</a>    <span class="k">def</span> <span class="nf">test_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;file:/opt/data/users&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;file:/opt/data/users&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;okera_sample.users&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;file:/opt/data/users&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;cerebro_sample.users&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;file:/opt/data/users&#39;</span><span class="p">])</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;file:/opt/data/&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;file:/opt/data/sample&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;file:/opt/data/users&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/users&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+
+        <span class="c1"># Two datasets registered here</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;s3://cerebro-datasets/transactions&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+        <span class="n">datasets</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;s3://cerebro-datasets/transactions&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="p">),</span> <span class="n">msg</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">datasets</span><span class="p">))</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/decimal-test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/alltypes&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;true|0|1|2|3|4.0|5.0|hello|vchar1|char1|2015-01-01|3.141592&#39;</span><span class="p">,</span>
+                         <span class="n">result</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RegisteredTest.test_as_testuser"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_fs.RegisteredTest.test_as_testuser">[docs]</a>    <span class="k">def</span> <span class="nf">test_as_testuser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">context</span><span class="p">()</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">enable_token_auth</span><span class="p">(</span><span class="n">token_str</span><span class="o">=</span><span class="s1">&#39;testuser&#39;</span><span class="p">)</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;file:/opt/data/&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;file:/opt/data/sample&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;file:/opt/data/users&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/users&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+
+        <span class="n">result1</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;s3://cerebro-datasets/transactions/&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result1</span><span class="p">))</span>
+
+        <span class="n">result2</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;s3://cerebro-datasets/transactions///&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result2</span><span class="p">))</span>
+
+        <span class="c1"># Two datasets registered here, but this user only has one. Make sure it is</span>
+        <span class="c1"># ACLed correctly.</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;s3://cerebro-datasets/transactions&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+        <span class="n">datasets</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;s3://cerebro-datasets/transactions&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;demo_test.transactions_schemaed&#39;</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">)</span>
+
+        <span class="c1"># Test user does not have access to this directory</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaisesRegex</span><span class="p">(</span><span class="n">_thrift_api</span><span class="o">.</span><span class="n">TRecordServiceException</span><span class="p">,</span>
+                                    <span class="s1">&#39;does not have access&#39;</span><span class="p">):</span>
+            <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/decimal-test&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Reading a path but this user only has column level permissions so only</span>
+        <span class="c1"># a subset of the columns come back.</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/alltypes&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;2,4.0,hello&#39;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RegisteredTest.test_masking"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_fs.RegisteredTest.test_masking">[docs]</a>    <span class="k">def</span> <span class="nf">test_masking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">context</span><span class="p">()</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">enable_token_auth</span><span class="p">(</span><span class="n">token_str</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">)</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/ccn&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;user1,4539797705756008&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">ctx</span><span class="o">.</span><span class="n">enable_token_auth</span><span class="p">(</span><span class="n">token_str</span><span class="o">=</span><span class="s1">&#39;testuser&#39;</span><span class="p">)</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/ccn&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;user1,XXXXXXXXXXXX6008&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RegisteredTest.test_dropping"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_fs.RegisteredTest.test_dropping">[docs]</a>    <span class="k">def</span> <span class="nf">test_dropping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">context</span><span class="p">()</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span><span class="s2">&quot;DROP DATABASE IF EXISTS ofs CASCADE&quot;</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span><span class="s2">&quot;CREATE DATABASE ofs&quot;</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span>
+            <span class="s2">&quot;CREATE EXTERNAL TABLE ofs.t1(s string) &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot;LOCATION &#39;s3://cerebrodata-test/empty-path-test&#39;&quot;</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/empty-path-test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+        <span class="n">datasets</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;s3://cerebrodata-test/empty-path-test&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;ofs.t1&#39;</span><span class="p">,</span> <span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># Create T2</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span>
+            <span class="s2">&quot;CREATE EXTERNAL TABLE ofs.t2(s string) &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot;LOCATION &#39;s3://cerebrodata-test/empty-path-test&#39;&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/empty-path-test&#39;</span><span class="p">)</span>
+        <span class="n">datasets</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;s3://cerebrodata-test/empty-path-test&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;ofs.t1&#39;</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;ofs.t2&#39;</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">)</span>
+
+        <span class="c1"># Drop t2, path should be gone</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span><span class="s2">&quot;DROP TABLE ofs.t2&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/empty-path-test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+        <span class="n">datasets</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;s3://cerebrodata-test/empty-path-test&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;ofs.t1&#39;</span><span class="p">,</span> <span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># Drop t1, path should be gone</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span><span class="s2">&quot;DROP TABLE ofs.t1&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_catalog_objects_at</span><span class="p">(</span><span class="s1">&#39;s3://cerebrodata-test/empty-path-test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">))</span></div></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Okera Development Team
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

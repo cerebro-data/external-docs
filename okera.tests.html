@@ -1,0 +1,554 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>okera.tests package &mdash; pyokera  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="okera" href="modules.html" />
+    <link rel="prev" title="okera package" href="okera.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyokera
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="okera.html">okera package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="okera.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">okera.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-okera.tests.pycerebro_test_common">okera.tests.pycerebro_test_common module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-okera.tests.test_basic">okera.tests.test_basic module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-okera.tests.test_connections">okera.tests.test_connections module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-okera.tests.test_fs">okera.tests.test_fs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-okera.tests.test_nightly">okera.tests.test_nightly module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-okera.tests.test_scans">okera.tests.test_scans module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-okera.tests">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="okera.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="okera.html#module-okera.botocore_patch">okera.botocore_patch module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="okera.html#module-okera.concurrency">okera.concurrency module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="okera.html#module-okera.odas">okera.odas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="okera.html#module-okera">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">okera</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyokera</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="okera.html">okera package</a> &raquo;</li>
+        
+      <li>okera.tests package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/okera.tests.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="okera-tests-package">
+<h1>okera.tests package<a class="headerlink" href="#okera-tests-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-okera.tests.pycerebro_test_common">
+<span id="okera-tests-pycerebro-test-common-module"></span><h2>okera.tests.pycerebro_test_common module<a class="headerlink" href="#module-okera.tests.pycerebro_test_common" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="okera.tests.pycerebro_test_common.configure_botocore_patch">
+<code class="descclassname">okera.tests.pycerebro_test_common.</code><code class="descname">configure_botocore_patch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/pycerebro_test_common.html#configure_botocore_patch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.pycerebro_test_common.configure_botocore_patch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="okera.tests.pycerebro_test_common.get_env_var">
+<code class="descclassname">okera.tests.pycerebro_test_common.</code><code class="descname">get_env_var</code><span class="sig-paren">(</span><em>name</em>, <em>coercer</em>, <em>default</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/pycerebro_test_common.html#get_env_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.pycerebro_test_common.get_env_var" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="okera.tests.pycerebro_test_common.get_planner">
+<code class="descclassname">okera.tests.pycerebro_test_common.</code><code class="descname">get_planner</code><span class="sig-paren">(</span><em>host=None</em>, <em>port=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/pycerebro_test_common.html#get_planner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.pycerebro_test_common.get_planner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="okera.tests.pycerebro_test_common.get_test_context">
+<code class="descclassname">okera.tests.pycerebro_test_common.</code><code class="descname">get_test_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/pycerebro_test_common.html#get_test_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.pycerebro_test_common.get_test_context" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="okera.tests.pycerebro_test_common.get_worker">
+<code class="descclassname">okera.tests.pycerebro_test_common.</code><code class="descname">get_worker</code><span class="sig-paren">(</span><em>host=None</em>, <em>port=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/pycerebro_test_common.html#get_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.pycerebro_test_common.get_worker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="okera.tests.pycerebro_test_common.identity">
+<code class="descclassname">okera.tests.pycerebro_test_common.</code><code class="descname">identity</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#okera.tests.pycerebro_test_common.identity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-okera.tests.test_basic">
+<span id="okera-tests-test-basic-module"></span><h2>okera.tests.test_basic module<a class="headerlink" href="#module-okera.tests.test_basic" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="okera.tests.test_basic.BasicTest">
+<em class="property">class </em><code class="descclassname">okera.tests.test_basic.</code><code class="descname">BasicTest</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_all_types_empty">
+<code class="descname">test_all_types_empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_all_types_empty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_all_types_empty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_all_types_empty_json">
+<code class="descname">test_all_types_empty_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_all_types_empty_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_all_types_empty_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_all_types_json">
+<code class="descname">test_all_types_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_all_types_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_all_types_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_all_types_null_json">
+<code class="descname">test_all_types_null_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_all_types_null_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_all_types_null_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_all_types_null_pandas">
+<code class="descname">test_all_types_null_pandas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_all_types_null_pandas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_all_types_null_pandas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_all_types_pandas">
+<code class="descname">test_all_types_pandas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_all_types_pandas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_all_types_pandas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_basic">
+<code class="descname">test_basic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_basic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_basic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_binary_data">
+<code class="descname">test_binary_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_binary_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_binary_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_catalog">
+<code class="descname">test_catalog</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_catalog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_catalog" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_column_order_scan_as_pandas">
+<code class="descname">test_column_order_scan_as_pandas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_column_order_scan_as_pandas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_column_order_scan_as_pandas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_connection">
+<code class="descname">test_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_connection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_ddl">
+<code class="descname">test_ddl</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_ddl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_ddl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_filter_with_empty_rows_pandas">
+<code class="descname">test_filter_with_empty_rows_pandas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_filter_with_empty_rows_pandas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_filter_with_empty_rows_pandas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_impersonation">
+<code class="descname">test_impersonation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_impersonation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_impersonation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_pick_host">
+<code class="descname">test_pick_host</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_pick_host"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_pick_host" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_plan">
+<code class="descname">test_plan</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_plan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_plan" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_planner">
+<code class="descname">test_planner</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_planner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_planner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_random_host">
+<code class="descname">test_random_host</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_random_host"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_random_host" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_requesting_user">
+<code class="descname">test_requesting_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_requesting_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_requesting_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_version">
+<code class="descname">test_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_warnings">
+<code class="descname">test_warnings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_warnings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_warnings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_basic.BasicTest.test_worker">
+<code class="descname">test_worker</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_basic.html#BasicTest.test_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_basic.BasicTest.test_worker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-okera.tests.test_connections">
+<span id="okera-tests-test-connections-module"></span><h2>okera.tests.test_connections module<a class="headerlink" href="#module-okera.tests.test_connections" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="okera.tests.test_connections.ConnectionErrorsTest">
+<em class="property">class </em><code class="descclassname">okera.tests.test_connections.</code><code class="descname">ConnectionErrorsTest</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_connections.html#ConnectionErrorsTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_connections.ConnectionErrorsTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="method">
+<dt id="okera.tests.test_connections.ConnectionErrorsTest.test_kerberos_server_no_override">
+<code class="descname">test_kerberos_server_no_override</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_connections.html#ConnectionErrorsTest.test_kerberos_server_no_override"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_connections.ConnectionErrorsTest.test_kerberos_server_no_override" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_connections.ConnectionErrorsTest.test_kerberos_server_valid_client">
+<code class="descname">test_kerberos_server_valid_client</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_connections.html#ConnectionErrorsTest.test_kerberos_server_valid_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_connections.ConnectionErrorsTest.test_kerberos_server_valid_client" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_connections.ConnectionErrorsTest.test_token_server_no_token">
+<code class="descname">test_token_server_no_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_connections.html#ConnectionErrorsTest.test_token_server_no_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_connections.ConnectionErrorsTest.test_token_server_no_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_connections.ConnectionErrorsTest.test_token_server_valid_token">
+<code class="descname">test_token_server_valid_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_connections.html#ConnectionErrorsTest.test_token_server_valid_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_connections.ConnectionErrorsTest.test_token_server_valid_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_connections.ConnectionErrorsTest.test_token_server_wrong_token">
+<code class="descname">test_token_server_wrong_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_connections.html#ConnectionErrorsTest.test_token_server_wrong_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_connections.ConnectionErrorsTest.test_token_server_wrong_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_connections.ConnectionErrorsTest.test_unauthenticated_server_planner">
+<code class="descname">test_unauthenticated_server_planner</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_connections.html#ConnectionErrorsTest.test_unauthenticated_server_planner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_connections.ConnectionErrorsTest.test_unauthenticated_server_planner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_connections.ConnectionErrorsTest.test_unauthenticated_server_worker">
+<code class="descname">test_unauthenticated_server_worker</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_connections.html#ConnectionErrorsTest.test_unauthenticated_server_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_connections.ConnectionErrorsTest.test_unauthenticated_server_worker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-okera.tests.test_fs">
+<span id="okera-tests-test-fs-module"></span><h2>okera.tests.test_fs module<a class="headerlink" href="#module-okera.tests.test_fs" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="okera.tests.test_fs.FsTest">
+<em class="property">class </em><code class="descclassname">okera.tests.test_fs.</code><code class="descname">FsTest</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_fs.html#FsTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_fs.FsTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="method">
+<dt id="okera.tests.test_fs.FsTest.test_as_testuser">
+<code class="descname">test_as_testuser</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_fs.html#FsTest.test_as_testuser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_fs.FsTest.test_as_testuser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_fs.FsTest.test_cat">
+<code class="descname">test_cat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_fs.html#FsTest.test_cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_fs.FsTest.test_cat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_fs.FsTest.test_errors">
+<code class="descname">test_errors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_fs.html#FsTest.test_errors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_fs.FsTest.test_errors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_fs.FsTest.test_ls">
+<code class="descname">test_ls</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_fs.html#FsTest.test_ls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_fs.FsTest.test_ls" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="okera.tests.test_fs.RegisteredTest">
+<em class="property">class </em><code class="descclassname">okera.tests.test_fs.</code><code class="descname">RegisteredTest</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_fs.html#RegisteredTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_fs.RegisteredTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="method">
+<dt id="okera.tests.test_fs.RegisteredTest.test_as_testuser">
+<code class="descname">test_as_testuser</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_fs.html#RegisteredTest.test_as_testuser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_fs.RegisteredTest.test_as_testuser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_fs.RegisteredTest.test_basic">
+<code class="descname">test_basic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_fs.html#RegisteredTest.test_basic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_fs.RegisteredTest.test_basic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_fs.RegisteredTest.test_dropping">
+<code class="descname">test_dropping</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_fs.html#RegisteredTest.test_dropping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_fs.RegisteredTest.test_dropping" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_fs.RegisteredTest.test_masking">
+<code class="descname">test_masking</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_fs.html#RegisteredTest.test_masking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_fs.RegisteredTest.test_masking" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-okera.tests.test_nightly">
+<span id="okera-tests-test-nightly-module"></span><h2>okera.tests.test_nightly module<a class="headerlink" href="#module-okera.tests.test_nightly" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="okera.tests.test_nightly.ConnectionErrorsTest">
+<em class="property">class </em><code class="descclassname">okera.tests.test_nightly.</code><code class="descname">ConnectionErrorsTest</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_nightly.html#ConnectionErrorsTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_nightly.ConnectionErrorsTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="method">
+<dt id="okera.tests.test_nightly.ConnectionErrorsTest.test_okera_fs_read">
+<code class="descname">test_okera_fs_read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_nightly.html#ConnectionErrorsTest.test_okera_fs_read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_nightly.ConnectionErrorsTest.test_okera_fs_read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_nightly.ConnectionErrorsTest.test_okera_sample_users">
+<code class="descname">test_okera_sample_users</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_nightly.html#ConnectionErrorsTest.test_okera_sample_users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_nightly.ConnectionErrorsTest.test_okera_sample_users" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-okera.tests.test_scans">
+<span id="okera-tests-test-scans-module"></span><h2>okera.tests.test_scans module<a class="headerlink" href="#module-okera.tests.test_scans" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="okera.tests.test_scans.BasicTest">
+<em class="property">class </em><code class="descclassname">okera.tests.test_scans.</code><code class="descname">BasicTest</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_scans.html#BasicTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_scans.BasicTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="method">
+<dt id="okera.tests.test_scans.BasicTest.test_duplicate_cols">
+<code class="descname">test_duplicate_cols</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_scans.html#BasicTest.test_duplicate_cols"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_scans.BasicTest.test_duplicate_cols" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_scans.BasicTest.test_large_decimals">
+<code class="descname">test_large_decimals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_scans.html#BasicTest.test_large_decimals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_scans.BasicTest.test_large_decimals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_scans.BasicTest.test_nulls">
+<code class="descname">test_nulls</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_scans.html#BasicTest.test_nulls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_scans.BasicTest.test_nulls" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_scans.BasicTest.test_scan_as_json_max_records">
+<code class="descname">test_scan_as_json_max_records</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_scans.html#BasicTest.test_scan_as_json_max_records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_scans.BasicTest.test_scan_as_json_max_records" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_scans.BasicTest.test_scan_as_pandas_max_records">
+<code class="descname">test_scan_as_pandas_max_records</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_scans.html#BasicTest.test_scan_as_pandas_max_records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_scans.BasicTest.test_scan_as_pandas_max_records" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_scans.BasicTest.test_sparse_data">
+<code class="descname">test_sparse_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_scans.html#BasicTest.test_sparse_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_scans.BasicTest.test_sparse_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="okera.tests.test_scans.BasicTest.test_timestamp_functions">
+<code class="descname">test_timestamp_functions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/okera/tests/test_scans.html#BasicTest.test_timestamp_functions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#okera.tests.test_scans.BasicTest.test_timestamp_functions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-okera.tests">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-okera.tests" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="modules.html" class="btn btn-neutral float-right" title="okera" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="okera.html" class="btn btn-neutral" title="okera package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Okera Development Team
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

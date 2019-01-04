@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>okera.tests.test_connections &mdash; pyokera  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pyokera
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../okera.html">okera package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">okera</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyokera</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../okera.html">okera</a> &raquo;</li>
+        
+      <li>okera.tests.test_connections</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for okera.tests.test_connections</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2017 Okera Inc. All Rights Reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Tests that verify connection issues with specific server auth settings.</span>
+
+<span class="c1"># pylint: disable=broad-except</span>
+<span class="c1"># pylint: disable=bad-continuation</span>
+<span class="c1"># pylint: disable=bad-indentation</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">okera</span> <span class="k">import</span> <span class="n">context</span>
+
+<span class="n">SERVER_AUTH</span> <span class="o">=</span> <span class="s1">&#39;NOSASL&#39;</span>
+<span class="k">if</span> <span class="s1">&#39;PYCEREBRO_TEST_AUTH_MECH&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+    <span class="n">SERVER_AUTH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PYCEREBRO_TEST_AUTH_MECH&#39;</span><span class="p">]</span>
+
+<span class="n">ROOT_TOKEN</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;OKERA_HOME&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/integration/tokens/cerebro.token&#39;</span>
+
+<div class="viewcode-block" id="ConnectionErrorsTest"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_connections.ConnectionErrorsTest">[docs]</a><span class="k">class</span> <span class="nc">ConnectionErrorsTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ConnectionErrorsTest.test_unauthenticated_server_planner"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_connections.ConnectionErrorsTest.test_unauthenticated_server_planner">[docs]</a>    <span class="nd">@unittest</span><span class="o">.</span><span class="n">skipIf</span><span class="p">(</span><span class="n">SERVER_AUTH</span> <span class="o">!=</span> <span class="s1">&#39;NOSASL&#39;</span><span class="p">,</span> <span class="s2">&quot;Test requires server to have no auth.&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_unauthenticated_server_planner</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">context</span><span class="p">()</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">enable_token_auth</span><span class="p">(</span><span class="s1">&#39;bad.token&#39;</span><span class="p">)</span>
+        <span class="n">thrown</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s2">&quot;Ensure server has authentication enabled&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">thrown</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">thrown</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConnectionErrorsTest.test_unauthenticated_server_worker"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_connections.ConnectionErrorsTest.test_unauthenticated_server_worker">[docs]</a>    <span class="nd">@unittest</span><span class="o">.</span><span class="n">skipIf</span><span class="p">(</span><span class="n">SERVER_AUTH</span> <span class="o">!=</span> <span class="s1">&#39;NOSASL&#39;</span><span class="p">,</span> <span class="s2">&quot;Test requires server to have no auth.&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_unauthenticated_server_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">context</span><span class="p">()</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">enable_token_auth</span><span class="p">(</span><span class="s1">&#39;bad.token&#39;</span><span class="p">)</span>
+        <span class="n">thrown</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">connect_worker</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s2">&quot;Ensure server has authentication enabled&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">thrown</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">thrown</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConnectionErrorsTest.test_token_server_wrong_token"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_connections.ConnectionErrorsTest.test_token_server_wrong_token">[docs]</a>    <span class="nd">@unittest</span><span class="o">.</span><span class="n">skipIf</span><span class="p">(</span><span class="n">SERVER_AUTH</span> <span class="o">!=</span> <span class="s1">&#39;TOKEN&#39;</span><span class="p">,</span> <span class="s2">&quot;Test requires server to have token auth.&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_token_server_wrong_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">context</span><span class="p">()</span>
+
+        <span class="c1"># Wrong token</span>
+        <span class="n">thrown</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">enable_token_auth</span><span class="p">(</span><span class="n">token_str</span><span class="o">=</span><span class="s1">&#39;bad.token&#39;</span><span class="p">)</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">thrown</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s2">&quot;Could not verify token&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">thrown</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConnectionErrorsTest.test_token_server_no_token"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_connections.ConnectionErrorsTest.test_token_server_no_token">[docs]</a>    <span class="nd">@unittest</span><span class="o">.</span><span class="n">skipIf</span><span class="p">(</span><span class="n">SERVER_AUTH</span> <span class="o">!=</span> <span class="s1">&#39;TOKEN&#39;</span><span class="p">,</span> <span class="s2">&quot;Test requires server to have token auth.&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_token_server_no_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">thrown</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">context</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">disable_auth</span><span class="p">()</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">thrown</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s2">&quot;Client does not have authentication enabled&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">thrown</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConnectionErrorsTest.test_token_server_valid_token"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_connections.ConnectionErrorsTest.test_token_server_valid_token">[docs]</a>    <span class="nd">@unittest</span><span class="o">.</span><span class="n">skipIf</span><span class="p">(</span><span class="n">SERVER_AUTH</span> <span class="o">!=</span> <span class="s1">&#39;TOKEN&#39;</span><span class="p">,</span> <span class="s2">&quot;Test requires server to have kerberos.&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_token_server_valid_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">context</span><span class="p">()</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">enable_token_auth</span><span class="p">(</span><span class="n">token_file</span><span class="o">=</span><span class="n">ROOT_TOKEN</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get_protocol_version</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConnectionErrorsTest.test_kerberos_server_no_override"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_connections.ConnectionErrorsTest.test_kerberos_server_no_override">[docs]</a>    <span class="nd">@unittest</span><span class="o">.</span><span class="n">skipIf</span><span class="p">(</span><span class="n">SERVER_AUTH</span> <span class="o">!=</span> <span class="s1">&#39;KERBEROS&#39;</span><span class="p">,</span> <span class="s2">&quot;Test requires server to have kerberos.&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_kerberos_server_no_override</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">context</span><span class="p">()</span>
+        <span class="c1"># This assumes the server principal is cerebro/localhost, which is wrong</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">enable_kerberos</span><span class="p">(</span><span class="s1">&#39;cerebro&#39;</span><span class="p">)</span>
+        <span class="n">thrown</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">thrown</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s2">&quot;cerebro/localhost@CEREBRO.TEST&quot;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">thrown</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConnectionErrorsTest.test_kerberos_server_valid_client"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_connections.ConnectionErrorsTest.test_kerberos_server_valid_client">[docs]</a>    <span class="nd">@unittest</span><span class="o">.</span><span class="n">skipIf</span><span class="p">(</span><span class="n">SERVER_AUTH</span> <span class="o">!=</span> <span class="s1">&#39;KERBEROS&#39;</span><span class="p">,</span> <span class="s2">&quot;Test requires server to have kerberos.&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_kerberos_server_valid_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">context</span><span class="p">()</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">enable_kerberos</span><span class="p">(</span><span class="s1">&#39;cerebro&#39;</span><span class="p">,</span> <span class="n">host_override</span><span class="o">=</span><span class="s1">&#39;service&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get_protocol_version</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Okera Development Team
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

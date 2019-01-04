@@ -1,0 +1,45 @@
+okera package
+=============
+
+Subpackages
+-----------
+
+.. toctree::
+
+    okera.tests
+
+Submodules
+----------
+
+okera.botocore\_patch module
+----------------------------
+
+.. automodule:: okera.botocore_patch
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+okera.concurrency module
+------------------------
+
+.. automodule:: okera.concurrency
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+okera.odas module
+-----------------
+
+.. automodule:: okera.odas
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: okera
+    :members:
+    :undoc-members:
+    :show-inheritance:

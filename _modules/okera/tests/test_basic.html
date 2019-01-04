@@ -1,0 +1,542 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>okera.tests.test_basic &mdash; pyokera  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pyokera
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../okera.html">okera package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">okera</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyokera</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../okera.html">okera</a> &raquo;</li>
+        
+      <li>okera.tests.test_basic</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for okera.tests.test_basic</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2017 Okera Inc. All Rights Reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Tests that should run on any configuration. The server auth can be specified</span>
+<span class="c1"># as an environment variables before running this test.</span>
+
+<span class="c1"># pylint: disable=no-member</span>
+<span class="c1"># pylint: disable=protected-access</span>
+<span class="c1"># pylint: disable=too-many-public-methods</span>
+<span class="c1"># pylint: disable=bad-continuation</span>
+<span class="c1"># pylint: disable=bad-indentation</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">tzlocal</span> <span class="k">import</span> <span class="n">get_localzone</span>
+
+<span class="kn">from</span> <span class="nn">okera</span> <span class="k">import</span> <span class="n">version</span><span class="p">,</span> <span class="n">_thrift_api</span>
+<span class="kn">from</span> <span class="nn">okera.tests</span> <span class="k">import</span> <span class="n">pycerebro_test_common</span> <span class="k">as</span> <span class="n">common</span>
+
+<span class="c1"># The timestamp values are TZ specific, switch based on this.</span>
+<span class="c1"># TODO: this is an awful way to do this.</span>
+<span class="n">TIME_ZONE</span> <span class="o">=</span> <span class="n">get_localzone</span><span class="p">()</span><span class="o">.</span><span class="n">zone</span>
+
+<div class="viewcode-block" id="BasicTest"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest">[docs]</a><span class="k">class</span> <span class="nc">BasicTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BasicTest.test_version"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_version">[docs]</a>    <span class="k">def</span> <span class="nf">test_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">version</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_connection"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_connection">[docs]</a>    <span class="k">def</span> <span class="nf">test_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_protocol_version</span><span class="p">())</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">worker</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_worker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span> <span class="n">worker</span><span class="o">.</span><span class="n">get_protocol_version</span><span class="p">())</span>
+        <span class="n">worker</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_random_host"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_random_host">[docs]</a>    <span class="k">def</span> <span class="nf">test_random_host</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_test_context</span><span class="p">()</span>
+        <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_OkeraContext__pick_host</span><span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="s1">&#39;abc&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span>
+
+        <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_OkeraContext__pick_host</span><span class="p">([</span><span class="s1">&#39;abc:234&#39;</span><span class="p">],</span> <span class="mi">123</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="s1">&#39;abc&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="mi">234</span><span class="p">)</span>
+
+        <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_OkeraContext__pick_host</span><span class="p">(</span><span class="s1">&#39;abc:234&#39;</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="s1">&#39;abc&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="mi">234</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+            <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_OkeraContext__pick_host</span><span class="p">([</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="s1">&#39;def&#39;</span><span class="p">],</span> <span class="mi">123</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">host</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="s1">&#39;def&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span>
+
+        <span class="c1"># Test some invalid args</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">_OkeraContext__pick_host</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">_OkeraContext__pick_host</span><span class="p">(</span><span class="s2">&quot;abc:123:45&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">_OkeraContext__pick_host</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="mi">123</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">_OkeraContext__pick_host</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">_OkeraContext__pick_host</span><span class="p">(</span><span class="s1">&#39;123&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_pick_host"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_pick_host">[docs]</a>    <span class="k">def</span> <span class="nf">test_pick_host</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">opt</span><span class="p">[</span><span class="s1">&#39;PIN_HOST&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_test_context</span><span class="p">()</span>
+        <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_OkeraContext__pick_host</span><span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="s1">&#39;abc&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span>
+
+        <span class="c1"># Should always pick the first one</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+            <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_OkeraContext__pick_host</span><span class="p">([</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="s1">&#39;def&#39;</span><span class="p">],</span> <span class="mi">123</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">host</span> <span class="o">==</span> <span class="s1">&#39;abc&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span>
+
+        <span class="n">network_hosts</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">_thrift_api</span><span class="o">.</span><span class="n">TNetworkAddress</span><span class="p">(</span><span class="s2">&quot;678&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="n">_thrift_api</span><span class="o">.</span><span class="n">TNetworkAddress</span><span class="p">(</span><span class="s2">&quot;456&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+            <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_OkeraContext__pick_host</span><span class="p">(</span><span class="n">network_hosts</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">host</span> <span class="o">==</span> <span class="s1">&#39;456&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_basic"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_basic">[docs]</a>    <span class="k">def</span> <span class="nf">test_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_test_context</span><span class="p">()</span>
+        <span class="c1"># Can either be None or a token depending on the dev setup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">get_auth</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_auth</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;TOKEN&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_auth</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;TOKEN&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">get_token</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">ctx</span><span class="o">.</span><span class="n">disable_auth</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">get_auth</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">ctx</span><span class="o">.</span><span class="n">enable_token_auth</span><span class="p">(</span><span class="s1">&#39;ab.cd&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;TOKEN&#39;</span><span class="p">,</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_auth</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;ab.cd&#39;</span><span class="p">,</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_token</span><span class="p">())</span>
+
+        <span class="n">ctx</span><span class="o">.</span><span class="n">enable_token_auth</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">get_auth</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="n">ctx</span><span class="o">.</span><span class="n">_get_user</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_planner"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_planner">[docs]</a>    <span class="k">def</span> <span class="nf">test_planner</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_test_context</span><span class="p">()</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_protocol_version</span><span class="p">())</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c1"># Should be able to make more</span>
+        <span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">planner</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="n">planner</span><span class="o">.</span><span class="n">get_protocol_version</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_worker"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_worker">[docs]</a>    <span class="k">def</span> <span class="nf">test_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_test_context</span><span class="p">()</span>
+        <span class="n">worker</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect_worker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="n">worker</span><span class="o">.</span><span class="n">get_protocol_version</span><span class="p">())</span>
+        <span class="n">worker</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c1"># Should be able to make more</span>
+        <span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect_worker</span><span class="p">()</span> <span class="k">as</span> <span class="n">worker</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="n">worker</span><span class="o">.</span><span class="n">get_protocol_version</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_catalog"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_catalog">[docs]</a>    <span class="k">def</span> <span class="nf">test_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">dbs</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">list_databases</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;okera_sample&#39;</span> <span class="ow">in</span> <span class="n">dbs</span><span class="p">)</span>
+        <span class="n">datasets</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">list_datasets</span><span class="p">(</span><span class="s1">&#39;okera_sample&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">datasets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">dataset_names</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">list_dataset_names</span><span class="p">(</span><span class="s1">&#39;okera_sample&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;okera_sample.sample&#39;</span> <span class="ow">in</span> <span class="n">dataset_names</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">dataset_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;okera_sample.users&#39;</span> <span class="ow">in</span> <span class="n">dataset_names</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">dataset_names</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_ddl"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_ddl">[docs]</a>    <span class="k">def</span> <span class="nf">test_ddl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span><span class="s2">&quot;show databases&quot;</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_plan"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_plan">[docs]</a>    <span class="k">def</span> <span class="nf">test_plan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">plan</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">plan</span><span class="p">(</span><span class="s2">&quot;tpch.nation&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">tasks</span><span class="p">))</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_all_types_json"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_all_types_json">[docs]</a>    <span class="k">def</span> <span class="nf">test_all_types_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">json</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">scan_as_json</span><span class="p">(</span><span class="s2">&quot;rs.alltypes&quot;</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">json</span><span class="p">))</span>
+        <span class="n">r1</span> <span class="o">=</span> <span class="n">json</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">json</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">r1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">r2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;bool_col&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">r2</span><span class="p">[</span><span class="s1">&#39;tinyint_col&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;smallint_col&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">r2</span><span class="p">[</span><span class="s1">&#39;int_col&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;bigint_col&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">r2</span><span class="p">[</span><span class="s1">&#39;float_col&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;double_col&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="n">r2</span><span class="p">[</span><span class="s1">&#39;string_col&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;vchar1&#39;</span><span class="p">,</span> <span class="n">r1</span><span class="p">[</span><span class="s1">&#39;varchar_col&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;char2&#39;</span><span class="p">,</span> <span class="n">r2</span><span class="p">[</span><span class="s1">&#39;char_col&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;3.1415920000&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">r1</span><span class="p">[</span><span class="s1">&#39;decimal_col&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;2016-01-01 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">r2</span><span class="p">[</span><span class="s1">&#39;timestamp_col&#39;</span><span class="p">]))</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_requesting_user"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_requesting_user">[docs]</a>    <span class="k">def</span> <span class="nf">test_requesting_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">json</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">scan_as_json</span><span class="p">(</span><span class="s2">&quot;rs.alltypes&quot;</span><span class="p">,</span> <span class="n">requesting_user</span><span class="o">=</span><span class="s2">&quot;testuser&quot;</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">json</span><span class="p">))</span>
+        <span class="n">r1</span> <span class="o">=</span> <span class="n">json</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">json</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">({</span><span class="s1">&#39;int_col&#39;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;string_col&#39;</span> <span class="p">:</span> <span class="s1">&#39;hello&#39;</span><span class="p">},</span> <span class="n">r1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">({</span><span class="s1">&#39;int_col&#39;</span> <span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;string_col&#39;</span> <span class="p">:</span> <span class="s1">&#39;world&#39;</span><span class="p">},</span> <span class="n">r2</span><span class="p">)</span>
+
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">pd</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">scan_as_pandas</span><span class="p">(</span><span class="s2">&quot;rs.alltypes&quot;</span><span class="p">,</span> <span class="n">requesting_user</span><span class="o">=</span><span class="s2">&quot;testuser&quot;</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pd</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">([</span><span class="s1">&#39;int_col&#39;</span><span class="p">,</span> <span class="s1">&#39;string_col&#39;</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_all_types_pandas"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_all_types_pandas">[docs]</a>    <span class="k">def</span> <span class="nf">test_all_types_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">pd</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">scan_as_pandas</span><span class="p">(</span><span class="s2">&quot;rs.alltypes&quot;</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pd</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;bool_col&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;bool_col&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;tinyint_col&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;tinyint_col&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;smallint_col&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;smallint_col&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;int_col&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;int_col&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;bigint_col&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;bigint_col&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;float_col&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;float_col&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;double_col&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mf">11.0</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;double_col&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;string_col&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;string_col&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;vchar1&#39;</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;varchar_col&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;vchar2&#39;</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;varchar_col&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;char1&#39;</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;char_col&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;char2&#39;</span><span class="p">,</span> <span class="n">pd</span><span class="p">[</span><span class="s1">&#39;char_col&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;3.1415920000&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">pd</span><span class="p">[</span><span class="s1">&#39;decimal_col&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;1234.5678900000&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">pd</span><span class="p">[</span><span class="s1">&#39;decimal_col&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;2015-01-01 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">pd</span><span class="p">[</span><span class="s1">&#39;timestamp_col&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;2016-01-01 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">pd</span><span class="p">[</span><span class="s1">&#39;timestamp_col&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_all_types_null_pandas"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_all_types_null_pandas">[docs]</a>    <span class="k">def</span> <span class="nf">test_all_types_null_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">pd</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">scan_as_pandas</span><span class="p">(</span><span class="s2">&quot;rs.alltypes_null&quot;</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pd</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">]),</span> <span class="n">msg</span><span class="o">=</span><span class="n">pd</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_all_types_empty"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_all_types_empty">[docs]</a>    <span class="k">def</span> <span class="nf">test_all_types_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">pd</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">scan_as_pandas</span><span class="p">(</span><span class="s2">&quot;rs.alltypes_empty&quot;</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="p">[</span><span class="s1">&#39;bool_col&#39;</span><span class="p">,</span> <span class="s1">&#39;tinyint_col&#39;</span><span class="p">,</span> <span class="s1">&#39;smallint_col&#39;</span><span class="p">,</span> <span class="s1">&#39;int_col&#39;</span><span class="p">,</span> <span class="s1">&#39;bigint_col&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;float_col&#39;</span><span class="p">,</span> <span class="s1">&#39;double_col&#39;</span><span class="p">,</span> <span class="s1">&#39;string_col&#39;</span><span class="p">,</span> <span class="s1">&#39;varchar_col&#39;</span><span class="p">,</span> <span class="s1">&#39;char_col&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;timestamp_col&#39;</span><span class="p">,</span> <span class="s1">&#39;decimal_col&#39;</span><span class="p">],</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">msg</span><span class="o">=</span><span class="n">pd</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pd</span><span class="p">),</span> <span class="n">msg</span><span class="o">=</span><span class="n">pd</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">msg</span><span class="o">=</span><span class="n">pd</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_all_types_null_json"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_all_types_null_json">[docs]</a>    <span class="k">def</span> <span class="nf">test_all_types_null_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">json</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">scan_as_json</span><span class="p">(</span><span class="s2">&quot;rs.alltypes_null&quot;</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">json</span><span class="p">),</span> <span class="n">msg</span><span class="o">=</span><span class="n">json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">msg</span><span class="o">=</span><span class="n">json</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">json</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">json</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_all_types_empty_json"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_all_types_empty_json">[docs]</a>    <span class="k">def</span> <span class="nf">test_all_types_empty_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">json</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">scan_as_json</span><span class="p">(</span><span class="s2">&quot;rs.alltypes_empty&quot;</span><span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">json</span><span class="p">),</span> <span class="n">msg</span><span class="o">=</span><span class="n">json</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_filter_with_empty_rows_pandas"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_filter_with_empty_rows_pandas">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_with_empty_rows_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="n">pd</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">scan_as_pandas</span><span class="p">(</span>
+            <span class="s2">&quot;SELECT * FROM okera_sample.users where gender = &#39;lol&#39;&quot;</span>
+        <span class="p">)</span>
+        <span class="n">planner</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pd</span><span class="p">),</span> <span class="n">msg</span><span class="o">=</span><span class="n">pd</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_column_order_scan_as_pandas"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_column_order_scan_as_pandas">[docs]</a>    <span class="k">def</span> <span class="nf">test_column_order_scan_as_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">planner</span><span class="o">.</span><span class="n">scan_as_pandas</span><span class="p">(</span><span class="s2">&quot;okera_sample.users&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span>
+            <span class="p">[</span><span class="s1">&#39;uid&#39;</span><span class="p">,</span> <span class="s1">&#39;dob&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;ccn&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">planner</span><span class="o">.</span><span class="n">scan_as_pandas</span><span class="p">(</span><span class="s2">&quot;select dob, uid from okera_sample.users&quot;</span><span class="p">)</span>
+                 <span class="o">.</span><span class="n">columns</span><span class="p">),</span>
+            <span class="p">[</span><span class="s1">&#39;dob&#39;</span><span class="p">,</span> <span class="s1">&#39;uid&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">planner</span><span class="o">.</span><span class="n">scan_as_pandas</span><span class="p">(</span><span class="s2">&quot;rs.alltypes_s3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span>
+            <span class="p">[</span><span class="s1">&#39;bool_col&#39;</span><span class="p">,</span> <span class="s1">&#39;tinyint_col&#39;</span><span class="p">,</span> <span class="s1">&#39;smallint_col&#39;</span><span class="p">,</span> <span class="s1">&#39;int_col&#39;</span><span class="p">,</span> <span class="s1">&#39;bigint_col&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;float_col&#39;</span><span class="p">,</span> <span class="s1">&#39;double_col&#39;</span><span class="p">,</span> <span class="s1">&#39;string_col&#39;</span><span class="p">,</span> <span class="s1">&#39;varchar_col&#39;</span><span class="p">,</span> <span class="s1">&#39;char_col&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;timestamp_col&#39;</span><span class="p">,</span> <span class="s1">&#39;decimal_col&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">planner</span><span class="o">.</span><span class="n">scan_as_pandas</span><span class="p">(</span>
+                <span class="s2">&quot;select decimal_col, bigint_col from rs.alltypes_s3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span>
+            <span class="p">[</span><span class="s1">&#39;decimal_col&#39;</span><span class="p">,</span> <span class="s1">&#39;bigint_col&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_binary_data"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_binary_data">[docs]</a>    <span class="k">def</span> <span class="nf">test_binary_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span> <span class="k">as</span> <span class="n">planner</span><span class="p">:</span>
+            <span class="n">planner</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span><span class="s2">&quot;create database if not exists binarydb&quot;</span><span class="p">)</span>
+            <span class="n">planner</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                create external table if not exists binarydb.sample (record binary)</span>
+<span class="s2">                ROW FORMAT DELIMITED FIELDS TERMINATED BY &#39;|&#39; STORED AS TEXTFILE</span>
+<span class="s2">                LOCATION &#39;s3://cerebrodata-test/sample&#39;&quot;&quot;&quot;</span><span class="p">)</span>
+
+            <span class="n">df</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">scan_as_pandas</span><span class="p">(</span><span class="s2">&quot;binarydb.sample&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="n">msg</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;record&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="n">msg</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;This is a sample test file.&#39;</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;record&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">msg</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+
+            <span class="n">planner</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span><span class="s2">&quot;drop table binarydb.sample&quot;</span><span class="p">)</span>
+            <span class="n">planner</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span><span class="s2">&quot;drop database binarydb&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_warnings"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_warnings">[docs]</a>    <span class="k">def</span> <span class="nf">test_warnings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">common</span><span class="o">.</span><span class="n">get_planner</span><span class="p">()</span> <span class="k">as</span> <span class="n">planner</span><span class="p">:</span>
+            <span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">scan_as_json</span><span class="p">(</span><span class="s2">&quot;okera_sample.sample&quot;</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="n">warnings</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">warnings</span><span class="p">))</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">scan_as_json</span><span class="p">(</span><span class="s2">&quot;rs.alltypes_empty&quot;</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="n">warnings</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">warnings</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s2">&quot;has no data files&quot;</span> <span class="ow">in</span> <span class="n">warnings</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="BasicTest.test_impersonation"><a class="viewcode-back" href="../../../okera.tests.html#okera.tests.test_basic.BasicTest.test_impersonation">[docs]</a>    <span class="k">def</span> <span class="nf">test_impersonation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_test_context</span><span class="p">()</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">enable_token_auth</span><span class="p">(</span><span class="s1">&#39;testuser&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">ctx</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">planner</span><span class="p">:</span>
+            <span class="c1"># Spot check a few</span>
+            <span class="n">dbs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">planner</span><span class="o">.</span><span class="n">execute_ddl</span><span class="p">(</span><span class="s1">&#39;show databases&#39;</span><span class="p">):</span>
+                <span class="n">dbs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;okera_sample&#39;</span> <span class="ow">in</span> <span class="n">dbs</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">dbs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;rs&#39;</span> <span class="ow">in</span> <span class="n">dbs</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">dbs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="s1">&#39;customer&#39;</span> <span class="ow">in</span> <span class="n">dbs</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">dbs</span><span class="p">)</span>
+
+            <span class="n">dbs2</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">list_databases</span><span class="p">()</span>
+            <span class="c1">#execute_ddl does not ignore internal dbs</span>
+            <span class="c1">#list_databases ignores internal dbs</span>
+            <span class="n">dbs</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dbs</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">dbs</span><span class="p">,</span> <span class="n">dbs2</span><span class="p">)</span>
+
+            <span class="n">tbl_names</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">list_dataset_names</span><span class="p">(</span><span class="s1">&#39;rs&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;rs.alltypes&#39;</span> <span class="ow">in</span> <span class="n">tbl_names</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">tbl_names</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;rs.alltypes_s3&#39;</span> <span class="ow">in</span> <span class="n">tbl_names</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">tbl_names</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="s1">&#39;rs.s3_nation&#39;</span> <span class="ow">in</span> <span class="n">tbl_names</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">tbl_names</span><span class="p">)</span>
+
+            <span class="n">tbls</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">list_datasets</span><span class="p">(</span><span class="s1">&#39;rs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">tables</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tbl_names</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">tbls</span><span class="p">))</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">scan_as_json</span><span class="p">(</span><span class="s1">&#39;okera_sample.whoami&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">],</span> <span class="s1">&#39;testuser&#39;</span><span class="p">)</span></div></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Okera Development Team
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
